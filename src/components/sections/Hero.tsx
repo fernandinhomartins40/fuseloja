@@ -4,7 +4,15 @@ import React from 'react';
 export const Hero: React.FC = () => {
   return (
     <section className="relative h-[500px] bg-[#0B0909]">
-      <div className="container mx-auto flex justify-between items-center h-full px-4 md:px-6 lg:px-8">
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <img
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/be236283cc696082892ac0171a0c6023c3c51f1f"
+          alt="Galaxy S22 Ultra"
+          className="w-full h-full object-cover opacity-75"
+        />
+      </div>
+      
+      <div className="container mx-auto flex justify-between items-center h-full px-4 md:px-6 lg:px-8 relative z-10">
         <div className="text-white">
           <h1 className="text-5xl mb-5">GALAXY S22 ULTRA</h1>
           <div className="flex flex-col gap-2.5 text-[#D90429] underline">
@@ -21,11 +29,11 @@ export const Hero: React.FC = () => {
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/be236283cc696082892ac0171a0c6023c3c51f1f"
           alt="Galaxy S22 Ultra"
-          className="max-w-[50%] max-sm:hidden"
+          className="max-w-[50%] max-sm:hidden z-10 relative"
         />
       </div>
       
-      <div className="absolute -translate-y-2/4 w-full flex justify-between px-2.5 py-0 top-2/4">
+      <div className="absolute -translate-y-2/4 w-full flex justify-between px-2.5 py-0 top-2/4 z-20">
         <button 
           className="bg-transparent border-none cursor-pointer"
           aria-label="Previous slide"

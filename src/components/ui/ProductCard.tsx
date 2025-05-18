@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { ProductTag, TagType } from './ProductTag';
 
 interface ProductCardProps {
   title: string;
@@ -7,7 +8,7 @@ interface ProductCardProps {
   originalPrice?: number;
   installments?: number;
   image: string;
-  onSale?: boolean;
+  tag?: TagType;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -16,17 +17,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   originalPrice,
   installments = 6,
   image,
-  onSale
+  tag
 }) => {
   const installmentValue = price / installments;
 
   return (
     <article className="border relative p-5 rounded-[5px] border-solid border-[rgba(84,89,95,0.29)]">
-      {onSale && (
-        <div className="absolute top-[-7px] text-white w-[50px] h-[50px] text-[13.7px] flex items-center justify-center bg-[#D90429] rounded-[50%] right-5 font-bold">
-          OFERTA!
-        </div>
-      )}
+      {tag && <ProductTag type={tag} />}
       <img
         src={image}
         alt={title}

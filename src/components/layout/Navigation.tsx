@@ -10,7 +10,7 @@ export const Navigation: React.FC = () => {
         className="h-[34px]"
       />
       
-      <nav className="flex gap-[15px] max-sm:hidden" aria-label="Main Navigation">
+      <nav className="flex gap-[15px] max-sm:hidden" aria-label="Navegação Principal">
         <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
           Ofertas
         </a>

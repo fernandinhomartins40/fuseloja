@@ -16,7 +16,7 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="text-white text-2xl mb-5">Links</h4>
             <nav className="flex flex-col gap-2.5">
-              <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Home</a>
+              <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Início</a>
               <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Ofertas</a>
               <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Marcas</a>
               <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Sobre</a>

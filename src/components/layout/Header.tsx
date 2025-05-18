@@ -6,18 +6,18 @@ export const Header: React.FC = () => {
   return (
     <header className="bg-[#0B0909] py-[25px]">
       <div className="container mx-auto flex justify-between items-center px-4 md:px-6 lg:px-8">
-        <SearchBar onSearch={(value) => console.log('Search:', value)} />
+        <SearchBar onSearch={(value) => console.log('Pesquisa:', value)} />
         
         <div className="flex items-center gap-5 text-white max-sm:hidden">
           <div className="flex items-center gap-2 text-base">
             <i className="ti ti-user" />
-            <span>Login / Minha Conta</span>
+            <span>Entrar / Minha Conta</span>
           </div>
           <div className="flex items-center gap-2 text-base">
             <i className="ti ti-phone" />
             <span>(11) 99999-9999</span>
           </div>
-          <nav className="flex gap-2.5" aria-label="Social Media">
+          <nav className="flex gap-2.5" aria-label="Redes Sociais">
             <a href="#" className="text-white text-xl no-underline hover:text-[#D90429] transition-colors" aria-label="Facebook">
               <i className="ti ti-brand-facebook" />
             </a>

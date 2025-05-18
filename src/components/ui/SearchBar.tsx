@@ -27,7 +27,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <button 
         type="submit"
         className="w-[50px] h-[50px] text-white flex justify-center items-center cursor-pointer bg-[#D90429] border-[none] rounded-r-[3px]"
-        aria-label="Search"
+        aria-label="Pesquisar"
       >
         <i className="ti ti-search" />
       </button>

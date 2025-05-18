@@ -27,16 +27,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group">
       <div className="relative p-6">
         {tag && <ProductTag type={tag} className="top-2 right-2" />}
-        <div className="mb-5 overflow-hidden rounded-md">
+        <div className="mb-3 overflow-hidden rounded-md">
           <img
             src={image}
             alt={title}
             className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
           />
         </div>
-        <div className="space-y-3">
-          <h3 className="text-lg font-medium text-foreground line-clamp-2 min-h-[56px]">{title}</h3>
-          <div className="flex items-center gap-3">
+        <div className="space-y-1">
+          <h3 className="text-lg font-medium text-foreground line-clamp-2 min-h-[48px]">{title}</h3>
+          <div className="flex items-center gap-2">
             {originalPrice && (
               <span className="text-sm text-muted-foreground line-through">
                 R$ {originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
@@ -50,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             Em até {installments}x de R$ {installmentValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} sem juros
           </div>
           <button 
-            className="flex items-center justify-center w-full py-3 mt-3 text-sm font-medium text-white transition-colors bg-destructive rounded-md hover:bg-destructive/80 gap-2"
+            className="flex items-center justify-center w-full py-2 mt-2 text-sm font-medium text-white transition-colors bg-destructive rounded-md hover:bg-destructive/80 gap-2"
             onClick={() => console.log(`Adicionar ao carrinho: ${title}`)}
           >
             <ShoppingCart size={16} />

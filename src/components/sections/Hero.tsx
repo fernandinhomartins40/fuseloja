@@ -6,7 +6,19 @@ export const Hero: React.FC = () => {
       </div>
       
       <div className="container mx-auto flex justify-between items-center h-full px-4 md:px-6 lg:px-8 relative z-10">
-        
+        <div className="text-white">
+          <h1 className="text-5xl mb-5">GALAXY S22 ULTRA</h1>
+          <div className="flex flex-col gap-2.5 text-[#D90429] underline">
+            <span className="line-through text-[#999]">De R$5.999,99</span>
+            <span className="text-[#D90429] text-2xl font-bold">
+              Por R$4.999,99
+            </span>
+          </div>
+          <div className="text-[#999] mx-0 my-5">Últimas Unidades</div>
+          <button className="text-white cursor-pointer bg-[#D90429] px-[30px] py-[15px] rounded-[5px] border-[none] hover:bg-[#b8031f] transition-colors">
+            Comprar Agora
+          </button>
+        </div>
         
       </div>
       

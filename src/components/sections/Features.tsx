@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export const Features: React.FC = () => {
@@ -21,7 +22,7 @@ export const Features: React.FC = () => {
   ];
 
   return (
-    <section className="flex justify-between gap-5 px-[360px] py-10 max-md:p-5">
+    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 bg-[#EBEFF4] py-10 px-4">
       {features.map((feature, index) => (
         <div 
           key={index}

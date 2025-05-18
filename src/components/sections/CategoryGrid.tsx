@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const categories = [
@@ -21,7 +22,7 @@ const categories = [
 
 export const CategoryGrid: React.FC = () => {
   return (
-    <section className="grid grid-cols-[1fr_1fr] gap-5 bg-[#EBEFF4] px-[360px] py-[90px] max-md:grid-cols-[1fr] max-md:p-5">
+    <section className="grid grid-cols-1 md:grid-cols-2 gap-5 bg-[#EBEFF4] py-[60px] px-4">
       {categories.map((category, index) => (
         <div key={index} className="relative overflow-hidden rounded-[5px]">
           <img

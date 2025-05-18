@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ProductCard } from '../ui/ProductCard';
 
@@ -82,11 +83,11 @@ const products = [
 
 export const ProductGrid: React.FC = () => {
   return (
-    <section className="px-[360px] py-10 max-md:p-5">
-      <h2 className="text-center text-[32px] text-[#0B0909] mb-10">
+    <section className="py-10 px-4">
+      <h2 className="text-center text-[32px] text-[#0B0909] font-bold mb-10">
         Smartphones
       </h2>
-      <div className="grid grid-cols-[repeat(4,1fr)] gap-5 max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {products.map((product, index) => (
           <ProductCard
             key={index}

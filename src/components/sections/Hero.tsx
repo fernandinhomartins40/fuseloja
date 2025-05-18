@@ -1,14 +1,15 @@
+
 import React from 'react';
 
 export const Hero: React.FC = () => {
   return (
     <section className="relative h-[500px] bg-[#0B0909]">
-      <div className="flex justify-between items-center px-[360px] py-0 max-md:p-5">
+      <div className="container mx-auto flex justify-between items-center h-full px-4 md:px-6 lg:px-8">
         <div className="text-white">
           <h1 className="text-5xl mb-5">GALAXY S22 ULTRA</h1>
           <div className="flex flex-col gap-2.5 text-[#D90429] underline">
             <span className="line-through text-[#999]">De R$5.999,99</span>
-            <span className="text-[#D90429] text-2xl font-[bold]">
+            <span className="text-[#D90429] text-2xl font-bold">
               Por R$4.999,99
             </span>
           </div>
@@ -20,7 +21,7 @@ export const Hero: React.FC = () => {
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/be236283cc696082892ac0171a0c6023c3c51f1f"
           alt="Galaxy S22 Ultra"
-          className="max-w-[50%]"
+          className="max-w-[50%] max-sm:hidden"
         />
       </div>
       

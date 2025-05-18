@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface SearchBarProps {
@@ -17,11 +18,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-[598px] bg-white rounded-[3px]">
+    <form onSubmit={handleSubmit} className="flex bg-white rounded-[3px] max-w-[600px] w-full">
       <input
         type="text"
         placeholder={placeholder}
-        className="w-[548px] text-[15px] text-[#54595F] px-[16.66px] py-[13.5px] border-[none] rounded-l-[3px] focus:outline-none"
+        className="flex-1 text-[15px] text-[#54595F] px-[16.66px] py-[13.5px] border-[none] rounded-l-[3px] focus:outline-none"
       />
       <button 
         type="submit"

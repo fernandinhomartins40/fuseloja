@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface ProductCardProps {
@@ -22,8 +23,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <article className="border relative p-5 rounded-[5px] border-solid border-[rgba(84,89,95,0.29)]">
       {onSale && (
-        <div className="absolute top-[-7px] text-white w-[50px] h-[50px] text-[13.7px] flex items-center justify-center bg-[#0B0909] rounded-[50%] right-5">
-          Sale!
+        <div className="absolute top-[-7px] text-white w-[50px] h-[50px] text-[13.7px] flex items-center justify-center bg-[#D90429] rounded-[50%] right-5 font-bold">
+          SALE!
         </div>
       )}
       <img
@@ -49,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         className="text-white w-full cursor-pointer bg-[#D90429] px-5 py-2.5 rounded-[3px] border-[none] hover:bg-[#b8031f] transition-colors"
         onClick={() => console.log(`Add to cart: ${title}`)}
       >
-        Add to cart
+        ADD TO CART
       </button>
     </article>
   );

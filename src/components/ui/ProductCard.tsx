@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { ProductTag, TagType } from './ProductTag';
+import { Card } from './card';
+import { ShoppingCart } from 'lucide-react';
 
 interface ProductCardProps {
   title: string;
@@ -22,33 +24,40 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const installmentValue = price / installments;
 
   return (
-    <article className="border relative p-5 rounded-[5px] border-solid border-[rgba(84,89,95,0.29)]">
-      {tag && <ProductTag type={tag} />}
-      <img
-        src={image}
-        alt={title}
-        className="w-full h-auto mb-5"
-      />
-      <h3 className="text-lg text-[#0B0909] mb-2.5">{title}</h3>
-      <div className={originalPrice ? "flex gap-2.5 mb-2.5" : "gap-2.5 text-[#D90429] underline mb-2.5"}>
-        {originalPrice && (
-          <span className="text-[#0B0909] line-through opacity-50">
-            R$ {originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-          </span>
-        )}
-        <span className="text-[#D90429] underline">
-          R$ {price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-        </span>
+    <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group">
+      <div className="relative p-6">
+        {tag && <ProductTag type={tag} className="top-2 right-2" />}
+        <div className="mb-5 overflow-hidden rounded-md">
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-foreground line-clamp-2 min-h-[56px]">{title}</h3>
+          <div className="flex items-center gap-3">
+            {originalPrice && (
+              <span className="text-sm text-muted-foreground line-through">
+                R$ {originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </span>
+            )}
+            <span className="text-xl font-bold text-destructive">
+              R$ {price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </span>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Em até {installments}x de R$ {installmentValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} sem juros
+          </div>
+          <button 
+            className="flex items-center justify-center w-full py-3 mt-3 text-sm font-medium text-white transition-colors bg-destructive rounded-md hover:bg-destructive/80 gap-2"
+            onClick={() => console.log(`Adicionar ao carrinho: ${title}`)}
+          >
+            <ShoppingCart size={16} />
+            ADICIONAR AO CARRINHO
+          </button>
+        </div>
       </div>
-      <div className="text-xs text-[#919191] mb-2.5">
-        Em até {installments}x de R$ {installmentValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} sem juros
-      </div>
-      <button 
-        className="text-white w-full cursor-pointer bg-[#D90429] px-5 py-2.5 rounded-[3px] border-[none] hover:bg-[#b8031f] transition-colors"
-        onClick={() => console.log(`Adicionar ao carrinho: ${title}`)}
-      >
-        ADICIONAR AO CARRINHO
-      </button>
-    </article>
+    </Card>
   );
 };

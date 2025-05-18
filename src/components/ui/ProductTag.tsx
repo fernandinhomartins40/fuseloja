@@ -29,7 +29,7 @@ export const ProductTag: React.FC<ProductTagProps> = ({ type, className }) => {
   return (
     <div
       className={cn(
-        "absolute top-2 right-2 px-2 py-1 text-xs font-bold rounded-md",
+        "absolute px-2.5 py-1.5 text-xs font-bold rounded-md shadow-sm",
         tagStyles[type],
         className
       )}

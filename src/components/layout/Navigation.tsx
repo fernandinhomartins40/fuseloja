@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { ShoppingCart, UserRound } from 'lucide-react';
 
 export const Navigation: React.FC = () => {
   return (
@@ -31,14 +32,17 @@ export const Navigation: React.FC = () => {
         </a>
       </nav>
       
-      <div className="flex items-center gap-2.5 text-[#54595F] text-[15px] font-extrabold">
-        <span>R$ 0,00</span>
-        <div>
-          <i className="ti ti-shopping-cart"></i>
-        </div>
-        <div className="w-4 h-4 text-white text-[10px] bg-[#D90429] rounded-[50%] flex items-center justify-center">
-          0
-        </div>
+      <div className="flex items-center gap-4">
+        <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors" aria-label="Perfil do usuário">
+          <UserRound size={24} />
+        </button>
+        
+        <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors" aria-label="Carrinho de compras">
+          <ShoppingCart size={24} />
+          <div className="absolute -top-2 -right-2 w-5 h-5 text-white text-[10px] bg-[#D90429] rounded-full flex items-center justify-center">
+            0
+          </div>
+        </button>
       </div>
     </div>
   );

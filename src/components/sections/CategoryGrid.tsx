@@ -3,20 +3,20 @@ import React from 'react';
 
 const categories = [
   {
-    title: "Linha iPhone",
-    description: "Celular Apple com desconto exclusivo",
-    image: "https://cdn.builder.io/api/v1/image/assets/TEMP/e7065705ff9aea34f7dad0bc93eb0dc4e3b4fa4c",
+    title: "Eletrônicos",
+    description: "Os melhores gadgets tecnológicos",
+    image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&auto=format&fit=crop",
     light: true
   },
   {
-    title: "Linha Samsung",
-    description: "Os melhores celulares da linha Galaxy",
-    image: "https://cdn.builder.io/api/v1/image/assets/TEMP/23d5d87fcd93e8839fab3952d1bd6bd70946c04e"
+    title: "Moda",
+    description: "Tendências e estilos para todos",
+    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&auto=format&fit=crop"
   },
   {
-    title: "Linha Motorola",
-    description: "Linha completa EDGE Motorola",
-    image: "https://cdn.builder.io/api/v1/image/assets/TEMP/93852e26c7f1b963ca275fa56bb4aa7c818bce7e"
+    title: "Casa & Decoração",
+    description: "Produtos para um lar moderno",
+    image: "https://images.unsplash.com/photo-1484101403633-562f891dc89a?q=80&auto=format&fit=crop"
   }
 ];
 

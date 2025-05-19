@@ -6,7 +6,7 @@ export const Navigation: React.FC = () => {
     <div className="flex justify-between items-center py-5 px-4">
       <img
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/4422fe2166933687d9b3b9fe0be3d68809b8b230"
-        alt="SmartNinja"
+        alt="ShopMaster"
         className="h-[34px]"
       />
       
@@ -15,16 +15,16 @@ export const Navigation: React.FC = () => {
           Ofertas
         </a>
         <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
-          Apple
+          Novidades
         </a>
         <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
-          Samsung
+          Categorias
         </a>
         <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
-          Motorola
+          Mais Vendidos
         </a>
         <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
-          Sobre
+          Sobre Nós
         </a>
         <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
           Contato

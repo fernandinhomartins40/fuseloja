@@ -3,12 +3,12 @@ import React from 'react';
 import { 
   Smartphone, 
   Headphones, 
-  Tablet, 
-  Music, 
-  Watch, 
-  Computer, 
-  Camera, 
-  Tag 
+  Shirt, 
+  Utensils, 
+  Home, 
+  Book, 
+  Shoes, 
+  Gift 
 } from 'lucide-react';
 
 // Define the category data structure
@@ -21,14 +21,14 @@ interface Category {
 export const CategoryIcons: React.FC = () => {
   // Define categories with their respective icons and colors
   const categories: Category[] = [
-    { name: 'Smartphones', icon: <Smartphone size={32} />, color: '#9b87f5' },
+    { name: 'Eletrônicos', icon: <Smartphone size={32} />, color: '#9b87f5' },
     { name: 'Acessórios', icon: <Headphones size={32} />, color: '#F97316' },
-    { name: 'Tablets', icon: <Tablet size={32} />, color: '#0EA5E9' },
-    { name: 'Áudio', icon: <Music size={32} />, color: '#D946EF' },
-    { name: 'Smartwatches', icon: <Watch size={32} />, color: '#7E69AB' },
-    { name: 'Computadores', icon: <Computer size={32} />, color: '#8B5CF6' },
-    { name: 'Câmeras', icon: <Camera size={32} />, color: '#F97316' },
-    { name: 'Promoções', icon: <Tag size={32} />, color: '#D90429' }
+    { name: 'Moda', icon: <Shirt size={32} />, color: '#0EA5E9' },
+    { name: 'Cozinha', icon: <Utensils size={32} />, color: '#D946EF' },
+    { name: 'Casa', icon: <Home size={32} />, color: '#7E69AB' },
+    { name: 'Livros', icon: <Book size={32} />, color: '#8B5CF6' },
+    { name: 'Calçados', icon: <Shoes size={32} />, color: '#F97316' },
+    { name: 'Presentes', icon: <Gift size={32} />, color: '#D90429' }
   ];
 
   return (

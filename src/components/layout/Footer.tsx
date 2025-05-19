@@ -18,7 +18,7 @@ export const Footer: React.FC = () => {
             <nav className="flex flex-col gap-2.5">
               <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Início</a>
               <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Ofertas</a>
-              <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Marcas</a>
+              <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Categorias</a>
               <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Sobre</a>
               <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Contato</a>
             </nav>
@@ -33,11 +33,11 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2.5">
                 <i className="ti ti-mail" />
-                <span>contato@celulares.com</span>
+                <span>contato@shopmaster.com</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <i className="ti ti-map-pin" />
-                <span>Rua Exemplo, 123 - São Paulo, SP</span>
+                <span>Rua Exemplo, 123 - Centro</span>
               </div>
             </div>
           </div>
@@ -62,7 +62,7 @@ export const Footer: React.FC = () => {
         </div>
         
         <div className="border-t border-solid border-[#333] py-5 text-center text-[#999]">
-          <p>© 2025 Celulares Store. Todos os direitos reservados.</p>
+          <p>© 2025 ShopMaster. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

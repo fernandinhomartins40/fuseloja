@@ -3,21 +3,21 @@ import React from 'react';
 export const Hero: React.FC = () => {
   return <section className="relative h-[500px] bg-[#0B0909]">
       <div className="absolute inset-0 w-full h-full overflow-hidden">
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/be236283cc696082892ac0171a0c6023c3c51f1f" alt="Galaxy S22 Ultra" className="w-full h-full object-cover opacity-75" />
+        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&auto=format&fit=crop" alt="Shopping Banner" className="w-full h-full object-cover opacity-75" />
       </div>
       
       <div className="container mx-auto flex justify-between items-center h-full px-4 md:px-6 lg:px-8 relative z-10">
         <div className="text-white">
-          <h1 className="text-5xl mb-5">GALAXY S22 ULTRA</h1>
+          <h1 className="text-5xl mb-5">OFERTAS ESPECIAIS</h1>
           <div className="flex flex-col gap-2.5 text-[#D90429] underline">
-            <span className="line-through text-[#999]">De R$5.999,99</span>
+            <span className="line-through text-[#999]">Produtos com até 40% off</span>
             <span className="text-[#D90429] text-2xl font-bold">
-              Por R$4.999,99
+              Descontos imperdíveis!
             </span>
           </div>
-          <div className="text-[#999] mx-0 my-5">Últimas Unidades</div>
+          <div className="text-[#999] mx-0 my-5">Ofertas por tempo limitado</div>
           <button className="text-white cursor-pointer bg-[#D90429] px-[30px] py-[15px] rounded-[5px] border-[none] hover:bg-[#b8031f] transition-colors">
-            Comprar Agora
+            Ver Ofertas
           </button>
         </div>
         

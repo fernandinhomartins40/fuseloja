@@ -76,13 +76,7 @@ const products: Product[] = [
     originalPrice: 199.99,
     image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&auto=format&fit=crop"
   },
-  {
-    title: "Relógio de Parede",
-    price: 89.99,
-    originalPrice: 119.99,
-    image: "https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?q=80&auto=format&fit=crop",
-    tag: 'promocao'
-  },
+  // Removed "Relógio de Parede" product that had the promocao tag
   {
     title: "Cadeira Ergonômica",
     price: 749.99,
@@ -99,10 +93,11 @@ export const ProductGrid: React.FC = () => {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {products.map((product, index) => (
-          <ProductCard
-            key={index}
-            {...product}
-          />
+          <div key={index} className="product-card-wrapper">
+            <ProductCard
+              {...product}
+            />
+          </div>
         ))}
       </div>
     </section>

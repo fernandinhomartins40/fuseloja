@@ -43,11 +43,10 @@ export const HeroSlider: React.FC = () => {
     emblaApi?.scrollTo(index);
   }, [emblaApi]);
 
-  // Image URLs from uploaded files
+  // Reduced to only 2 images for promotional banners
   const images = [
     "/lovable-uploads/ebda897d-7a2c-4efe-9208-e4a4d94ae3e2.png",
-    "/lovable-uploads/addb029a-6ab4-4684-b7fc-ab0bf991fe7e.png",
-    "/lovable-uploads/5a9b8c6c-0135-4082-b30a-84b29edbe1cf.png"
+    "/lovable-uploads/addb029a-6ab4-4684-b7fc-ab0bf991fe7e.png"
   ];
 
   return (

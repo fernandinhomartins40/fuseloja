@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Category, CategoryColor, categoryColorsMap } from '@/types/category';
 import IconSelector from './IconSelector';
 import { cn } from '@/lib/utils';
-import { IconName } from '@/utils/categoryIcons';
+import { iconComponents, IconName } from '@/utils/categoryIcons';
 
 interface CategoryFormProps {
   initialData: Partial<Category> | null;

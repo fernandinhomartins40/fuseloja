@@ -16,13 +16,16 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
     
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      onChange({
-        ...settings,
-        [parent]: {
-          ...settings[parent as keyof GeneralSettingsType],
-          [child]: value
-        }
-      });
+      
+      if (parent === 'socialMedia') {
+        onChange({
+          ...settings,
+          socialMedia: {
+            ...settings.socialMedia,
+            [child]: value
+          }
+        });
+      }
     } else {
       onChange({
         ...settings,

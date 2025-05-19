@@ -17,13 +17,16 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
   const handleChange = (field: string, value: string) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
-      onChange({
-        ...settings,
-        [parent]: {
-          ...settings[parent as keyof VisualSettingsType],
-          [child]: value
-        }
-      });
+      
+      if (parent === 'colors') {
+        onChange({
+          ...settings,
+          colors: {
+            ...settings.colors,
+            [child]: value
+          }
+        });
+      }
     } else {
       onChange({
         ...settings,

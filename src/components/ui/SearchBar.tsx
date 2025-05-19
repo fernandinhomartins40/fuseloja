@@ -18,15 +18,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex bg-white rounded-[3px] max-w-[600px] w-full">
+    <form onSubmit={handleSubmit} className="flex bg-white rounded-lg max-w-[600px] w-full">
       <input
         type="text"
         placeholder={placeholder}
-        className="flex-1 text-[15px] text-[#54595F] px-[16.66px] py-[13.5px] border-[none] rounded-l-[3px] focus:outline-none"
+        className="flex-1 text-[15px] text-[#54595F] px-[16.66px] py-[13.5px] border-[none] rounded-l-lg focus:outline-none"
       />
       <button 
         type="submit"
-        className="w-[50px] h-[50px] text-white flex justify-center items-center cursor-pointer bg-[#D90429] border-[none] rounded-r-[3px]"
+        className="w-[50px] h-[50px] text-white flex justify-center items-center cursor-pointer bg-[#D90429] border-[none] rounded-r-lg"
         aria-label="Pesquisar"
       >
         <i className="ti ti-search" />

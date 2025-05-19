@@ -1,13 +1,10 @@
 
 import React from 'react';
-import { SearchBar } from '../ui/SearchBar';
 
 export const Header: React.FC = () => {
   return (
     <header className="bg-[#0B0909] py-[25px]">
-      <div className="container mx-auto flex justify-between items-center px-4 md:px-6 lg:px-8">
-        <SearchBar onSearch={(value) => console.log('Pesquisa:', value)} />
-        
+      <div className="container mx-auto flex justify-end items-center px-4 md:px-6 lg:px-8">
         <div className="flex items-center gap-5 text-white max-sm:hidden">
           <div className="flex items-center gap-2 text-base">
             <i className="ti ti-user" />

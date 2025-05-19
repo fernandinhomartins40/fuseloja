@@ -1,17 +1,23 @@
 
 import React from 'react';
 import { ShoppingCart, UserRound } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const Navigation: React.FC = () => {
   return (
     <div className="flex justify-between items-center py-5 px-4 bg-white">
-      <img
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/4422fe2166933687d9b3b9fe0be3d68809b8b230"
-        alt="ShopMaster"
-        className="h-[34px]"
-      />
+      <Link to="/">
+        <img
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/4422fe2166933687d9b3b9fe0be3d68809b8b230"
+          alt="ShopMaster"
+          className="h-[34px]"
+        />
+      </Link>
       
       <nav className="flex gap-[15px] max-sm:hidden" aria-label="Navegação Principal">
+        <Link to="/" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
+          Início
+        </Link>
         <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
           Ofertas
         </a>
@@ -21,15 +27,12 @@ export const Navigation: React.FC = () => {
         <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
           Categorias
         </a>
-        <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
-          Mais Vendidos
-        </a>
-        <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
+        <Link to="/sobre" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
           Sobre Nós
-        </a>
-        <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
+        </Link>
+        <Link to="/contato" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
           Contato
-        </a>
+        </Link>
       </nav>
       
       <div className="flex items-center gap-4">

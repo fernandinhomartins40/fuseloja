@@ -7,8 +7,8 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
-// Fix the import to use the proper method
-import { useEmblaCarousel } from "embla-carousel-react";
+// Import embla carousel correctly
+import useEmblaCarousel from "embla-carousel-react";
 
 export const HeroSlider: React.FC = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });

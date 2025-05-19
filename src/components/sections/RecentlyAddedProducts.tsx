@@ -66,13 +66,15 @@ export const RecentlyAddedProducts: React.FC = () => {
         <Carousel className="w-full">
           <CarouselContent className="-ml-2 md:-ml-4">
             {recentProducts.map((product, index) => (
-              <CarouselItem key={index} className="pl-2 md:pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <ProductCard {...product} />
+              <CarouselItem key={index} className="pl-2 md:pl-4 basis-full xs:basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                <div className="h-full">
+                  <ProductCard {...product} />
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="hidden md:flex left-0" />
-          <CarouselNext className="hidden md:flex right-0" />
+          <CarouselPrevious className="hidden sm:flex left-0" />
+          <CarouselNext className="hidden sm:flex right-0" />
         </Carousel>
       </div>
     </section>

@@ -70,9 +70,9 @@ export const PromotionProducts: React.FC = () => {
         />
         
         <ScrollArea className="w-full whitespace-nowrap pb-6">
-          <div className="flex gap-6">
+          <div className="flex gap-4 md:gap-6">
             {promotionProducts.map((product, index) => (
-              <div key={index} className="w-[280px] relative flex-shrink-0">
+              <div key={index} className="min-w-[240px] w-[280px] md:w-[320px] relative flex-shrink-0">
                 <div className="absolute top-4 left-4 z-20 bg-destructive text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
                   <Percent size={14} />
                   {product.discountPercentage}% OFF

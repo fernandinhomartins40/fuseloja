@@ -50,9 +50,9 @@ export const BestSellerProducts: React.FC = () => {
           onAction={() => console.log("Ver todos os mais vendidos")}
         />
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {bestSellerProducts.map((product, index) => (
-            <div key={index} className="relative">
+            <div key={index} className="relative w-full">
               <div className="absolute top-2 left-2 z-20">
                 <Badge className="bg-amber-500 hover:bg-amber-600 flex items-center gap-1">
                   <Award size={14} />
@@ -60,7 +60,7 @@ export const BestSellerProducts: React.FC = () => {
                 </Badge>
               </div>
               <ProductCard {...product} />
-              <div className="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
+              <div className="mt-2 flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
                 <TrendingUp size={14} className="text-green-500" />
                 <span>{product.soldCount}+ pessoas compraram</span>
               </div>

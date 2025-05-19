@@ -125,9 +125,9 @@ export const CategoryProducts: React.FC = () => {
         />
         
         <Tabs defaultValue={categories[0].id} className="w-full">
-          <TabsList className="flex justify-center mb-8 bg-background border">
+          <TabsList className="flex justify-center mb-8 bg-background border overflow-x-auto max-w-full">
             {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id} className="px-8">
+              <TabsTrigger key={category.id} value={category.id} className="px-4 md:px-8">
                 {category.name}
               </TabsTrigger>
             ))}
@@ -135,9 +135,11 @@ export const CategoryProducts: React.FC = () => {
           
           {categories.map((category) => (
             <TabsContent key={category.id} value={category.id}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                 {category.products.map((product, index) => (
-                  <ProductCard key={index} {...product} />
+                  <div key={index} className="w-full">
+                    <ProductCard key={index} {...product} />
+                  </div>
                 ))}
               </div>
             </TabsContent>

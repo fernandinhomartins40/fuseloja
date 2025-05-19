@@ -2,7 +2,7 @@
 import React from 'react';
 import { Header } from '../components/layout/Header';
 import { Navigation } from '../components/layout/Navigation';
-import { Hero } from '../components/sections/Hero';
+import { HeroSlider } from '../components/sections/HeroSlider';
 import { Features } from '../components/sections/Features';
 import { CategoryIcons } from '../components/sections/CategoryIcons';
 import { CategoryGrid } from '../components/sections/CategoryGrid';
@@ -24,7 +24,7 @@ const Index = () => {
           <SearchBar onSearch={(value) => console.log('Pesquisa:', value)} />
         </div>
       </div>
-      <Hero />
+      <HeroSlider />
       <div className="container mx-auto">
         <Features />
       </div>

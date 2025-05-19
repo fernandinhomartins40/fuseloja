@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
 
@@ -21,11 +21,11 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="text-white text-2xl mb-5">Links</h4>
             <nav className="flex flex-col gap-2.5">
-              <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Início</a>
-              <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Ofertas</a>
-              <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Categorias</a>
-              <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Sobre</a>
-              <a href="#" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Contato</a>
+              <Link to="/" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Início</Link>
+              <Link to="/" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Ofertas</Link>
+              <Link to="/" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Categorias</Link>
+              <Link to="/sobre" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Sobre</Link>
+              <Link to="/contato" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Contato</Link>
             </nav>
           </div>
           
@@ -81,3 +81,4 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
+

@@ -12,20 +12,15 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Product } from '@/pages/admin/Products';
+import { defaultCategories } from '@/utils/categoryIcons';
+import { iconComponents, IconName } from '@/utils/categoryIcons';
+import { Category } from '@/types/category';
 
 interface ProductFormProps {
   initialData: Product | null;
   onSubmit: (product: Product) => void;
   onCancel: () => void;
 }
-
-// Sample categories
-const categories = [
-  { name: 'Eletrônicos', value: 'Eletrônicos' },
-  { name: 'Audio', value: 'Audio' },
-  { name: 'Acessórios', value: 'Acessórios' },
-  { name: 'Gadgets', value: 'Gadgets' },
-];
 
 // Sample tags
 const tags = [
@@ -63,6 +58,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
       onSubmit(product);
     }
   };
+
+  const categories = defaultCategories;
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4 pt-2">
@@ -191,15 +188,36 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
             onValueChange={(value) => handleChange('category', value)}
             required
           >
-            <SelectTrigger id="category">
-              <SelectValue placeholder="Selecione uma categoria" />
+            <SelectTrigger id="category" className="flex items-center">
+              <SelectValue placeholder="Selecione uma categoria">
+                {product.category && (() => {
+                  const category = categories.find(c => c.slug === product.category);
+                  if (!category) return product.category;
+                  
+                  const IconComp = category.icon ? iconComponents[category.icon as IconName] : null;
+                  
+                  return (
+                    <div className="flex items-center gap-2">
+                      {IconComp && <IconComp className="h-4 w-4" />}
+                      <span>{category.name}</span>
+                    </div>
+                  );
+                })()}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category.value} value={category.value}>
-                  {category.name}
-                </SelectItem>
-              ))}
+              {categories.map((category: Category) => {
+                const IconComp = category.icon ? iconComponents[category.icon as IconName] : null;
+                
+                return (
+                  <SelectItem key={category.slug} value={category.slug}>
+                    <div className="flex items-center gap-2">
+                      {IconComp && <IconComp className="h-4 w-4" />}
+                      <span>{category.name}</span>
+                    </div>
+                  </SelectItem>
+                );
+              })}
             </SelectContent>
           </Select>
         </div>

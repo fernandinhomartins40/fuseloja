@@ -16,7 +16,7 @@ import {
   SidebarProvider,
   SidebarTrigger
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package2, Truck, ShoppingCart, BarChart, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package2, Truck, ShoppingCart, BarChart, LogOut, Tags } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -60,6 +60,14 @@ const AdminLayout: React.FC = () => {
                       <a href="/admin/products">
                         <Package2 />
                         <span>Produtos</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Categorias">
+                      <a href="/admin/categories">
+                        <Tags />
+                        <span>Categorias</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

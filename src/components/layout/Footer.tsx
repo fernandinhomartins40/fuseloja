@@ -1,7 +1,12 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ShoppingCart } from 'lucide-react';
 
 export const Footer: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <footer className="bg-[#0B0909] pt-[60px] pb-0">
       <div className="container mx-auto px-4">
@@ -61,8 +66,16 @@ export const Footer: React.FC = () => {
           </div>
         </div>
         
-        <div className="border-t border-solid border-[#333] py-5 text-center text-[#999]">
+        <div className="border-t border-solid border-[#333] py-5 flex flex-col md:flex-row justify-between items-center text-[#999]">
           <p>© 2025 ShopMaster. Todos os direitos reservados.</p>
+          <Button 
+            variant="outline" 
+            className="mt-4 md:mt-0 border-[#D90429] text-[#D90429] hover:bg-[#D90429] hover:text-white"
+            onClick={() => navigate('/admin')}
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Painel do Lojista
+          </Button>
         </div>
       </div>
     </footer>

@@ -26,12 +26,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group">
       <div className="relative p-6">
-        {tag && <ProductTag type={tag} className="top-2 right-2" />}
-        <div className="mb-3 overflow-hidden rounded-md">
+        <div className="relative mb-3 overflow-hidden rounded-md h-[220px]">
+          {tag && <ProductTag type={tag} className="absolute top-2 right-2 z-10" />}
           <img
             src={image}
             alt={title}
-            className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
         <div className="space-y-1">

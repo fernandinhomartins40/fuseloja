@@ -6,9 +6,13 @@ import { HeroSlider } from '../components/sections/HeroSlider';
 import { Features } from '../components/sections/Features';
 import { CategoryIcons } from '../components/sections/CategoryIcons';
 import { CategoryGrid } from '../components/sections/CategoryGrid';
-import { ProductGrid } from '../components/sections/ProductGrid';
 import { Footer } from '../components/layout/Footer';
 import { SearchBar } from '../components/ui/SearchBar';
+import { RecentlyAddedProducts } from '../components/sections/RecentlyAddedProducts';
+import { BestSellerProducts } from '../components/sections/BestSellerProducts';
+import { CategoryProducts } from '../components/sections/CategoryProducts';
+import { PromotionProducts } from '../components/sections/PromotionProducts';
+import { RecommendedProducts } from '../components/sections/RecommendedProducts';
 
 const Index = () => {
   return (
@@ -29,10 +33,14 @@ const Index = () => {
         <Features />
       </div>
       <CategoryIcons />
+      <RecentlyAddedProducts />
+      <BestSellerProducts />
+      <CategoryProducts />
+      <PromotionProducts />
       <div className="container mx-auto">
         <CategoryGrid />
-        <ProductGrid />
       </div>
+      <RecommendedProducts />
       <Footer />
     </div>
   );

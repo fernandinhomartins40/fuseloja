@@ -13,7 +13,7 @@ import { SearchBar } from '../components/ui/SearchBar';
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="bg-[#0B0909]">
+      <div className="bg-white">
         <div className="container mx-auto">
           <Navigation />
         </div>

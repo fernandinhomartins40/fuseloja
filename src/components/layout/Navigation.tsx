@@ -3,7 +3,7 @@ import React from 'react';
 
 export const Navigation: React.FC = () => {
   return (
-    <div className="flex justify-between items-center py-5 px-4">
+    <div className="flex justify-between items-center py-5 px-4 bg-white">
       <img
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/4422fe2166933687d9b3b9fe0be3d68809b8b230"
         alt="ShopMaster"

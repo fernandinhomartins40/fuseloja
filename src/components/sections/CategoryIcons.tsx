@@ -7,7 +7,7 @@ import {
   Utensils, 
   Home, 
   Book, 
-  Shoes, 
+  ShoppingBag, 
   Gift 
 } from 'lucide-react';
 
@@ -27,7 +27,7 @@ export const CategoryIcons: React.FC = () => {
     { name: 'Cozinha', icon: <Utensils size={32} />, color: '#D946EF' },
     { name: 'Casa', icon: <Home size={32} />, color: '#7E69AB' },
     { name: 'Livros', icon: <Book size={32} />, color: '#8B5CF6' },
-    { name: 'Calçados', icon: <Shoes size={32} />, color: '#F97316' },
+    { name: 'Calçados', icon: <ShoppingBag size={32} />, color: '#F97316' },
     { name: 'Presentes', icon: <Gift size={32} />, color: '#D90429' }
   ];
 

@@ -18,12 +18,12 @@ interface IconSelectorProps {
 }
 
 // Icon categories for better organization
-const iconCategories = {
-  'Interface': ['ArrowRight', 'ArrowLeft', 'Check', 'X', 'Plus', 'Minus', 'Search', 'Settings', 'User', 'Home', 'Menu'],
-  'E-commerce': ['ShoppingBag', 'ShoppingCart', 'CreditCard', 'Package', 'Truck', 'Tag', 'Tags', 'Shirt', 'Smartphone', 'Laptop'],
-  'Media': ['Image', 'Video', 'Music', 'Headphones', 'Speaker', 'Play', 'Pause', 'Camera', 'Film', 'Mic'],
-  'Communication': ['Mail', 'MessageSquare', 'Phone', 'Share', 'Send', 'Bell', 'Heart', 'Star', 'Flag', 'MessageCircle'],
-  'Business': ['FileText', 'Briefcase', 'Calendar', 'Clock', 'PieChart', 'BarChart', 'DollarSign', 'Percent', 'TrendingUp', 'TrendingDown'],
+const iconCategories: Record<string, IconName[]> = {
+  'Interface': ['Search', 'Settings', 'User', 'Home', 'Moon', 'Sun'],
+  'E-commerce': ['ShoppingBag', 'ShoppingCart', 'Package', 'Truck', 'Shirt', 'Smartphone', 'Laptop'],
+  'Media': ['Image', 'Video', 'Music', 'Headphones', 'Speaker', 'Camera', 'Film'],
+  'Communication': ['MessageCircle', 'Heart', 'Star', 'Phone', 'Share'],
+  'Business': ['Calendar', 'Clock', 'PieChart', 'BarChart', 'DollarSign'],
   'Outros': [] // Will hold all other icons not in a specific category
 };
 
@@ -42,7 +42,7 @@ export const IconSelector: React.FC<IconSelectorProps> = ({ value, onChange }) =
     // Add all icons to "Outros" that aren't assigned to a specific category
     const assignedIcons = Object.values(iconCategories).flat();
     categorizedMap['Outros'] = iconNames.filter(name => 
-      !assignedIcons.includes(name as IconName)
+      !assignedIcons.includes(name)
     );
     
     return categorizedMap;

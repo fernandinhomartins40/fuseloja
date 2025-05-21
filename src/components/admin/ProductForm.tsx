@@ -1,32 +1,18 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Product } from '@/types/product';
-import { defaultCategories } from '@/utils/categoryIcons';
-import { iconComponents, IconName } from '@/utils/categoryIcons';
-import { Category } from '@/types/category';
+import { Product, ProductTag } from '@/types/product';
+import ProductImageField from './product-form/ProductImageField';
+import ProductPriceFields from './product-form/ProductPriceFields';
+import ProductCategoryField from './product-form/ProductCategoryField';
+import ProductTagField from './product-form/ProductTagField';
 
 interface ProductFormProps {
   initialData: Product | null;
   onSubmit: (product: Product) => void;
   onCancel: () => void;
 }
-
-// Sample tags
-const tags = [
-  { name: 'Promoção', value: 'promocao' },
-  { name: 'Exclusivo', value: 'exclusivo' },
-  { name: 'Novo', value: 'novo' },
-];
 
 const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCancel }) => {
   const [product, setProduct] = useState<Product>(
@@ -57,9 +43,16 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
       onSubmit(product);
     }
   };
-
-  const categories = defaultCategories;
   
+  const handleSaleToggle = (checked: boolean) => {
+    setIsOnSale(checked);
+    if (!checked) {
+      handleChange('originalPrice', undefined);
+    } else if (!product.originalPrice) {
+      handleChange('originalPrice', product.price * 1.2);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 pt-2">
       <div className="grid grid-cols-1 gap-4">
@@ -76,172 +69,31 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="price" className="text-sm font-medium block mb-1">
-              Preço*
-            </label>
-            <Input
-              id="price"
-              type="number"
-              step="0.01"
-              min="0"
-              value={product.price}
-              onChange={(e) => handleChange('price', parseFloat(e.target.value))}
-              placeholder="0,00"
-              required
-            />
-          </div>
-          
-          <div className="flex flex-col">
-            <label htmlFor="stock" className="text-sm font-medium block mb-1">
-              Estoque*
-            </label>
-            <Input
-              id="stock"
-              type="number"
-              min="0"
-              value={product.stock}
-              onChange={(e) => handleChange('stock', parseInt(e.target.value))}
-              placeholder="0"
-              required
-            />
-          </div>
-        </div>
+        <ProductPriceFields 
+          price={product.price}
+          stock={product.stock}
+          originalPrice={product.originalPrice}
+          isOnSale={isOnSale}
+          onPriceChange={(value) => handleChange('price', value)}
+          onStockChange={(value) => handleChange('stock', value)}
+          onOriginalPriceChange={(value) => handleChange('originalPrice', value)}
+          onSaleToggle={handleSaleToggle}
+        />
         
-        <div className="flex items-start space-x-2">
-          <Checkbox 
-            id="is-on-sale" 
-            checked={isOnSale} 
-            onCheckedChange={(checked) => {
-              setIsOnSale(!!checked);
-              if (!checked) {
-                handleChange('originalPrice', undefined);
-              } else if (!product.originalPrice) {
-                handleChange('originalPrice', product.price * 1.2);
-              }
-            }}
-          />
-          <div className="grid gap-1.5 leading-none">
-            <label
-              htmlFor="is-on-sale"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Este produto está em promoção
-            </label>
-            <p className="text-sm text-muted-foreground">
-              Marque esta opção para definir um preço original e um preço promocional.
-            </p>
-          </div>
-        </div>
+        <ProductImageField 
+          imageUrl={product.image}
+          onChange={(value) => handleChange('image', value)}
+        />
         
-        {isOnSale && (
-          <div>
-            <label htmlFor="original-price" className="text-sm font-medium block mb-1">
-              Preço Original
-            </label>
-            <Input
-              id="original-price"
-              type="number"
-              step="0.01"
-              min={product.price}
-              value={product.originalPrice || ''}
-              onChange={(e) => handleChange('originalPrice', parseFloat(e.target.value))}
-              placeholder="Preço antes do desconto"
-              required={isOnSale}
-            />
-          </div>
-        )}
+        <ProductCategoryField 
+          value={product.category}
+          onChange={(value) => handleChange('category', value)}
+        />
         
-        <div>
-          <label htmlFor="image" className="text-sm font-medium block mb-1">
-            URL da Imagem*
-          </label>
-          <Input
-            id="image"
-            value={product.image}
-            onChange={(e) => handleChange('image', e.target.value)}
-            placeholder="https://"
-            required
-          />
-          {product.image && (
-            <div className="mt-2 border rounded-md p-2 w-24 h-24 overflow-hidden">
-              <img 
-                src={product.image} 
-                alt="Preview" 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "https://placehold.co/400x400?text=Erro";
-                }}
-              />
-            </div>
-          )}
-        </div>
-        
-        <div>
-          <label htmlFor="category" className="text-sm font-medium block mb-1">
-            Categoria*
-          </label>
-          <Select
-            value={product.category}
-            onValueChange={(value) => handleChange('category', value)}
-            required
-          >
-            <SelectTrigger id="category" className="flex items-center">
-              <SelectValue placeholder="Selecione uma categoria">
-                {product.category && (() => {
-                  const category = categories.find(c => c.slug === product.category);
-                  if (!category) return product.category;
-                  
-                  const IconComp = category.icon ? iconComponents[category.icon as IconName] : null;
-                  
-                  return (
-                    <div className="flex items-center gap-2">
-                      {IconComp && <IconComp className="h-4 w-4" />}
-                      <span>{category.name}</span>
-                    </div>
-                  );
-                })()}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category: Category) => {
-                const IconComp = category.icon ? iconComponents[category.icon as IconName] : null;
-                
-                return (
-                  <SelectItem key={category.slug} value={category.slug}>
-                    <div className="flex items-center gap-2">
-                      {IconComp && <IconComp className="h-4 w-4" />}
-                      <span>{category.name}</span>
-                    </div>
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div>
-          <label htmlFor="tag" className="text-sm font-medium block mb-1">
-            Tag (opcional)
-          </label>
-          <Select
-            value={product.tag}
-            onValueChange={(value) => handleChange('tag', value)}
-          >
-            <SelectTrigger id="tag">
-              <SelectValue placeholder="Selecione uma tag" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="no-tag">Sem tag</SelectItem>
-              {tags.map((tag) => (
-                <SelectItem key={tag.value} value={tag.value}>
-                  {tag.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <ProductTagField 
+          value={product.tag}
+          onChange={(value) => handleChange('tag', value)}
+        />
       </div>
       
       <div className="flex justify-end gap-2 pt-2">

@@ -2,7 +2,8 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-export type TagType = 'promocao' | 'novidade' | 'exclusivo' | 'ultima-unidade' | 'pre-venda';
+// Ensure this matches with ProductTag in types/product.ts
+export type TagType = 'promocao' | 'novidade' | 'exclusivo' | 'ultima-unidade' | 'pre-venda' | 'novo';
 
 export interface ProductTagProps {
   type: TagType;
@@ -15,6 +16,7 @@ const tagStyles: Record<TagType, string> = {
   'exclusivo': 'bg-[#16A34A] text-white',
   'ultima-unidade': 'bg-[#F97316] text-white',
   'pre-venda': 'bg-[#9b87f5] text-white',
+  'novo': 'bg-[#0EA5E9] text-white', // Added novo tag with the same style as novidade
 };
 
 const tagText: Record<TagType, string> = {
@@ -23,6 +25,7 @@ const tagText: Record<TagType, string> = {
   'exclusivo': 'EXCLUSIVO',
   'ultima-unidade': 'ÚLTIMA UNIDADE',
   'pre-venda': 'PRÉ-VENDA',
+  'novo': 'NOVO', // Added text for novo tag
 };
 
 export const ProductTag: React.FC<ProductTagProps> = ({ type, className }) => {

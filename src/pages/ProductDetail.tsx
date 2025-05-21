@@ -12,6 +12,8 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Card, CardContent } from '@/components/ui/card';
 import { ShoppingCart, Share, Star, ChevronLeft } from 'lucide-react';
 import { ProductTag } from '@/components/ui/ProductTag';
+import { Product } from '@/types/product';
+import { RecommendedProducts } from '@/components/sections/RecommendedProducts';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -51,6 +53,25 @@ const ProductDetail: React.FC = () => {
     );
   }
 
+  // Convert ProductTag to TagType if needed
+  const productTagToTagType = (tag?: string) => {
+    if (!tag) return undefined;
+    
+    // Only return tags that are valid TagType values
+    switch (tag) {
+      case 'promocao':
+      case 'novidade':
+      case 'exclusivo':
+      case 'ultima-unidade':
+      case 'pre-venda':
+        return tag as any; // We've verified it's a valid TagType
+      default:
+        return undefined;
+    }
+  };
+
+  const tagForDisplay = productTagToTagType(product.tag);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -69,9 +90,9 @@ const ProductDetail: React.FC = () => {
           {/* Product Images */}
           <div className="space-y-4">
             <div className="relative overflow-hidden rounded-lg border">
-              {product.tag && (
+              {tagForDisplay && (
                 <div className="absolute top-4 right-4 z-10">
-                  <ProductTag type={product.tag} />
+                  <ProductTag type={tagForDisplay} />
                 </div>
               )}
               <AspectRatio ratio={1 / 1}>
@@ -253,30 +274,10 @@ const ProductDetail: React.FC = () => {
           </Tabs>
         </div>
         
-        {/* Related products placeholder */}
+        {/* Replace initialProducts with RecommendedProducts component */}
         <div className="mt-16">
           <h2 className="text-2xl font-bold mb-6">Produtos Relacionados</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {initialProducts.slice(0, 4).map((relatedProduct) => (
-              <Link key={relatedProduct.id} to={`/produto/${relatedProduct.id}`} className="block">
-                <div className="rounded-lg overflow-hidden border hover:shadow-md transition-shadow">
-                  <AspectRatio ratio={1 / 1}>
-                    <img 
-                      src={relatedProduct.image} 
-                      alt={relatedProduct.title} 
-                      className="w-full h-full object-cover"
-                    />
-                  </AspectRatio>
-                  <div className="p-3">
-                    <h3 className="font-medium text-sm line-clamp-2">{relatedProduct.title}</h3>
-                    <div className="text-destructive font-bold mt-1">
-                      R$ {relatedProduct.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <RecommendedProducts />
         </div>
       </div>
       

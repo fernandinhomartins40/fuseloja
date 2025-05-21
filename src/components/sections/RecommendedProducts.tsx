@@ -2,56 +2,27 @@
 import React from 'react';
 import { ProductCard } from '../ui/ProductCard';
 import { SectionHeader } from '../ui/SectionHeader';
+import { initialProducts } from '@/types/product';
 
-// Sample recommended products data
-const recommendedProducts = [
-  {
-    id: "p001",
-    title: "Smartwatch Premium",
-    price: 599.99,
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&auto=format&fit=crop",
-    tag: 'exclusivo' as const
-  },
-  {
-    id: "p002",
-    title: "Caixa de Som Bluetooth Portátil",
-    price: 149.99,
-    originalPrice: 199.99,
-    image: "https://images.unsplash.com/photo-1558089966-a11f54853d0b?q=80&auto=format&fit=crop",
-    tag: 'promocao' as const
-  },
-  {
-    id: "p003",
-    title: "Mouse Sem Fio Ergonômico",
-    price: 89.99,
-    image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?q=80&auto=format&fit=crop"
-  },
-  {
-    id: "p004",
-    title: "Carregador Sem Fio Rápido",
-    price: 129.99,
-    originalPrice: 159.99,
-    image: "https://images.unsplash.com/photo-1608569212221-856278461677?q=80&auto=format&fit=crop",
-    tag: 'promocao' as const
-  }
-];
+// Use a subset of initialProducts for recommendations
+const recommendedProducts = initialProducts.slice(0, 4).map(product => ({
+  id: product.id,
+  title: product.title,
+  price: product.price,
+  originalPrice: product.originalPrice,
+  image: product.image,
+  tag: product.tag
+}));
 
 export const RecommendedProducts: React.FC = () => {
   return (
-    <section className="py-12">
-      <div className="container mx-auto px-4">
-        <SectionHeader
-          title="Recomendados Para Você"
-          description="Produtos selecionados com base nos seus interesses"
-        />
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {recommendedProducts.map((product, index) => (
-            <div key={index} className="w-full">
-              <ProductCard key={index} {...product} />
-            </div>
-          ))}
-        </div>
+    <section>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {recommendedProducts.map((product, index) => (
+          <div key={index} className="w-full">
+            <ProductCard key={index} {...product} id={product.id} />
+          </div>
+        ))}
       </div>
     </section>
   );

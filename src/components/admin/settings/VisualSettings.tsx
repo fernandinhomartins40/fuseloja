@@ -49,11 +49,22 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
           <h4 className="text-sm font-medium mb-3">Logo e Favicon</h4>
           <div className="grid gap-4">
             <div>
-              <Label className="mb-2">Logo da Loja</Label>
+              <Label className="mb-2">Logo Principal</Label>
               <LogoUploader 
                 imageUrl={settings.logo}
                 onImageChange={(url) => handleChange('logo', url)}
               />
+            </div>
+            
+            <div>
+              <Label className="mb-2">Logo do Rodapé</Label>
+              <LogoUploader 
+                imageUrl={settings.footerLogo}
+                onImageChange={(url) => handleChange('footerLogo', url)}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Se não for definida, a logo principal será usada no rodapé.
+              </p>
             </div>
             
             <div>

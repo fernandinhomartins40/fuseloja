@@ -18,6 +18,7 @@ export const defaultSettings: StoreSettings = {
   },
   visual: {
     logo: "https://cdn.builder.io/api/v1/image/assets/TEMP/e090bda74d8b6b74bc4d3502a92715f9622ce8f5",
+    footerLogo: "https://cdn.builder.io/api/v1/image/assets/TEMP/e090bda74d8b6b74bc4d3502a92715f9622ce8f5", // Default footer logo
     favicon: "/favicon.ico",
     colors: {
       primary: "#D90429",
@@ -46,7 +47,9 @@ export const defaultSettings: StoreSettings = {
         id: "1",
         image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
         title: "Eletrônicos com até 30% off",
-        actionLink: "/categoria/eletronicos"
+        actionLink: "/categoria/eletronicos",
+        buttonText: "Ver mais", // Added button text
+        buttonStyle: "primary" // Added button style
       }
     ]
   },

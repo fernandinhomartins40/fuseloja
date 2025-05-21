@@ -7,6 +7,7 @@ interface LogoUploaderProps {
   imageUrl: string;
   onImageChange: (url: string) => void;
   aspectRatio?: string;
+  dimensions?: string;
   small?: boolean;
 }
 
@@ -14,6 +15,7 @@ export const LogoUploader: React.FC<LogoUploaderProps> = ({
   imageUrl, 
   onImageChange,
   aspectRatio = "3/1",
+  dimensions,
   small = false
 }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -98,6 +100,7 @@ export const LogoUploader: React.FC<LogoUploaderProps> = ({
           <div className="text-sm text-center">
             <p className="font-medium">Clique para selecionar</p>
             <p className="text-xs text-muted-foreground">ou arraste e solte</p>
+            {dimensions && <p className="text-xs mt-1 text-muted-foreground">Tamanho recomendado: {dimensions}</p>}
           </div>
           <input
             type="file"

@@ -9,6 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Plus, Trash2 } from 'lucide-react';
 import { LogoUploader } from './LogoUploader';
 import { v4 as uuidv4 } from 'uuid';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface BannerSettingsProps {
   settings: BannerSettingsType;
@@ -58,7 +59,9 @@ export const BannerSettings: React.FC<BannerSettingsProps> = ({ settings, onChan
           id: uuidv4(),
           image: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b',
           title: 'Banner Secundário',
-          actionLink: '/'
+          actionLink: '/',
+          buttonText: 'Ver mais',
+          buttonStyle: 'primary'
         }
       ]
     });
@@ -173,11 +176,12 @@ export const BannerSettings: React.FC<BannerSettingsProps> = ({ settings, onChan
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label className="mb-2">Imagem do Banner</Label>
+                    <Label className="mb-2">Imagem do Banner (1920x500px)</Label>
                     <LogoUploader 
                       imageUrl={banner.image}
                       onImageChange={(url) => handleMainBannerChange(banner.id, 'image', url)}
-                      aspectRatio="21/9"
+                      aspectRatio="1920/500"
+                      dimensions="1920x500px"
                     />
                   </div>
                   
@@ -268,6 +272,34 @@ export const BannerSettings: React.FC<BannerSettingsProps> = ({ settings, onChan
                       value={banner.actionLink}
                       onChange={(e) => handleSecondaryBannerChange(banner.id, 'actionLink', e.target.value)}
                     />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label>Texto do Botão</Label>
+                      <Input
+                        value={banner.buttonText}
+                        onChange={(e) => handleSecondaryBannerChange(banner.id, 'buttonText', e.target.value)}
+                      />
+                    </div>
+                    
+                    <div className="grid gap-2">
+                      <Label>Estilo do Botão</Label>
+                      <Select
+                        value={banner.buttonStyle}
+                        onValueChange={(value) => handleSecondaryBannerChange(banner.id, 'buttonStyle', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um estilo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="primary">Primário</SelectItem>
+                          <SelectItem value="secondary">Secundário</SelectItem>
+                          <SelectItem value="outline">Contorno</SelectItem>
+                          <SelectItem value="text">Somente texto</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
               </CardContent>

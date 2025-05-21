@@ -16,6 +16,7 @@ export interface GeneralSettings {
 
 export interface VisualSettings {
   logo: string;
+  footerLogo: string;  // Added footer logo
   favicon: string;
   colors: {
     primary: string;
@@ -43,6 +44,8 @@ export interface BannerSettings {
     image: string;
     title: string;
     actionLink: string;
+    buttonText: string;  // Added button text for secondary banners
+    buttonStyle: 'primary' | 'secondary' | 'outline' | 'text';  // Added button style
   }>;
 }
 

@@ -3,9 +3,32 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
+import { defaultSettings } from '@/utils/defaultSettings';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  settings?: {
+    general?: {
+      storeName?: string;
+      phone?: string;
+      email?: string;
+      address?: string;
+    };
+    visual?: {
+      logo?: string;
+      footerLogo?: string;
+    };
+  };
+}
+
+export const Footer: React.FC<FooterProps> = ({ settings = defaultSettings }) => {
   const navigate = useNavigate();
+  
+  // Use footer logo if available, otherwise use the main logo
+  const logoUrl = settings?.visual?.footerLogo || settings?.visual?.logo || defaultSettings.visual.logo;
+  const storeName = settings?.general?.storeName || defaultSettings.general.storeName;
+  const phone = settings?.general?.phone || defaultSettings.general.phone;
+  const email = settings?.general?.email || defaultSettings.general.email;
+  const address = settings?.general?.address || defaultSettings.general.address;
 
   return (
     <footer className="bg-[#0B0909] pt-[60px] pb-0">
@@ -13,8 +36,9 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
           <div>
             <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/e090bda74d8b6b74bc4d3502a92715f9622ce8f5"
-              alt="Logo"
+              src={logoUrl}
+              alt={storeName}
+              className="max-h-16"
             />
           </div>
           
@@ -34,15 +58,15 @@ export const Footer: React.FC = () => {
             <div className="flex flex-col gap-2.5 text-[#999]">
               <div className="flex items-center gap-2.5">
                 <i className="ti ti-phone" />
-                <span>(11) 99999-9999</span>
+                <span>{phone}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <i className="ti ti-mail" />
-                <span>contato@shopmaster.com</span>
+                <span>{email}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <i className="ti ti-map-pin" />
-                <span>Rua Exemplo, 123 - Centro</span>
+                <span>{address}</span>
               </div>
             </div>
           </div>
@@ -67,7 +91,7 @@ export const Footer: React.FC = () => {
         </div>
         
         <div className="border-t border-solid border-[#333] py-5 flex flex-col md:flex-row justify-between items-center text-[#999]">
-          <p>© 2025 ShopMaster. Todos os direitos reservados.</p>
+          <p>© 2025 {storeName}. Todos os direitos reservados.</p>
           <Button 
             variant="outline" 
             className="mt-4 md:mt-0 border-[#D90429] text-[#D90429] hover:bg-[#D90429] hover:text-white"
@@ -81,4 +105,3 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
-

@@ -39,12 +39,10 @@ const AdminLayout: React.FC = () => {
           <SidebarHeader>
             <div className="flex items-center px-2">
               <h2 className="text-xl font-bold">Painel do Lojista</h2>
+              <SidebarTrigger className="ml-auto" />
             </div>
           </SidebarHeader>
           <SidebarContent>
-            <div className="flex items-center justify-end px-2 mb-2">
-              <SidebarTrigger />
-            </div>
             <SidebarGroup>
               <SidebarGroupLabel>Gerenciamento</SidebarGroupLabel>
               <SidebarGroupContent>

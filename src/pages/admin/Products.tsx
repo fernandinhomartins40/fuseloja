@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Edit, Plus, Search, Trash2 } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ProductForm from '@/components/admin/ProductForm';
 import { toast } from '@/hooks/use-toast';
 
@@ -125,16 +125,18 @@ const Products: React.FC = () => {
     });
   };
 
+  const handleNewProductClick = () => {
+    setEditingProduct(null);
+    setIsFormOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <SectionHeader 
         title="Gerenciamento de Produtos" 
         description="Adicione, edite e exclua produtos da sua loja"
         actionLabel="Novo Produto"
-        onAction={() => {
-          setEditingProduct(null);
-          setIsFormOpen(true);
-        }}
+        onAction={handleNewProductClick}
       />
       
       <Card>
@@ -149,30 +151,30 @@ const Products: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-              <DialogTrigger asChild>
-                <Button className="ml-4">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Produto
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px]">
-                <DialogHeader>
-                  <DialogTitle>
-                    {editingProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}
-                  </DialogTitle>
-                </DialogHeader>
-                <ProductForm
-                  initialData={editingProduct}
-                  onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct}
-                  onCancel={() => {
-                    setIsFormOpen(false);
-                    setEditingProduct(null);
-                  }}
-                />
-              </DialogContent>
-            </Dialog>
+            <Button className="ml-4" onClick={handleNewProductClick}>
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Produto
+            </Button>
           </div>
+          
+          {/* Dialog component moved outside of the button for better state management */}
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>
+                  {editingProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}
+                </DialogTitle>
+              </DialogHeader>
+              <ProductForm
+                initialData={editingProduct}
+                onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct}
+                onCancel={() => {
+                  setIsFormOpen(false);
+                  setEditingProduct(null);
+                }}
+              />
+            </DialogContent>
+          </Dialog>
           
           <div className="overflow-x-auto">
             <Table>

@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Product } from '@/pages/admin/Products';
+import { Product } from '@/types/product';
 import { defaultCategories } from '@/utils/categoryIcons';
 import { iconComponents, IconName } from '@/utils/categoryIcons';
 import { Category } from '@/types/category';

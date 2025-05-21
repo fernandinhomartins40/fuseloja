@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useProduct } from '@/hooks/useProduct';
 import { Header } from '@/components/layout/Header';
@@ -10,18 +9,38 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Card, CardContent } from '@/components/ui/card';
-import { ShoppingCart, Share, Star, ChevronLeft } from 'lucide-react';
+import { ShoppingCart, Share, Star, ChevronLeft, Plus, Minus } from 'lucide-react';
 import { ProductTag } from '@/components/ui/ProductTag';
-import { Product } from '@/types/product';
+import { useCart } from '@/contexts/CartContext';
 import { RecommendedProducts } from '@/components/sections/RecommendedProducts';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { product, isLoading, error } = useProduct(id);
+  const { addItem } = useCart();
+  const [quantity, setQuantity] = useState(1);
   
   // Calculate installment price
   const installments = 6;
   const installmentValue = product ? product.price / installments : 0;
+
+  const handleAddToCart = () => {
+    if (product) {
+      addItem(product, quantity);
+    }
+  };
+
+  const incrementQuantity = () => {
+    if (product && quantity < product.stock) {
+      setQuantity(prev => prev + 1);
+    }
+  };
+
+  const decrementQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(prev => prev - 1);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -174,9 +193,39 @@ const ProductDetail: React.FC = () => {
               {product.sku && <div className="text-xs text-muted-foreground mt-1">SKU: {product.sku}</div>}
             </div>
             
+            {/* Quantity selector */}
+            <div className="flex items-center space-x-4">
+              <div className="font-medium">Quantidade:</div>
+              <div className="flex items-center border rounded-md">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={decrementQuantity} 
+                  disabled={quantity <= 1}
+                  className="h-10 w-10"
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="w-10 text-center">{quantity}</span>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={incrementQuantity} 
+                  disabled={product.stock <= quantity}
+                  className="h-10 w-10"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            
             {/* Add to cart */}
             <div className="pt-4">
-              <Button className="w-full h-12 text-base flex items-center gap-2" disabled={product.stock <= 0}>
+              <Button 
+                className="w-full h-12 text-base flex items-center gap-2" 
+                disabled={product.stock <= 0}
+                onClick={handleAddToCart}
+              >
                 <ShoppingCart className="h-5 w-5" />
                 Adicionar ao Carrinho
               </Button>
@@ -274,7 +323,7 @@ const ProductDetail: React.FC = () => {
           </Tabs>
         </div>
         
-        {/* Replace initialProducts with RecommendedProducts component */}
+        {/* Products recommendations */}
         <div className="mt-16">
           <h2 className="text-2xl font-bold mb-6">Produtos Relacionados</h2>
           <RecommendedProducts />

@@ -19,39 +19,44 @@ import Settings from "./pages/admin/Settings";
 import ProductDetail from "./pages/ProductDetail";
 import Profile from "./pages/user/Profile";
 import { UserProvider } from "./contexts/UserContext";
+import { CartProvider } from "./contexts/CartContext";
+import Checkout from "./pages/Checkout";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <UserProvider>
-      <BrowserRouter>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/sobre" element={<AboutUs />} />
-            <Route path="/contato" element={<Contact />} />
-            <Route path="/produto/:id" element={<ProductDetail />} />
-            <Route path="/perfil" element={<Profile />} />
-            
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="products" element={<Products />} />
-              <Route path="orders" element={<Orders />} />
-              <Route path="deliveries" element={<Deliveries />} />
-              <Route path="reports" element={<Reports />} />
-              <Route path="categories" element={<Categories />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </TooltipProvider>
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/sobre" element={<AboutUs />} />
+              <Route path="/contato" element={<Contact />} />
+              <Route path="/produto/:id" element={<ProductDetail />} />
+              <Route path="/perfil" element={<Profile />} />
+              <Route path="/checkout" element={<Checkout />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="products" element={<Products />} />
+                <Route path="orders" element={<Orders />} />
+                <Route path="deliveries" element={<Deliveries />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="categories" element={<Categories />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
+              
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TooltipProvider>
+        </BrowserRouter>
+      </CartProvider>
     </UserProvider>
   </QueryClientProvider>
 );

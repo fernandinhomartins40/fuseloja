@@ -4,6 +4,7 @@ import { ProductTag, TagType } from './ProductTag';
 import { Card } from './card';
 import { ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useCart } from '@/contexts/CartContext';
 
 interface ProductCardProps {
   title: string;
@@ -25,6 +26,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   id = "p001" // Fallback ID if none provided
 }) => {
   const installmentValue = price / installments;
+  const { addItem } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to product page
+    addItem({
+      id,
+      title,
+      price,
+      image,
+      stock: 1, // We don't have this info in the ProductCard, assume it's available
+      category: "" // We don't have this info in the ProductCard
+    });
+  };
 
   return (
     <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group min-w-[240px] w-full h-full flex flex-col">
@@ -56,10 +70,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
           <button 
             className="flex items-center justify-center w-full py-2 mt-2 text-xs md:text-sm font-medium text-white transition-colors bg-destructive rounded-md hover:bg-destructive/80 gap-2"
-            onClick={(e) => {
-              e.preventDefault(); // Prevent navigation to product page
-              console.log(`Adicionar ao carrinho: ${title}`);
-            }}
+            onClick={handleAddToCart}
           >
             <ShoppingCart size={16} />
             ADICIONAR AO CARRINHO

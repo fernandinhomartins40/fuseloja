@@ -14,10 +14,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Button } from "@/components/ui/button";
 import { useUser } from '@/contexts/UserContext';
 import { UserLoginForm } from '../user/UserLoginForm';
+import { useCart } from '@/contexts/CartContext';
+import { CartDrawer } from '../cart/CartDrawer';
 
 export const Navigation: React.FC = () => {
   const { user, isAuthenticated, logout } = useUser();
+  const { totalItems } = useCart();
   const [loginSheetOpen, setLoginSheetOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -112,12 +116,20 @@ export const Navigation: React.FC = () => {
           </Sheet>
         )}
         
-        <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors" aria-label="Carrinho de compras">
+        {/* Cart button that opens the cart drawer */}
+        <button 
+          className="relative text-[#54595F] hover:text-[#D90429] transition-colors" 
+          aria-label="Carrinho de compras"
+          onClick={() => setCartOpen(true)}
+        >
           <ShoppingCart size={24} />
           <div className="absolute -top-2 -right-2 w-5 h-5 text-white text-[10px] bg-[#D90429] rounded-full flex items-center justify-center">
-            0
+            {totalItems}
           </div>
         </button>
+        
+        {/* Cart Drawer */}
+        <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
       </div>
     </div>
   );

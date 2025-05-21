@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Product, initialProducts } from '@/types/product';
+import { Product, initialProducts, ProductTag } from '@/types/product';
 import { toast } from '@/hooks/use-toast';
 
 export const useProductsManagement = () => {
@@ -11,7 +11,9 @@ export const useProductsManagement = () => {
 
   const filteredProducts = products.filter(product =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.shortDescription?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDeleteProduct = (id: string) => {
@@ -36,6 +38,8 @@ export const useProductsManagement = () => {
       id: `p${String(products.length + 1).padStart(3, '0')}`,
       // Convert "no-tag" to undefined
       tag: product.tag === 'no-tag' ? undefined : product.tag,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     setProducts([newProduct, ...products]);
     setIsFormOpen(false);
@@ -50,6 +54,7 @@ export const useProductsManagement = () => {
     const processedProduct = {
       ...updatedProduct,
       tag: updatedProduct.tag === 'no-tag' ? undefined : updatedProduct.tag,
+      updatedAt: new Date(),
     };
     
     setProducts(products.map(p => 

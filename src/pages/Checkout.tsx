@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@/components/ui/separator';
-import { ArrowRight, ShoppingCart, Trash2, WhatsApp } from 'lucide-react';
+import { ArrowRight, MessageSquare, ShoppingCart, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const checkoutFormSchema = z.object({
@@ -173,7 +173,7 @@ ${productsText}
                           type="submit" 
                           className="w-full flex items-center gap-2"
                         >
-                          <WhatsApp className="h-5 w-5" />
+                          <MessageSquare className="h-5 w-5" />
                           Finalizar via WhatsApp
                         </Button>
                       </div>

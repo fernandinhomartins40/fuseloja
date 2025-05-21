@@ -6,12 +6,14 @@ import { SectionHeader } from '../ui/SectionHeader';
 // Sample recommended products data
 const recommendedProducts = [
   {
+    id: "p001",
     title: "Smartwatch Premium",
     price: 599.99,
     image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&auto=format&fit=crop",
     tag: 'exclusivo' as const
   },
   {
+    id: "p002",
     title: "Caixa de Som Bluetooth Portátil",
     price: 149.99,
     originalPrice: 199.99,
@@ -19,11 +21,13 @@ const recommendedProducts = [
     tag: 'promocao' as const
   },
   {
+    id: "p003",
     title: "Mouse Sem Fio Ergonômico",
     price: 89.99,
     image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?q=80&auto=format&fit=crop"
   },
   {
+    id: "p004",
     title: "Carregador Sem Fio Rápido",
     price: 129.99,
     originalPrice: 159.99,

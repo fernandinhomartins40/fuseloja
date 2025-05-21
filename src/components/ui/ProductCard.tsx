@@ -3,6 +3,7 @@ import React from 'react';
 import { ProductTag, TagType } from './ProductTag';
 import { Card } from './card';
 import { ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
   title: string;
@@ -11,6 +12,7 @@ interface ProductCardProps {
   installments?: number;
   image: string;
   tag?: TagType;
+  id?: string;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -19,23 +21,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   originalPrice,
   installments = 6,
   image,
-  tag
+  tag,
+  id = "p001" // Fallback ID if none provided
 }) => {
   const installmentValue = price / installments;
 
   return (
     <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group min-w-[240px] w-full h-full flex flex-col">
       <div className="relative p-4 md:p-6 flex flex-col flex-1">
-        <div className="relative mb-3 overflow-hidden rounded-md aspect-square">
+        <Link to={`/produto/${id}`} className="block relative mb-3 overflow-hidden rounded-md aspect-square">
           {tag && <ProductTag type={tag} className="absolute top-2 right-2 z-10" />}
           <img
             src={image}
             alt={title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-        </div>
+        </Link>
         <div className="space-y-1 flex-1 flex flex-col">
-          <h3 className="text-base md:text-lg font-medium text-foreground line-clamp-2 min-h-[2.5rem] md:min-h-[3rem]">{title}</h3>
+          <Link to={`/produto/${id}`} className="block">
+            <h3 className="text-base md:text-lg font-medium text-foreground line-clamp-2 min-h-[2.5rem] md:min-h-[3rem] hover:text-destructive transition-colors">{title}</h3>
+          </Link>
           <div className="flex items-center gap-2 mt-auto pt-2">
             {originalPrice && (
               <span className="text-xs md:text-sm text-muted-foreground line-through">
@@ -51,7 +56,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
           <button 
             className="flex items-center justify-center w-full py-2 mt-2 text-xs md:text-sm font-medium text-white transition-colors bg-destructive rounded-md hover:bg-destructive/80 gap-2"
-            onClick={() => console.log(`Adicionar ao carrinho: ${title}`)}
+            onClick={(e) => {
+              e.preventDefault(); // Prevent navigation to product page
+              console.log(`Adicionar ao carrinho: ${title}`);
+            }}
           >
             <ShoppingCart size={16} />
             ADICIONAR AO CARRINHO

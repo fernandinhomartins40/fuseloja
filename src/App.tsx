@@ -16,6 +16,7 @@ import Deliveries from "./pages/admin/Deliveries";
 import Reports from "./pages/admin/Reports";
 import Categories from "./pages/admin/Categories";
 import Settings from "./pages/admin/Settings";
+import ProductDetail from "./pages/ProductDetail";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/sobre" element={<AboutUs />} />
           <Route path="/contato" element={<Contact />} />
+          <Route path="/produto/:id" element={<ProductDetail />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLayout />}>

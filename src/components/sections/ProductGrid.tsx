@@ -4,6 +4,7 @@ import { ProductCard } from '../ui/ProductCard';
 import { TagType } from '../ui/ProductTag';
 
 interface Product {
+  id?: string;
   title: string;
   price: number;
   originalPrice?: number;
@@ -14,6 +15,7 @@ interface Product {
 
 const products: Product[] = [
   {
+    id: "pg001",
     title: "Headphone Bluetooth JBL",
     price: 199.99,
     originalPrice: 299.99,
@@ -21,17 +23,20 @@ const products: Product[] = [
     tag: 'promocao'
   },
   {
+    id: "pg002",
     title: "Smart TV 4K 50 polegadas",
     price: 1999.99,
     image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?q=80&auto=format&fit=crop",
     tag: 'novidade'
   },
   {
+    id: "pg003",
     title: "Notebook Ultra Slim",
     price: 2899.99,
     image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&auto=format&fit=crop"
   },
   {
+    id: "pg004",
     title: "Cafeteira Espresso",
     price: 399.99,
     originalPrice: 599.99,
@@ -39,12 +44,14 @@ const products: Product[] = [
     tag: 'ultima-unidade'
   },
   {
+    id: "pg005",
     title: "Smartwatch Premium",
     price: 599.99,
     image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&auto=format&fit=crop",
     tag: 'exclusivo'
   },
   {
+    id: "pg006",
     title: "Câmera Mirrorless",
     price: 2999.99,
     originalPrice: 3599.99,
@@ -52,6 +59,7 @@ const products: Product[] = [
     tag: 'promocao'
   },
   {
+    id: "pg007",
     title: "Console de Videogame",
     price: 2999.99,
     originalPrice: 3599.99,
@@ -59,24 +67,28 @@ const products: Product[] = [
     tag: 'pre-venda'
   },
   {
+    id: "pg008",
     title: "Tênis Esportivo",
     price: 199.99,
     originalPrice: 249.99,
     image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&auto=format&fit=crop"
   },
   {
+    id: "pg009",
     title: "Panela Elétrica Multifuncional",
     price: 399.99,
     image: "https://images.unsplash.com/photo-1585515320310-259814833e62?q=80&auto=format&fit=crop",
     tag: 'novidade'
   },
   {
+    id: "pg010",
     title: "Mochila Impermeável",
     price: 149.99,
     originalPrice: 199.99,
     image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&auto=format&fit=crop"
   },
   {
+    id: "pg011",
     title: "Relógio de Parede",
     price: 89.99,
     originalPrice: 119.99,
@@ -84,6 +96,7 @@ const products: Product[] = [
     tag: 'promocao'
   },
   {
+    id: "pg012",
     title: "Cadeira Ergonômica",
     price: 749.99,
     originalPrice: 899.99,
@@ -101,6 +114,7 @@ export const ProductGrid: React.FC = () => {
         {products.map((product, index) => (
           <ProductCard
             key={index}
+            id={product.id}
             {...product}
           />
         ))}

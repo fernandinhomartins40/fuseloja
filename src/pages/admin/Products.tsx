@@ -104,6 +104,8 @@ const Products: React.FC = () => {
     const newProduct = {
       ...product,
       id: `p${String(products.length + 1).padStart(3, '0')}`,
+      // Convert "no-tag" to undefined
+      tag: product.tag === 'no-tag' ? undefined : product.tag,
     };
     setProducts([newProduct, ...products]);
     setIsFormOpen(false);
@@ -114,8 +116,14 @@ const Products: React.FC = () => {
   };
 
   const handleUpdateProduct = (updatedProduct: Product) => {
+    // Convert "no-tag" to undefined
+    const processedProduct = {
+      ...updatedProduct,
+      tag: updatedProduct.tag === 'no-tag' ? undefined : updatedProduct.tag,
+    };
+    
     setProducts(products.map(p => 
-      p.id === updatedProduct.id ? updatedProduct : p
+      p.id === processedProduct.id ? processedProduct : p
     ));
     setIsFormOpen(false);
     setEditingProduct(null);

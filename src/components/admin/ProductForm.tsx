@@ -233,7 +233,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
               <SelectValue placeholder="Selecione uma tag" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Sem tag</SelectItem>
+              <SelectItem value="no-tag">Sem tag</SelectItem>
               {tags.map((tag) => (
                 <SelectItem key={tag.value} value={tag.value}>
                   {tag.name}

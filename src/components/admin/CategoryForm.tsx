@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Category, CategoryColor, categoryColorsMap } from '@/types/category';
+import { Category, getContrastTextColor } from '@/types/category';
 import IconSelector from './IconSelector';
 import { cn } from '@/lib/utils';
 import { iconComponents, IconName } from '@/utils/categoryIcons';
+import { ColorPicker } from '@/components/admin/settings/ColorPicker';
 
 interface CategoryFormProps {
   initialData: Partial<Category> | null;
@@ -25,7 +26,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
       slug: '',
       description: '',
       icon: '',
-      color: 'neutral',
+      color: '#E5DEFF', // Default color
     }
   );
 
@@ -50,23 +51,15 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!category.name || !category.slug || !category.icon) {
+    if (!category.name || !category.slug || !category.icon || !category.color) {
       return;
     }
     
     onSubmit(category as Omit<Category, 'id'>);
   };
 
-  const availableColors: CategoryColor[] = [
-    'neutral',
-    'purple',
-    'green',
-    'yellow',
-    'orange',
-    'pink',
-    'blue',
-    'red'
-  ];
+  // Get text color based on background color for better contrast
+  const textColor = category.color ? getContrastTextColor(category.color) : '#333333';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 pt-2">
@@ -125,47 +118,27 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
 
         <div>
           <label className="text-sm font-medium block mb-1">
-            Cor da Categoria
+            Cor da Categoria*
           </label>
-          <div className="grid grid-cols-4 gap-2">
-            {availableColors.map((colorName) => {
-              const colorData = categoryColorsMap[colorName];
-              const isSelected = category.color === colorName;
-              
-              return (
-                <Button
-                  key={colorName}
-                  type="button"
-                  className={cn(
-                    "h-10 border border-transparent",
-                    isSelected && "border-primary ring-2 ring-primary/20"
-                  )}
-                  style={{ 
-                    backgroundColor: colorData.bg, 
-                    color: colorData.text
-                  }}
-                  onClick={() => handleChange('color', colorName)}
-                >
-                  {colorName}
-                </Button>
-              );
-            })}
-          </div>
+          <ColorPicker
+            color={category.color || '#E5DEFF'}
+            onChange={(color) => handleChange('color', color)}
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Selecione uma cor para identificar visualmente a categoria
+          </p>
         </div>
         
         {/* Preview */}
-        {category.name && category.icon && (
+        {category.name && category.icon && category.color && (
           <div className="mt-4 border rounded p-4">
             <p className="text-sm font-medium mb-2">Preview:</p>
             <div className="flex items-center gap-2">
               {category.icon && (
                 <div 
-                  className={cn(
-                    "p-2 rounded-full",
-                    `bg-${category.color}-100`
-                  )}
+                  className="p-2 rounded-full"
                   style={{ 
-                    backgroundColor: categoryColorsMap[category.color as CategoryColor]?.bg 
+                    backgroundColor: category.color 
                   }}
                 >
                   {(() => {
@@ -176,7 +149,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                       <IconComp 
                         className="h-5 w-5" 
                         style={{ 
-                          color: categoryColorsMap[category.color as CategoryColor]?.text 
+                          color: textColor
                         }}
                       /> : 
                       null;
@@ -195,7 +168,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
         </Button>
         <Button 
           type="submit" 
-          disabled={!category.name || !category.slug || !category.icon}
+          disabled={!category.name || !category.slug || !category.icon || !category.color}
         >
           {initialData ? 'Atualizar Categoria' : 'Adicionar Categoria'}
         </Button>

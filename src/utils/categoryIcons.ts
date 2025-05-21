@@ -1,4 +1,3 @@
-
 import {
   Smartphone,
   Laptop,
@@ -29,7 +28,46 @@ import {
   Speaker,
   Video,
   Gamepad2,
-  Puzzle
+  Puzzle,
+  Activity,
+  Coffee,
+  Gift,
+  Tv,
+  Monitor,
+  Music,
+  Phone,
+  Pizza,
+  Plane,
+  Search,
+  Settings,
+  Share,
+  Shield,
+  ShoppingCart,
+  Camera,
+  CreditCard,
+  Globe,
+  Map,
+  MessageCircle,
+  Package,
+  Sun,
+  Moon,
+  Star,
+  Truck,
+  Umbrella,
+  UserCheck,
+  Wifi,
+  Zap,
+  ThumbsUp,
+  Image,
+  Film,
+  User,
+  Users,
+  BarChart,
+  PieChart,
+  DollarSign,
+  Calendar,
+  Clock,
+  Award
 } from "lucide-react";
 import { Category } from "@/types/category";
 
@@ -64,6 +102,45 @@ export const iconComponents = {
   Video,
   Gamepad2,
   Puzzle,
+  Activity,
+  Coffee,
+  Gift,
+  Tv,
+  Monitor,
+  Music,
+  Phone,
+  Pizza,
+  Plane,
+  Search,
+  Settings,
+  Share,
+  Shield,
+  ShoppingCart,
+  Camera,
+  CreditCard,
+  Globe,
+  Map,
+  MessageCircle,
+  Package,
+  Sun,
+  Moon,
+  Star,
+  Truck,
+  Umbrella,
+  UserCheck,
+  Wifi,
+  Zap,
+  ThumbsUp,
+  Image,
+  Film,
+  User,
+  Users,
+  BarChart,
+  PieChart,
+  DollarSign,
+  Calendar,
+  Clock,
+  Award
 };
 
 export type IconName = keyof typeof iconComponents;
@@ -75,7 +152,7 @@ export const defaultCategories: Category[] = [
     slug: "eletronicos",
     icon: "Smartphone",
     description: "Smartphones, tablets, laptops e outros dispositivos eletrônicos",
-    color: "blue",
+    color: "#D3E4FD",
     isDefault: true
   },
   {
@@ -84,7 +161,7 @@ export const defaultCategories: Category[] = [
     slug: "moda",
     icon: "Shirt",
     description: "Roupas, calçados e acessórios de moda",
-    color: "pink",
+    color: "#FFDEE2",
     isDefault: true
   },
   {
@@ -93,7 +170,7 @@ export const defaultCategories: Category[] = [
     slug: "casa-decoracao",
     icon: "Home",
     description: "Móveis, decoração e itens para o lar",
-    color: "green",
+    color: "#F2FCE2",
     isDefault: true
   },
   {
@@ -102,7 +179,7 @@ export const defaultCategories: Category[] = [
     slug: "livros",
     icon: "BookOpen",
     description: "Livros físicos, e-books e audiolivros",
-    color: "orange",
+    color: "#FDE1D3",
     isDefault: true
   },
   {
@@ -111,7 +188,7 @@ export const defaultCategories: Category[] = [
     slug: "beleza-saude",
     icon: "Sparkles",
     description: "Produtos de beleza, saúde e bem-estar",
-    color: "purple",
+    color: "#E5DEFF",
     isDefault: true
   },
   {
@@ -120,7 +197,7 @@ export const defaultCategories: Category[] = [
     slug: "esportes",
     icon: "Dumbbell",
     description: "Artigos esportivos e equipamentos de fitness",
-    color: "red",
+    color: "#FFCDD2",
     isDefault: true
   },
   {
@@ -129,7 +206,7 @@ export const defaultCategories: Category[] = [
     slug: "infantil",
     icon: "Baby",
     description: "Produtos para bebês e crianças",
-    color: "yellow",
+    color: "#FEF7CD",
     isDefault: true
   },
   {
@@ -138,7 +215,7 @@ export const defaultCategories: Category[] = [
     slug: "acessorios",
     icon: "Watch",
     description: "Relógios, joias e acessórios pessoais",
-    color: "purple",
+    color: "#E5DEFF",
     isDefault: true
   },
   {
@@ -147,7 +224,7 @@ export const defaultCategories: Category[] = [
     slug: "alimentos",
     icon: "UtensilsCrossed",
     description: "Alimentos, bebidas e artigos de culinária",
-    color: "green",
+    color: "#F2FCE2",
     isDefault: true
   },
   {
@@ -156,7 +233,7 @@ export const defaultCategories: Category[] = [
     slug: "automotivo",
     icon: "Car",
     description: "Peças, acessórios e produtos para automóveis",
-    color: "blue",
+    color: "#D3E4FD",
     isDefault: true
   },
   {
@@ -165,7 +242,7 @@ export const defaultCategories: Category[] = [
     slug: "pets",
     icon: "Cat",
     description: "Produtos para animais de estimação",
-    color: "orange",
+    color: "#FDE1D3",
     isDefault: true
   },
   {
@@ -174,7 +251,7 @@ export const defaultCategories: Category[] = [
     slug: "ferramentas",
     icon: "Hammer",
     description: "Ferramentas e equipamentos",
-    color: "neutral",
+    color: "#F1F0FB",
     isDefault: true
   },
   {
@@ -183,7 +260,7 @@ export const defaultCategories: Category[] = [
     slug: "jardinagem",
     icon: "Flower",
     description: "Plantas, sementes e artigos para jardim",
-    color: "green",
+    color: "#F2FCE2",
     isDefault: true
   },
   {
@@ -192,7 +269,7 @@ export const defaultCategories: Category[] = [
     slug: "audio-video",
     icon: "Speaker",
     description: "Equipamentos de áudio e vídeo",
-    color: "red",
+    color: "#FFCDD2",
     isDefault: true
   },
   {
@@ -201,7 +278,7 @@ export const defaultCategories: Category[] = [
     slug: "jogos",
     icon: "Gamepad",
     description: "Jogos, consoles e acessórios para games",
-    color: "blue",
+    color: "#D3E4FD",
     isDefault: true
   }
 ];

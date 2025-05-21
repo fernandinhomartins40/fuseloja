@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Search, Plus } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { defaultCategories } from '@/utils/categoryIcons';
-import { Category } from '@/types/category';
+import { Category, getContrastTextColor } from '@/types/category';
 import CategoryCard from '@/components/admin/CategoryCard';
 import CategoryForm from '@/components/admin/CategoryForm';
 

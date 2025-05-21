@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useUser } from '@/contexts/UserContext';
 import { UserAddress } from '@/types/user';
 
+// Define Zod schema with all required fields to match UserAddress type
 const addressSchema = z.object({
   street: z.string().min(1, { message: 'Rua é obrigatória' }),
   number: z.string().min(1, { message: 'Número é obrigatório' }),
@@ -52,7 +52,17 @@ export const UserAddressForm: React.FC<UserAddressFormProps> = ({
     if (address) {
       updateAddress(address.id, data);
     } else {
-      addAddress(data);
+      // Here's the fix: ensure all required fields are present by explicitly passing them
+      addAddress({
+        street: data.street,
+        number: data.number,
+        complement: data.complement,
+        neighborhood: data.neighborhood,
+        city: data.city,
+        state: data.state,
+        zipCode: data.zipCode,
+        isDefault: data.isDefault
+      });
     }
     
     if (onCancel) {

@@ -1,6 +1,6 @@
 
 // Define product tag type
-export type ProductTag = 'promocao' | 'exclusivo' | 'novo' | 'no-tag';
+export type ProductTag = 'promocao' | 'exclusivo' | 'novo' | 'novidade' | 'ultima-unidade' | 'pre-venda' | 'no-tag';
 
 // Product variant type
 export type ProductVariant = {

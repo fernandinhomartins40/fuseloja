@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Button } from '@/components/ui/button';
@@ -61,7 +60,7 @@ const initialProducts = [
   },
 ];
 
-// Product type
+// Update the Product type to include 'no-tag' as a potential value
 export type Product = {
   id: string;
   title: string;
@@ -70,7 +69,7 @@ export type Product = {
   image: string;
   category: string;
   stock: number;
-  tag?: 'promocao' | 'exclusivo' | 'novo';
+  tag?: 'promocao' | 'exclusivo' | 'novo' | 'no-tag';
 };
 
 const Products: React.FC = () => {

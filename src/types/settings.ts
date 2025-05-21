@@ -1,9 +1,9 @@
-
 export interface GeneralSettings {
   storeName: string;
   slogan: string;
   email: string;
   phone: string;
+  whatsApp: string; // Added WhatsApp field
   address: string;
   socialMedia: {
     facebook: string;

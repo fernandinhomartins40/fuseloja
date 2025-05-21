@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { GeneralSettings as GeneralSettingsType } from '@/types/settings';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Smartphone } from 'lucide-react';
 
 interface GeneralSettingsProps {
   settings: GeneralSettingsType;
@@ -85,6 +85,24 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onCh
               onChange={handleChange}
             />
           </div>
+        </div>
+
+        {/* WhatsApp field */}
+        <div className="grid gap-2">
+          <Label htmlFor="whatsApp" className="flex items-center gap-2">
+            <Smartphone className="h-4 w-4" />
+            <span>WhatsApp</span>
+          </Label>
+          <Input
+            id="whatsApp"
+            name="whatsApp"
+            value={settings.whatsApp}
+            onChange={handleChange}
+            placeholder="(xx) xxxxx-xxxx"
+          />
+          <p className="text-xs text-muted-foreground">
+            Número de WhatsApp para contato com clientes. Inclua o código de área.
+          </p>
         </div>
         
         <div className="grid gap-2">

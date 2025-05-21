@@ -1,9 +1,32 @@
 
-import React from 'react';
-import { ShoppingCart, UserRound } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShoppingCart, UserRound, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { useUser } from '@/contexts/UserContext';
+import { UserLoginForm } from '../user/UserLoginForm';
 
 export const Navigation: React.FC = () => {
+  const { user, isAuthenticated, logout } = useUser();
+  const [loginSheetOpen, setLoginSheetOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const handleLoginSuccess = () => {
+    setLoginSheetOpen(false);
+  };
+
   return (
     <div className="flex justify-between items-center py-5 px-4 bg-white">
       <Link to="/">
@@ -36,9 +59,58 @@ export const Navigation: React.FC = () => {
       </nav>
       
       <div className="flex items-center gap-4">
-        <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors" aria-label="Perfil do usuário">
-          <UserRound size={24} />
-        </button>
+        {isAuthenticated ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors flex items-center" aria-label="Perfil do usuário">
+                {user?.avatar ? (
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <UserRound size={24} />
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="p-2 text-center">
+                <p className="text-sm font-medium">Olá, {user?.name.split(' ')[0]}</p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/perfil" className="cursor-pointer">Meu Perfil</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/perfil?tab=orders" className="cursor-pointer">Meus Pedidos</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
+                <LogOut className="w-4 h-4 mr-2" />
+                Sair
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Sheet open={loginSheetOpen} onOpenChange={setLoginSheetOpen}>
+            <SheetTrigger asChild>
+              <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors" aria-label="Entrar">
+                <UserRound size={24} />
+              </button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader className="mb-4">
+                <SheetTitle>Entre na sua conta</SheetTitle>
+              </SheetHeader>
+              <UserLoginForm onSuccess={handleLoginSuccess} />
+              <div className="mt-4 text-center">
+                <p className="text-sm text-muted-foreground">Não tem uma conta?</p>
+                <Button variant="link" className="p-0 h-auto">Registre-se</Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        )}
         
         <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors" aria-label="Carrinho de compras">
           <ShoppingCart size={24} />

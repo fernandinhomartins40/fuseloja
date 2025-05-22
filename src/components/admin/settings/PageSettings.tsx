@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { PageContent } from '@/types/settings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RichTextEditor } from './RichTextEditor';
@@ -9,11 +9,29 @@ interface PageSettingsProps {
   onChange: (settings: PageContent) => void;
 }
 
+type PageContentKey = keyof PageContent;
+
 export const PageSettings: React.FC<PageSettingsProps> = ({ settings, onChange }) => {
-  const handlePageContentChange = (page: keyof PageContent, content: string) => {
+  // Add state for active tab
+  const [activeTab, setActiveTab] = useState<PageContentKey>('aboutUs');
+
+  const handleTabChange = (value: string) => {
+    // Map the tab values to PageContent keys
+    const tabToContentKey: Record<string, PageContentKey> = {
+      'about': 'aboutUs',
+      'contact': 'contact',
+      'privacy': 'privacyPolicy',
+      'terms': 'termsOfService',
+      'faq': 'faq'
+    };
+    
+    setActiveTab(tabToContentKey[value] as PageContentKey);
+  };
+
+  const handlePageContentChange = (content: string) => {
     onChange({
       ...settings,
-      [page]: content
+      [activeTab]: content
     });
   };
 
@@ -331,7 +349,19 @@ export const PageSettings: React.FC<PageSettingsProps> = ({ settings, onChange }
         break;
     }
     
-    handlePageContentChange(page, defaultContent);
+    onChange({
+      ...settings,
+      [page]: defaultContent
+    });
+  };
+
+  // Map content keys to tab values
+  const contentKeyToTab: Record<PageContentKey, string> = {
+    'aboutUs': 'about',
+    'contact': 'contact',
+    'privacyPolicy': 'privacy',
+    'termsOfService': 'terms',
+    'faq': 'faq'
   };
 
   return (
@@ -343,7 +373,11 @@ export const PageSettings: React.FC<PageSettingsProps> = ({ settings, onChange }
         </p>
       </div>
       
-      <Tabs defaultValue="about">
+      <Tabs 
+        defaultValue="about" 
+        value={contentKeyToTab[activeTab]}
+        onValueChange={handleTabChange}
+      >
         <TabsList className="w-full mb-4 grid grid-cols-2 md:grid-cols-5">
           <TabsTrigger value="about">Sobre Nós</TabsTrigger>
           <TabsTrigger value="contact">Contato</TabsTrigger>
@@ -365,7 +399,7 @@ export const PageSettings: React.FC<PageSettingsProps> = ({ settings, onChange }
           <div className="border p-4 rounded-md">
             <RichTextEditor
               value={settings.aboutUs}
-              onChange={(content) => handlePageContentChange('aboutUs', content)}
+              onChange={handlePageContentChange}
             />
           </div>
         </TabsContent>
@@ -383,7 +417,7 @@ export const PageSettings: React.FC<PageSettingsProps> = ({ settings, onChange }
           <div className="border p-4 rounded-md">
             <RichTextEditor
               value={settings.contact}
-              onChange={(content) => handlePageContentChange('contact', content)}
+              onChange={handlePageContentChange}
             />
           </div>
         </TabsContent>
@@ -401,7 +435,7 @@ export const PageSettings: React.FC<PageSettingsProps> = ({ settings, onChange }
           <div className="border p-4 rounded-md">
             <RichTextEditor
               value={settings.privacyPolicy}
-              onChange={(content) => handlePageContentChange('privacyPolicy', content)}
+              onChange={handlePageContentChange}
             />
           </div>
         </TabsContent>
@@ -419,7 +453,7 @@ export const PageSettings: React.FC<PageSettingsProps> = ({ settings, onChange }
           <div className="border p-4 rounded-md">
             <RichTextEditor
               value={settings.termsOfService}
-              onChange={(content) => handlePageContentChange('termsOfService', content)}
+              onChange={handlePageContentChange}
             />
           </div>
         </TabsContent>
@@ -437,7 +471,7 @@ export const PageSettings: React.FC<PageSettingsProps> = ({ settings, onChange }
           <div className="border p-4 rounded-md">
             <RichTextEditor
               value={settings.faq}
-              onChange={(content) => handlePageContentChange('faq', content)}
+              onChange={handlePageContentChange}
             />
           </div>
         </TabsContent>

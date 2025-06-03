@@ -22,26 +22,24 @@ const UserCard: React.FC = () => {
   };
 
   return (
-    <Card className="border-0 shadow-none bg-gradient-to-r from-blue-50/50 via-purple-50/30 to-pink-50/20 mb-2 hover:shadow-md transition-all duration-300 hover:scale-105 transform">
+    <Card className="border border-gray-200 bg-white mb-2 hover:shadow-sm transition-shadow">
       <CardContent className="p-3">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Avatar className="h-11 w-11 ring-2 ring-gradient-to-r ring-blue-400/30 shadow-lg">
+            <Avatar className="h-11 w-11 border-2 border-gray-200">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-sm font-bold shadow-lg">
+              <AvatarFallback className="bg-blue-600 text-white text-sm font-semibold">
                 {getInitials(user.name)}
               </AvatarFallback>
             </Avatar>
-            {/* Enhanced online status indicator */}
-            <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 bg-gradient-to-br from-emerald-400 to-emerald-600 border-2 border-white rounded-full shadow-lg">
-              <div className="w-full h-full bg-emerald-400 rounded-full animate-ping opacity-75"></div>
-            </div>
+            {/* Online status indicator */}
+            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent truncate">
+            <p className="text-sm font-semibold text-gray-900 truncate">
               {user.name}
             </p>
-            <p className="text-xs text-slate-500 truncate font-medium">
+            <p className="text-xs text-gray-500 truncate">
               {user.email}
             </p>
           </div>

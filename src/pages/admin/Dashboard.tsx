@@ -82,11 +82,7 @@ const salesData = [
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="space-y-8 p-1 relative">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-3xl -z-10" />
-      <div className="absolute top-96 right-0 w-96 h-96 bg-gradient-to-br from-pink-200/20 to-orange-200/20 rounded-full blur-3xl -z-10" />
-      
+    <div className="space-y-8">
       <PageHeader
         title="Dashboard"
         description="Visão geral da sua loja"
@@ -113,7 +109,14 @@ const Dashboard: React.FC = () => {
         <div className="lg:col-span-2">
           <ChartCard 
             title="Vendas nos Últimos 6 Meses" 
-            data={salesData}
+            data={[
+              { name: 'Jan', value: 4000 },
+              { name: 'Fev', value: 3000 },
+              { name: 'Mar', value: 6000 },
+              { name: 'Abr', value: 8000 },
+              { name: 'Mai', value: 5000 },
+              { name: 'Jun', value: 7000 },
+            ]}
             height={350}
             type="area"
           />

@@ -26,105 +26,90 @@ export const ChartCard: React.FC<ChartCardProps> = ({
   type = 'area'
 }) => {
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 group">
-      <CardHeader className="pb-4 relative">
-        <CardTitle className="text-lg font-semibold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-          {title}
-        </CardTitle>
-        <div className="absolute top-4 right-4 w-3 h-3 bg-gradient-to-br from-green-400 to-green-600 rounded-full animate-pulse" />
+    <Card className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold text-gray-900">
+            {title}
+          </CardTitle>
+          <div className="w-3 h-3 bg-green-500 rounded-full" />
+        </div>
       </CardHeader>
-      <CardContent className="relative">
+      <CardContent>
         <div style={{ height }}>
           <ResponsiveContainer width="100%" height="100%">
             {type === 'area' ? (
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.05}/>
+                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0.05}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" opacity={0.5} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#64748B' }}
+                  tick={{ fontSize: 12, fill: '#6B7280' }}
                 />
                 <YAxis 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#64748B' }}
+                  tick={{ fontSize: 12, fill: '#6B7280' }}
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                    border: 'none',
-                    borderRadius: '12px',
-                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                    backdropFilter: 'blur(10px)'
+                    backgroundColor: 'white', 
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                   }}
                 />
                 <Area 
                   type="monotone" 
                   dataKey="value" 
-                  stroke="url(#gradient)"
-                  strokeWidth={3}
+                  stroke="#2563EB"
+                  strokeWidth={2}
                   fill="url(#colorValue)"
-                  dot={{ fill: '#3B82F6', strokeWidth: 3, r: 5 }}
-                  activeDot={{ r: 7, stroke: '#3B82F6', strokeWidth: 3, fill: 'white' }}
+                  dot={{ fill: '#2563EB', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#2563EB', strokeWidth: 2, fill: 'white' }}
                 />
-                <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#3B82F6" />
-                    <stop offset="50%" stopColor="#8B5CF6" />
-                    <stop offset="100%" stopColor="#EC4899" />
-                  </linearGradient>
-                </defs>
               </AreaChart>
             ) : (
               <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" opacity={0.5} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#64748B' }}
+                  tick={{ fontSize: 12, fill: '#6B7280' }}
                 />
                 <YAxis 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#64748B' }}
+                  tick={{ fontSize: 12, fill: '#6B7280' }}
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                    border: 'none',
-                    borderRadius: '12px',
-                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                    backdropFilter: 'blur(10px)'
+                    backgroundColor: 'white', 
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                   }}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="value" 
-                  stroke="url(#gradient)"
-                  strokeWidth={4}
-                  dot={{ fill: '#3B82F6', strokeWidth: 3, r: 5 }}
-                  activeDot={{ r: 7, stroke: '#3B82F6', strokeWidth: 3, fill: 'white' }}
+                  stroke="#2563EB"
+                  strokeWidth={3}
+                  dot={{ fill: '#2563EB', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#2563EB', strokeWidth: 2, fill: 'white' }}
                 />
-                <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#3B82F6" />
-                    <stop offset="50%" stopColor="#8B5CF6" />
-                    <stop offset="100%" stopColor="#EC4899" />
-                  </linearGradient>
-                </defs>
               </LineChart>
             )}
           </ResponsiveContainer>
         </div>
-        <div className="absolute -bottom-5 -right-5 w-16 h-16 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-xl" />
       </CardContent>
     </Card>
   );

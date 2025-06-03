@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TrendingUp, ShoppingCart, Package, Truck, Plus } from 'lucide-react';
 import { StatsCard } from '@/components/admin/dashboard/StatsCard';
@@ -83,7 +82,11 @@ const salesData = [
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="space-y-8 p-1">
+    <div className="space-y-8 p-1 relative">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-3xl -z-10" />
+      <div className="absolute top-96 right-0 w-96 h-96 bg-gradient-to-br from-pink-200/20 to-orange-200/20 rounded-full blur-3xl -z-10" />
+      
       <PageHeader
         title="Dashboard"
         description="Visão geral da sua loja"
@@ -112,6 +115,7 @@ const Dashboard: React.FC = () => {
             title="Vendas nos Últimos 6 Meses" 
             data={salesData}
             height={350}
+            type="area"
           />
         </div>
         <div className="lg:col-span-1">
@@ -127,6 +131,7 @@ const Dashboard: React.FC = () => {
               { name: 'Dom', value: 5 },
             ]}
             height={350}
+            type="line"
           />
         </div>
       </div>

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import {
   Sidebar,
@@ -25,7 +25,15 @@ import UserCard from '@/components/admin/UserCard';
 
 const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
-  const { logout } = useUser();
+  const { logout, login, isAuthenticated } = useUser();
+  
+  // Auto-login for admin access during development
+  useEffect(() => {
+    if (!isAuthenticated) {
+      console.log('Auto-logging in admin user for development...');
+      login("joao.silva@example.com", "password");
+    }
+  }, [isAuthenticated, login]);
   
   const handleLogout = () => {
     logout();

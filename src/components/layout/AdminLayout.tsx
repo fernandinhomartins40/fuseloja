@@ -20,11 +20,15 @@ import { LayoutDashboard, Package2, Truck, ShoppingCart, BarChart, LogOut, Tags,
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { useUser } from '@/contexts/UserContext';
+import UserCard from '@/components/admin/UserCard';
 
 const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
+  const { logout } = useUser();
   
   const handleLogout = () => {
+    logout();
     toast({
       title: "Sessão finalizada",
       description: "Você foi desconectado com sucesso."
@@ -107,6 +111,7 @@ const AdminLayout: React.FC = () => {
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter>
+            <UserCard />
             <Button 
               variant="outline" 
               className="w-full flex gap-2" 

@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ProductCard } from '../ui/ProductCard';
 import { SectionHeader } from '../ui/SectionHeader';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TagType } from '../ui/ProductTag';
+import { iconComponents, IconName } from '@/utils/categoryIcons';
 
 interface Product {
   title: string;
@@ -17,13 +17,17 @@ interface Category {
   id: string;
   name: string;
   products: Product[];
+  icon: IconName;
+  color: string;
 }
 
-// Sample category data with products
+// Sample category data with products, icons, and colors
 const categories: Category[] = [
   {
     id: "electronics",
     name: "Eletrônicos",
+    icon: "Smartphone",
+    color: "#D3E4FD",
     products: [
       {
         title: "Smartphone Ultra Plus 512GB",
@@ -55,6 +59,8 @@ const categories: Category[] = [
   {
     id: "fashion",
     name: "Moda",
+    icon: "Shirt",
+    color: "#FFDEE2",
     products: [
       {
         title: "Tênis Esportivo",
@@ -84,6 +90,8 @@ const categories: Category[] = [
   {
     id: "home",
     name: "Casa & Decoração",
+    icon: "Home",
+    color: "#F2FCE2",
     products: [
       {
         title: "Cafeteira Espresso",
@@ -116,6 +124,25 @@ const categories: Category[] = [
 ];
 
 export const CategoryProducts: React.FC = () => {
+  const [activeCategory, setActiveCategory] = useState(categories[0].id);
+
+  const getActiveCategory = () => {
+    return categories.find(cat => cat.id === activeCategory) || categories[0];
+  };
+
+  const getContrastTextColor = (hexColor: string): string => {
+    // Convert hex to RGB
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+    
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Return dark for light backgrounds and light for dark backgrounds
+    return luminance > 0.5 ? '#374151' : '#FFFFFF';
+  };
+
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -124,29 +151,42 @@ export const CategoryProducts: React.FC = () => {
           description="Explore produtos em suas categorias favoritas"
         />
         
-        <Tabs defaultValue={categories[0].id} className="w-full">
-          <div className="flex justify-center mb-12">
-            <TabsList className="bg-gray-50 border border-gray-200">
-              {categories.map((category) => (
-                <TabsTrigger key={category.id} value={category.id} className="px-6 py-3 text-sm font-medium">
-                  {category.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-          
-          {categories.map((category) => (
-            <TabsContent key={category.id} value={category.id}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {category.products.map((product, index) => (
-                  <div key={index} className="w-full">
-                    <ProductCard {...product} />
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
+        {/* Category Buttons */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map((category) => {
+            const IconComponent = iconComponents[category.icon];
+            const isActive = activeCategory === category.id;
+            const textColor = getContrastTextColor(category.color);
+            
+            return (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 border ${
+                  isActive 
+                    ? 'border-gray-300 shadow-sm' 
+                    : 'border-transparent hover:border-gray-200 hover:shadow-sm'
+                }`}
+                style={{
+                  backgroundColor: isActive ? category.color : 'transparent',
+                  color: isActive ? textColor : '#6B7280'
+                }}
+              >
+                <IconComponent size={20} />
+                <span className="text-sm">{category.name}</span>
+              </button>
+            );
+          })}
+        </div>
+        
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {getActiveCategory().products.map((product, index) => (
+            <div key={index} className="w-full">
+              <ProductCard {...product} />
+            </div>
           ))}
-        </Tabs>
+        </div>
       </div>
     </section>
   );

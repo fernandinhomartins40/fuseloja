@@ -3,32 +3,18 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
-import { defaultSettings } from '@/utils/defaultSettings';
+import { useSettings } from '@/contexts/SettingsContext';
 
-interface FooterProps {
-  settings?: {
-    general?: {
-      storeName?: string;
-      phone?: string;
-      email?: string;
-      address?: string;
-    };
-    visual?: {
-      logo?: string;
-      footerLogo?: string;
-    };
-  };
-}
-
-export const Footer: React.FC<FooterProps> = ({ settings = defaultSettings }) => {
+export const Footer: React.FC = () => {
   const navigate = useNavigate();
+  const { settings } = useSettings();
   
   // Use footer logo if available, otherwise use the main logo
-  const logoUrl = settings?.visual?.footerLogo || settings?.visual?.logo || defaultSettings.visual.logo;
-  const storeName = settings?.general?.storeName || defaultSettings.general.storeName;
-  const phone = settings?.general?.phone || defaultSettings.general.phone;
-  const email = settings?.general?.email || defaultSettings.general.email;
-  const address = settings?.general?.address || defaultSettings.general.address;
+  const logoUrl = settings.visual.footerLogo || settings.visual.logo;
+  const storeName = settings.general.storeName;
+  const phone = settings.general.phone;
+  const email = settings.general.email;
+  const address = settings.general.address;
 
   return (
     <footer className="bg-[#0B0909] pt-[60px] pb-0">

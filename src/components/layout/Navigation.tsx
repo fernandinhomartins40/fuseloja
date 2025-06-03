@@ -16,10 +16,12 @@ import { useUser } from '@/contexts/UserContext';
 import { UserLoginForm } from '../user/UserLoginForm';
 import { useCart } from '@/contexts/CartContext';
 import { CartDrawer } from '../cart/CartDrawer';
+import { useSettings } from '@/contexts/SettingsContext';
 
 export const Navigation: React.FC = () => {
   const { user, isAuthenticated, logout } = useUser();
   const { totalItems } = useCart();
+  const { settings } = useSettings();
   const [loginSheetOpen, setLoginSheetOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -35,8 +37,8 @@ export const Navigation: React.FC = () => {
     <div className="flex justify-between items-center py-5 px-4 bg-white">
       <Link to="/">
         <img
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/4422fe2166933687d9b3b9fe0be3d68809b8b230"
-          alt="ShopMaster"
+          src={settings.visual.logo}
+          alt={settings.general.storeName}
           className="h-[34px]"
         />
       </Link>

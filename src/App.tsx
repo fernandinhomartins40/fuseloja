@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { UserProvider } from "./contexts/UserContext";
 import { CartProvider } from "./contexts/CartContext";
+import { SettingsProvider } from "./contexts/SettingsContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AboutUs from "./pages/AboutUs";
@@ -62,13 +63,15 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <UserProvider>
         <CartProvider>
-          <BrowserRouter>
-            <TooltipProvider>
-              <AppRoutes />
-              <Toaster />
-              <Sonner />
-            </TooltipProvider>
-          </BrowserRouter>
+          <SettingsProvider>
+            <BrowserRouter>
+              <TooltipProvider>
+                <AppRoutes />
+                <Toaster />
+                <Sonner />
+              </TooltipProvider>
+            </BrowserRouter>
+          </SettingsProvider>
         </CartProvider>
       </UserProvider>
     </QueryClientProvider>

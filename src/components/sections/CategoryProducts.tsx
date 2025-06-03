@@ -117,7 +117,7 @@ const categories: Category[] = [
 
 export const CategoryProducts: React.FC = () => {
   return (
-    <section className="py-12">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <SectionHeader
           title="Compre por Categoria"
@@ -125,20 +125,22 @@ export const CategoryProducts: React.FC = () => {
         />
         
         <Tabs defaultValue={categories[0].id} className="w-full">
-          <TabsList className="flex justify-center mb-8 bg-background border overflow-x-auto max-w-full">
-            {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id} className="px-4 md:px-8">
-                {category.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          <div className="flex justify-center mb-12">
+            <TabsList className="bg-gray-50 border border-gray-200">
+              {categories.map((category) => (
+                <TabsTrigger key={category.id} value={category.id} className="px-6 py-3 text-sm font-medium">
+                  {category.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
           
           {categories.map((category) => (
             <TabsContent key={category.id} value={category.id}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {category.products.map((product, index) => (
                   <div key={index} className="w-full">
-                    <ProductCard key={index} {...product} />
+                    <ProductCard {...product} />
                   </div>
                 ))}
               </div>

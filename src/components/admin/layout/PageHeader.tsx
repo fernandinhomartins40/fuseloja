@@ -61,7 +61,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           <Button
             onClick={action.onClick}
             variant={action.variant || 'default'}
-            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white border-0 rounded-none"
+            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white"
           >
             {action.icon && <action.icon className="w-4 h-4" />}
             {action.label}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TrendingUp, ShoppingCart, Package, Truck, Plus } from 'lucide-react';
 import { StatsCard } from '@/components/admin/dashboard/StatsCard';

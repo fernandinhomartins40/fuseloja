@@ -106,7 +106,7 @@ const Settings: React.FC = () => {
       />
       
       {hasUnsavedChanges && (
-        <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-none text-amber-800">
+        <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800">
           <AlertCircle className="h-4 w-4" />
           <span className="text-sm">Você possui alterações não salvas.</span>
         </div>
@@ -116,8 +116,7 @@ const Settings: React.FC = () => {
         <div className="flex items-center gap-2">
           <Button 
             variant="outline" 
-            onClick={handleResetSettings} 
-            className="rounded-none border-gray-400"
+            onClick={handleResetSettings}
             disabled={isLoading}
           >
             <RotateCcw className="mr-2 h-4 w-4" />
@@ -126,8 +125,7 @@ const Settings: React.FC = () => {
           
           <Button 
             variant="outline" 
-            onClick={handleExportSettings} 
-            className="rounded-none border-gray-400"
+            onClick={handleExportSettings}
             disabled={isLoading}
           >
             <Download className="mr-2 h-4 w-4" />
@@ -135,7 +133,7 @@ const Settings: React.FC = () => {
           </Button>
           
           <div className="relative">
-            <Button variant="outline" className="rounded-none border-gray-400" disabled={isLoading}>
+            <Button variant="outline" disabled={isLoading}>
               <Upload className="mr-2 h-4 w-4" />
               Importar
             </Button>
@@ -150,7 +148,7 @@ const Settings: React.FC = () => {
         </div>
       </div>
       
-      <Card className="border-gray-300 rounded-none">
+      <Card className="shadow-sm">
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}

@@ -9,6 +9,7 @@ import { ColorPicker } from './ColorPicker';
 import { LogoUploader } from './LogoUploader';
 import { SettingsPreview } from './SettingsPreview';
 import { useSettings } from '@/contexts/SettingsContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface VisualSettingsProps {
   settings: VisualSettingsType;
@@ -50,9 +51,11 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
       
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="space-y-6">
-          <div className="p-4 border border-gray-300 rounded-none bg-gray-50">
-            <h4 className="text-sm font-medium mb-3">Logo e Favicon</h4>
-            <div className="grid gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Logo e Favicon</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div>
                 <Label className="mb-2">Logo Principal</Label>
                 <LogoUploader 
@@ -80,12 +83,14 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
                   small
                 />
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
           
-          <div className="p-4 border border-gray-300 rounded-none bg-gray-50">
-            <h4 className="text-sm font-medium mb-3">Esquema de Cores</h4>
-            <div className="grid gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Esquema de Cores</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="grid gap-2">
                 <Label>Cor Primária</Label>
                 <ColorPicker 
@@ -117,18 +122,18 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
                   onChange={(color) => handleChange('colors.text', color)}
                 />
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
           
-          <div className="p-4 border border-gray-300 rounded-none bg-gray-50">
-            <div className="grid gap-4">
+          <Card>
+            <CardContent className="pt-6 space-y-4">
               <div className="grid gap-2">
                 <Label htmlFor="fontFamily">Família da Fonte</Label>
                 <Select
                   value={settings.fontFamily}
                   onValueChange={(value) => handleChange('fontFamily', value)}
                 >
-                  <SelectTrigger className="rounded-none border-gray-400">
+                  <SelectTrigger>
                     <SelectValue placeholder="Selecione uma fonte" />
                   </SelectTrigger>
                   <SelectContent>
@@ -162,8 +167,8 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
                   </div>
                 </RadioGroup>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
         
         {/* Preview Column */}

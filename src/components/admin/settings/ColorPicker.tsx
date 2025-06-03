@@ -43,18 +43,18 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => 
       <PopoverTrigger asChild>
         <div className="flex items-center gap-2 cursor-pointer">
           <div
-            className="w-10 h-10 border border-gray-400 rounded-none"
+            className="w-10 h-10 border rounded-md shadow-sm"
             style={{ backgroundColor: currentColor }}
           />
           <Input
             value={currentColor}
             onChange={handleColorChange}
             onBlur={handleBlur}
-            className="w-32 rounded-none border-gray-400"
+            className="w-32"
           />
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-3 border-gray-400 rounded-none">
+      <PopoverContent className="w-64 p-3">
         <div className="space-y-2">
           <div className="relative overflow-hidden">
             <Input
@@ -63,7 +63,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => 
               value={currentColor}
               onChange={handleColorChange}
               onBlur={handleBlur}
-              className="h-32 p-0 border-0 rounded-none"
+              className="h-32 p-0 border-0"
               style={{ width: '100%' }}
             />
           </div>
@@ -76,7 +76,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => 
               {presetColors.map((presetColor, i) => (
                 <button
                   key={i}
-                  className="w-6 h-6 border border-gray-400 hover:scale-110 transition-transform rounded-none"
+                  className="w-6 h-6 border rounded-md hover:scale-110 transition-transform shadow-sm"
                   style={{ backgroundColor: presetColor }}
                   onClick={() => {
                     setCurrentColor(presetColor);

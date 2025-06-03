@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ProductTag, TagType } from './ProductTag';
 import { ShoppingCart } from 'lucide-react';
@@ -40,7 +39,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group min-w-[240px] w-full h-full flex flex-col">
+    <div className="bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group min-w-[240px] w-full h-full flex flex-col">
       <div className="relative p-4 md:p-6 flex flex-col flex-1">
         <Link to={`/produto/${id}`} className="block relative mb-3 overflow-hidden rounded-md aspect-square">
           {tag && <ProductTag type={tag} className="absolute top-2 right-2 z-10" />}

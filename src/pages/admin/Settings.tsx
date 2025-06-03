@@ -110,22 +110,22 @@ const Settings: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold">Configurações da Loja</h1>
-          <p className="text-muted-foreground">Personalize sua loja de acordo com sua identidade visual.</p>
+          <p className="text-gray-600">Personalize sua loja de acordo com sua identidade visual.</p>
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={handleResetSettings}>
+          <Button variant="outline" onClick={handleResetSettings} className="rounded-none border-gray-400">
             <RotateCcw className="mr-2 h-4 w-4" />
             Redefinir
           </Button>
           
-          <Button variant="outline" onClick={handleExportSettings}>
+          <Button variant="outline" onClick={handleExportSettings} className="rounded-none border-gray-400">
             <Download className="mr-2 h-4 w-4" />
             Exportar
           </Button>
           
           <div className="relative">
-            <Button variant="outline">
+            <Button variant="outline" className="rounded-none border-gray-400">
               <Upload className="mr-2 h-4 w-4" />
               Importar
             </Button>
@@ -137,14 +137,14 @@ const Settings: React.FC = () => {
             />
           </div>
           
-          <Button onClick={handleSaveSettings}>
+          <Button onClick={handleSaveSettings} className="bg-blue-500 hover:bg-blue-600 text-white border-0 rounded-none">
             <Save className="mr-2 h-4 w-4" />
             Salvar
           </Button>
         </div>
       </div>
       
-      <Card>
+      <Card className="border-gray-300 rounded-none">
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}

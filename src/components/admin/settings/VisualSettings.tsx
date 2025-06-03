@@ -39,13 +39,13 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Configurações Visuais</h3>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-gray-600">
           Personalize a aparência da sua loja.
         </p>
       </div>
       
       <div className="grid gap-6">
-        <div>
+        <div className="p-4 border border-gray-300 rounded-none bg-gray-50">
           <h4 className="text-sm font-medium mb-3">Logo e Favicon</h4>
           <div className="grid gap-4">
             <div>
@@ -62,7 +62,7 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
                 imageUrl={settings.footerLogo}
                 onImageChange={(url) => handleChange('footerLogo', url)}
               />
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Se não for definida, a logo principal será usada no rodapé.
               </p>
             </div>
@@ -78,7 +78,7 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
           </div>
         </div>
         
-        <div>
+        <div className="p-4 border border-gray-300 rounded-none bg-gray-50">
           <h4 className="text-sm font-medium mb-3">Esquema de Cores</h4>
           <div className="grid gap-4">
             <div className="grid gap-2">
@@ -115,46 +115,48 @@ export const VisualSettings: React.FC<VisualSettingsProps> = ({ settings, onChan
           </div>
         </div>
         
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="fontFamily">Família da Fonte</Label>
-            <Select
-              value={settings.fontFamily}
-              onValueChange={(value) => handleChange('fontFamily', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione uma fonte" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Inter, sans-serif">Inter</SelectItem>
-                <SelectItem value="'Roboto', sans-serif">Roboto</SelectItem>
-                <SelectItem value="'Montserrat', sans-serif">Montserrat</SelectItem>
-                <SelectItem value="'Lato', sans-serif">Lato</SelectItem>
-                <SelectItem value="'Poppins', sans-serif">Poppins</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="grid gap-2">
-            <Label>Estilo dos Botões</Label>
-            <RadioGroup
-              value={settings.buttonStyle}
-              onValueChange={(value) => handleChange('buttonStyle', value)}
-              className="flex gap-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="rounded" id="rounded" />
-                <Label htmlFor="rounded" className="cursor-pointer">Arredondado</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="square" id="square" />
-                <Label htmlFor="square" className="cursor-pointer">Quadrado</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="bordered" id="bordered" />
-                <Label htmlFor="bordered" className="cursor-pointer">Com borda</Label>
-              </div>
-            </RadioGroup>
+        <div className="p-4 border border-gray-300 rounded-none bg-gray-50">
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="fontFamily">Família da Fonte</Label>
+              <Select
+                value={settings.fontFamily}
+                onValueChange={(value) => handleChange('fontFamily', value)}
+              >
+                <SelectTrigger className="rounded-none border-gray-400">
+                  <SelectValue placeholder="Selecione uma fonte" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Inter, sans-serif">Inter</SelectItem>
+                  <SelectItem value="'Roboto', sans-serif">Roboto</SelectItem>
+                  <SelectItem value="'Montserrat', sans-serif">Montserrat</SelectItem>
+                  <SelectItem value="'Lato', sans-serif">Lato</SelectItem>
+                  <SelectItem value="'Poppins', sans-serif">Poppins</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="grid gap-2">
+              <Label>Estilo dos Botões</Label>
+              <RadioGroup
+                value={settings.buttonStyle}
+                onValueChange={(value) => handleChange('buttonStyle', value)}
+                className="flex gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="rounded" id="rounded" />
+                  <Label htmlFor="rounded" className="cursor-pointer">Arredondado</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="square" id="square" />
+                  <Label htmlFor="square" className="cursor-pointer">Quadrado</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="bordered" id="bordered" />
+                  <Label htmlFor="bordered" className="cursor-pointer">Com borda</Label>
+                </div>
+              </RadioGroup>
+            </div>
           </div>
         </div>
       </div>

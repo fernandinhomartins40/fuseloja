@@ -99,14 +99,14 @@ const Dashboard: React.FC = () => {
       />
       
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {stats.map((stat, index) => (
           <StatsCard key={index} {...stat} />
         ))}
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <ChartCard 
             title="Vendas nos Últimos 6 Meses" 
@@ -141,17 +141,40 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Tables Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <ModernTable
           title="Pedidos Recentes"
-          columns={recentOrdersColumns}
-          data={recentOrders}
+          columns={[
+            { key: 'id', label: 'ID', width: '80px' },
+            { key: 'customer', label: 'Cliente' },
+            { key: 'date', label: 'Data', width: '120px' },
+            { key: 'status', label: 'Status', width: '140px', align: 'center' as const },
+            { key: 'total', label: 'Total', width: '100px', align: 'right' as const },
+          ]}
+          data={[
+            { id: "#4832", customer: "Ana Silva", date: "12/05/2025", status: "Entregue", total: "R$ 256,00" },
+            { id: "#4831", customer: "Carlos Mendes", date: "12/05/2025", status: "Em processamento", total: "R$ 129,90" },
+            { id: "#4830", customer: "Beatriz Lima", date: "11/05/2025", status: "Enviado", total: "R$ 345,50" },
+            { id: "#4829", customer: "Diego Santos", date: "11/05/2025", status: "Aguardando pagamento", total: "R$ 78,90" },
+            { id: "#4828", customer: "Juliana Costa", date: "10/05/2025", status: "Entregue", total: "R$ 199,00" },
+          ]}
         />
         
         <ModernTable
           title="Produtos com Estoque Baixo"
-          columns={lowStockColumns}
-          data={lowStockProducts}
+          columns={[
+            { key: 'id', label: 'ID', width: '80px' },
+            { key: 'name', label: 'Produto' },
+            { key: 'stock', label: 'Atual', width: '80px', align: 'center' as const },
+            { key: 'minStock', label: 'Mínimo', width: '80px', align: 'center' as const },
+            { key: 'status', label: 'Status', width: '80px', align: 'center' as const },
+          ]}
+          data={[
+            { id: "P345", name: "Smartwatch Premium", stock: 3, minStock: 5, status: "🔴" },
+            { id: "P212", name: "Caixa de Som Bluetooth Portátil", stock: 2, minStock: 10, status: "🔴" },
+            { id: "P187", name: "Mouse Sem Fio Ergonômico", stock: 4, minStock: 8, status: "🔴" },
+            { id: "P156", name: "Carregador Sem Fio Rápido", stock: 6, minStock: 10, status: "🔴" },
+          ]}
         />
       </div>
     </div>

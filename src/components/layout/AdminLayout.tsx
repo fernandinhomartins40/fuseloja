@@ -46,95 +46,95 @@ const AdminLayout: React.FC = () => {
 
   return (
     <SidebarProvider>
-      <div className="flex w-full min-h-screen bg-gray-50">
-        <Sidebar className="border-r bg-white">
-          <SidebarHeader className="border-b bg-white">
-            <div className="flex items-center gap-3 px-4 py-4">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <Store className="w-5 h-5 text-white" />
+      <div className="flex w-full min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+        <Sidebar className="border-0 bg-gradient-to-b from-white to-slate-50 shadow-xl">
+          <SidebarHeader className="border-0 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-br-3xl">
+            <div className="flex items-center gap-3 px-6 py-6">
+              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                <Store className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-bold text-white">
                   ShopMaster
                 </h2>
-                <p className="text-xs text-gray-600 font-normal">Painel Administrativo</p>
+                <p className="text-xs text-indigo-100 font-medium">Painel Administrativo</p>
               </div>
             </div>
           </SidebarHeader>
-          <SidebarContent className="bg-white">
+          <SidebarContent className="bg-transparent px-3 py-4">
             <SidebarGroup>
-              <SidebarGroupLabel className="text-gray-700 font-medium text-sm">
+              <SidebarGroupLabel className="text-slate-700 font-bold text-sm mb-3 px-3">
                 Gerenciamento
               </SidebarGroupLabel>
               <SidebarGroupContent>
-                <SidebarMenu>
+                <SidebarMenu className="space-y-2">
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Dashboard" className="hover:bg-gray-100 text-gray-700 hover:text-blue-600 transition-colors">
-                      <a href="/admin" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <LayoutDashboard className="w-4 h-4 text-blue-600" />
+                    <SidebarMenuButton asChild tooltip="Dashboard" className="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 text-slate-700 hover:text-indigo-600 transition-all duration-300 rounded-2xl py-3 group">
+                      <a href="/admin" className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center group-hover:from-indigo-200 group-hover:to-purple-200 transition-all duration-300">
+                          <LayoutDashboard className="w-5 h-5 text-indigo-600" />
                         </div>
-                        <span className="font-medium">Dashboard</span>
+                        <span className="font-semibold">Dashboard</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Produtos" className="hover:bg-gray-100 text-gray-700 hover:text-blue-600 transition-colors">
-                      <a href="/admin/products" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <Package2 className="w-4 h-4 text-blue-600" />
+                    <SidebarMenuButton asChild tooltip="Produtos" className="hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 text-slate-700 hover:text-emerald-600 transition-all duration-300 rounded-2xl py-3 group">
+                      <a href="/admin/products" className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-xl flex items-center justify-center group-hover:from-emerald-200 group-hover:to-teal-200 transition-all duration-300">
+                          <Package2 className="w-5 h-5 text-emerald-600" />
                         </div>
-                        <span className="font-medium">Produtos</span>
+                        <span className="font-semibold">Produtos</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Categorias" className="hover:bg-gray-100 text-gray-700 hover:text-blue-600 transition-colors">
-                      <a href="/admin/categories" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <Tags className="w-4 h-4 text-blue-600" />
+                    <SidebarMenuButton asChild tooltip="Categorias" className="hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 text-slate-700 hover:text-amber-600 transition-all duration-300 rounded-2xl py-3 group">
+                      <a href="/admin/categories" className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl flex items-center justify-center group-hover:from-amber-200 group-hover:to-orange-200 transition-all duration-300">
+                          <Tags className="w-5 h-5 text-amber-600" />
                         </div>
-                        <span className="font-medium">Categorias</span>
+                        <span className="font-semibold">Categorias</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Pedidos" className="hover:bg-gray-100 text-gray-700 hover:text-blue-600 transition-colors">
-                      <a href="/admin/orders" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <ShoppingCart className="w-4 h-4 text-blue-600" />
+                    <SidebarMenuButton asChild tooltip="Pedidos" className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 text-slate-700 hover:text-blue-600 transition-all duration-300 rounded-2xl py-3 group">
+                      <a href="/admin/orders" className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center group-hover:from-blue-200 group-hover:to-cyan-200 transition-all duration-300">
+                          <ShoppingCart className="w-5 h-5 text-blue-600" />
                         </div>
-                        <span className="font-medium">Pedidos</span>
+                        <span className="font-semibold">Pedidos</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Entregas" className="hover:bg-gray-100 text-gray-700 hover:text-blue-600 transition-colors">
-                      <a href="/admin/deliveries" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <Truck className="w-4 h-4 text-blue-600" />
+                    <SidebarMenuButton asChild tooltip="Entregas" className="hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 text-slate-700 hover:text-violet-600 transition-all duration-300 rounded-2xl py-3 group">
+                      <a href="/admin/deliveries" className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-violet-100 to-purple-100 rounded-xl flex items-center justify-center group-hover:from-violet-200 group-hover:to-purple-200 transition-all duration-300">
+                          <Truck className="w-5 h-5 text-violet-600" />
                         </div>
-                        <span className="font-medium">Entregas</span>
+                        <span className="font-semibold">Entregas</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Relatórios" className="hover:bg-gray-100 text-gray-700 hover:text-blue-600 transition-colors">
-                      <a href="/admin/reports" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <BarChart className="w-4 h-4 text-blue-600" />
+                    <SidebarMenuButton asChild tooltip="Relatórios" className="hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 text-slate-700 hover:text-rose-600 transition-all duration-300 rounded-2xl py-3 group">
+                      <a href="/admin/reports" className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center group-hover:from-rose-200 group-hover:to-pink-200 transition-all duration-300">
+                          <BarChart className="w-5 h-5 text-rose-600" />
                         </div>
-                        <span className="font-medium">Relatórios</span>
+                        <span className="font-semibold">Relatórios</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Configurações" className="hover:bg-gray-100 text-gray-700 hover:text-blue-600 transition-colors">
-                      <a href="/admin/settings" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <Settings className="w-4 h-4 text-blue-600" />
+                    <SidebarMenuButton asChild tooltip="Configurações" className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-gray-50 text-slate-700 hover:text-slate-600 transition-all duration-300 rounded-2xl py-3 group">
+                      <a href="/admin/settings" className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-slate-100 to-gray-100 rounded-xl flex items-center justify-center group-hover:from-slate-200 group-hover:to-gray-200 transition-all duration-300">
+                          <Settings className="w-5 h-5 text-slate-600" />
                         </div>
-                        <span className="font-medium">Configurações</span>
+                        <span className="font-semibold">Configurações</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -142,27 +142,27 @@ const AdminLayout: React.FC = () => {
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
-          <SidebarFooter className="border-t bg-white p-4">
+          <SidebarFooter className="border-0 bg-transparent p-4 space-y-3">
             <UserCard />
             <Button 
               variant="outline" 
-              className="w-full flex gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors font-medium" 
+              className="w-full flex gap-3 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-600 hover:border-red-300 transition-all duration-300 font-semibold rounded-2xl py-3 border-2" 
               onClick={handleLogout}
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-5 w-5" />
               <span>Sair</span>
             </Button>
           </SidebarFooter>
         </Sidebar>
-        <SidebarInset className="bg-gray-50">
-          <div className="flex items-center gap-2 p-4 bg-white border-b shadow-sm">
-            <SidebarTrigger className="hover:bg-gray-100 text-gray-700 hover:text-blue-600 transition-colors" />
-            <div className="w-px h-6 bg-gray-300 mx-2" />
-            <h1 className="text-lg font-semibold text-gray-900">
+        <SidebarInset className="bg-transparent">
+          <div className="flex items-center gap-4 p-6 bg-white bg-opacity-80 backdrop-blur-md border-0 shadow-lg rounded-br-3xl">
+            <SidebarTrigger className="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 text-slate-700 hover:text-indigo-600 transition-all duration-300 rounded-xl p-2" />
+            <div className="w-px h-6 bg-gradient-to-b from-slate-300 to-transparent mx-2" />
+            <h1 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
               Painel Administrativo
             </h1>
           </div>
-          <div className="p-6">
+          <div className="p-8">
             <Outlet />
           </div>
         </SidebarInset>

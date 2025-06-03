@@ -30,29 +30,25 @@ export const ModernTable: React.FC<ModernTableProps> = ({
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       'Entregue': { 
-        variant: 'default' as const, 
-        className: 'bg-green-600 text-white hover:bg-green-700' 
+        className: 'bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold px-3 py-1 rounded-full text-xs shadow-md' 
       },
       'Enviado': { 
-        variant: 'default' as const, 
-        className: 'bg-blue-600 text-white hover:bg-blue-700' 
+        className: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold px-3 py-1 rounded-full text-xs shadow-md' 
       },
       'Em processamento': { 
-        variant: 'default' as const, 
-        className: 'bg-yellow-600 text-white hover:bg-yellow-700' 
+        className: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold px-3 py-1 rounded-full text-xs shadow-md' 
       },
       'Aguardando pagamento': { 
-        variant: 'default' as const, 
-        className: 'bg-gray-600 text-white hover:bg-gray-700' 
+        className: 'bg-gradient-to-r from-slate-500 to-gray-500 text-white font-semibold px-3 py-1 rounded-full text-xs shadow-md' 
       },
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig['Aguardando pagamento'];
     
     return (
-      <Badge variant={config.variant} className={`${config.className} transition-colors`}>
+      <span className={config.className}>
         {status}
-      </Badge>
+      </span>
     );
   };
 
@@ -64,32 +60,35 @@ export const ModernTable: React.FC<ModernTableProps> = ({
   };
 
   return (
-    <Card className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
-      <CardHeader className="pb-4 bg-gray-50 border-b border-gray-200">
+    <Card className="bg-gradient-to-br from-white to-slate-50 border-0 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+      <CardHeader className="pb-4 bg-gradient-to-r from-violet-50 to-purple-50 rounded-t-2xl border-b-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold text-gray-900">
+          <CardTitle className="text-xl font-bold text-slate-900">
             {title}
           </CardTitle>
-          <div className="w-2 h-2 bg-green-500 rounded-full" />
+          <div className="flex space-x-2">
+            <div className="w-3 h-3 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full animate-pulse" />
+            <div className="w-3 h-3 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full" />
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-0">
         {data.length === 0 ? (
           <div className="p-8 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">📊</span>
+            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center">
+              <span className="text-3xl">📊</span>
             </div>
-            <p className="text-gray-500 font-medium">{emptyMessage}</p>
+            <p className="text-slate-600 font-semibold">{emptyMessage}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
+              <thead>
+                <tr className="bg-gradient-to-r from-slate-50 to-gray-50">
                   {columns.map((column) => (
                     <th
                       key={column.key}
-                      className={`px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200 ${
+                      className={`px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider ${
                         column.align === 'center' ? 'text-center' :
                         column.align === 'right' ? 'text-right' : ''
                       }`}
@@ -100,13 +99,13 @@ export const ModernTable: React.FC<ModernTableProps> = ({
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-100">
                 {data.map((row, index) => (
-                  <tr key={index} className="hover:bg-gray-50 transition-colors">
+                  <tr key={index} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
                     {columns.map((column) => (
                       <td
                         key={column.key}
-                        className={`px-6 py-4 whitespace-nowrap text-sm text-gray-700 ${
+                        className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-700 ${
                           column.align === 'center' ? 'text-center' :
                           column.align === 'right' ? 'text-right' : ''
                         }`}

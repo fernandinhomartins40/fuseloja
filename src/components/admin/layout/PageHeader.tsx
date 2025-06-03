@@ -31,13 +31,13 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           <ol className="flex items-center space-x-2 text-sm">
             {breadcrumbs.map((breadcrumb, index) => (
               <li key={index} className="flex items-center">
-                {index > 0 && <span className="mx-2 text-gray-500">/</span>}
+                {index > 0 && <span className="mx-2 text-slate-400">/</span>}
                 {breadcrumb.href ? (
-                  <a href={breadcrumb.href} className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+                  <a href={breadcrumb.href} className="text-slate-600 hover:text-indigo-600 transition-colors font-semibold rounded-lg px-2 py-1 hover:bg-indigo-50">
                     {breadcrumb.label}
                   </a>
                 ) : (
-                  <span className="text-gray-900 font-semibold">
+                  <span className="text-slate-900 font-bold bg-gradient-to-r from-indigo-50 to-purple-50 px-3 py-1 rounded-lg">
                     {breadcrumb.label}
                   </span>
                 )}
@@ -49,21 +49,20 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-3">
             {title}
           </h1>
           {description && (
-            <p className="text-lg text-gray-600">{description}</p>
+            <p className="text-lg text-slate-600 font-medium">{description}</p>
           )}
         </div>
         
         {action && (
           <Button
             onClick={action.onClick}
-            variant={action.variant || 'default'}
-            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white"
+            className="flex items-center gap-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
-            {action.icon && <action.icon className="w-4 h-4" />}
+            {action.icon && <action.icon className="w-5 h-5" />}
             {action.label}
           </Button>
         )}

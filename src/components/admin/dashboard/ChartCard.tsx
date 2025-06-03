@@ -26,13 +26,16 @@ export const ChartCard: React.FC<ChartCardProps> = ({
   type = 'area'
 }) => {
   return (
-    <Card className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
+    <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-0 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold text-gray-900">
+          <CardTitle className="text-xl font-bold text-slate-900">
             {title}
           </CardTitle>
-          <div className="w-3 h-3 bg-green-500 rounded-full" />
+          <div className="flex space-x-2">
+            <div className="w-3 h-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full animate-pulse" />
+            <div className="w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" />
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -42,69 +45,73 @@ export const ChartCard: React.FC<ChartCardProps> = ({
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.2}/>
-                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0.05}/>
+                    <stop offset="5%" stopColor="#6366F1" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#6366F1" stopOpacity={0.05}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" opacity={0.5} />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#6B7280' }}
+                  tick={{ fontSize: 12, fill: '#64748B', fontWeight: 500 }}
                 />
                 <YAxis 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#6B7280' }}
+                  tick={{ fontSize: 12, fill: '#64748B', fontWeight: 500 }}
                 />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: 'white', 
-                    border: '1px solid #E5E7EB',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    border: 'none',
+                    borderRadius: '16px',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                    fontSize: '14px',
+                    fontWeight: 600
                   }}
                 />
                 <Area 
                   type="monotone" 
                   dataKey="value" 
-                  stroke="#2563EB"
-                  strokeWidth={2}
+                  stroke="#6366F1"
+                  strokeWidth={3}
                   fill="url(#colorValue)"
-                  dot={{ fill: '#2563EB', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: '#2563EB', strokeWidth: 2, fill: 'white' }}
+                  dot={{ fill: '#6366F1', strokeWidth: 3, r: 5 }}
+                  activeDot={{ r: 8, stroke: '#6366F1', strokeWidth: 3, fill: 'white' }}
                 />
               </AreaChart>
             ) : (
               <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" opacity={0.5} />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#6B7280' }}
+                  tick={{ fontSize: 12, fill: '#64748B', fontWeight: 500 }}
                 />
                 <YAxis 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#6B7280' }}
+                  tick={{ fontSize: 12, fill: '#64748B', fontWeight: 500 }}
                 />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: 'white', 
-                    border: '1px solid #E5E7EB',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    border: 'none',
+                    borderRadius: '16px',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                    fontSize: '14px',
+                    fontWeight: 600
                   }}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="value" 
-                  stroke="#2563EB"
-                  strokeWidth={3}
-                  dot={{ fill: '#2563EB', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: '#2563EB', strokeWidth: 2, fill: 'white' }}
+                  stroke="#6366F1"
+                  strokeWidth={4}
+                  dot={{ fill: '#6366F1', strokeWidth: 3, r: 5 }}
+                  activeDot={{ r: 8, stroke: '#6366F1', strokeWidth: 3, fill: 'white' }}
                 />
               </LineChart>
             )}

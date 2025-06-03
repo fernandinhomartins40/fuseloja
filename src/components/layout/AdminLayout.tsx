@@ -16,7 +16,7 @@ import {
   SidebarProvider,
   SidebarTrigger
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package2, Truck, ShoppingCart, BarChart, LogOut, Tags, Settings } from 'lucide-react';
+import { LayoutDashboard, Package2, Truck, ShoppingCart, BarChart, LogOut, Tags, Settings, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -46,20 +46,26 @@ const AdminLayout: React.FC = () => {
 
   return (
     <SidebarProvider>
-      <div className="flex w-full min-h-screen bg-background">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center px-2">
-              <h2 className="text-xl font-bold">Painel do Lojista</h2>
+      <div className="flex w-full min-h-screen bg-gray-50">
+        <Sidebar className="border-r border-gray-200">
+          <SidebarHeader className="border-b border-gray-200 bg-white">
+            <div className="flex items-center gap-2 px-4 py-3">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Store className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">ShopMaster</h2>
+                <p className="text-xs text-gray-500">Painel Administrativo</p>
+              </div>
             </div>
           </SidebarHeader>
-          <SidebarContent>
+          <SidebarContent className="bg-white">
             <SidebarGroup>
-              <SidebarGroupLabel>Gerenciamento</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-gray-700 font-semibold">Gerenciamento</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Dashboard">
+                    <SidebarMenuButton asChild tooltip="Dashboard" className="hover:bg-primary/10 hover:text-primary">
                       <a href="/admin">
                         <LayoutDashboard />
                         <span>Dashboard</span>
@@ -67,7 +73,7 @@ const AdminLayout: React.FC = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Produtos">
+                    <SidebarMenuButton asChild tooltip="Produtos" className="hover:bg-primary/10 hover:text-primary">
                       <a href="/admin/products">
                         <Package2 />
                         <span>Produtos</span>
@@ -75,7 +81,7 @@ const AdminLayout: React.FC = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Categorias">
+                    <SidebarMenuButton asChild tooltip="Categorias" className="hover:bg-primary/10 hover:text-primary">
                       <a href="/admin/categories">
                         <Tags />
                         <span>Categorias</span>
@@ -83,7 +89,7 @@ const AdminLayout: React.FC = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Pedidos">
+                    <SidebarMenuButton asChild tooltip="Pedidos" className="hover:bg-primary/10 hover:text-primary">
                       <a href="/admin/orders">
                         <ShoppingCart />
                         <span>Pedidos</span>
@@ -91,7 +97,7 @@ const AdminLayout: React.FC = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Entregas">
+                    <SidebarMenuButton asChild tooltip="Entregas" className="hover:bg-primary/10 hover:text-primary">
                       <a href="/admin/deliveries">
                         <Truck />
                         <span>Entregas</span>
@@ -99,7 +105,7 @@ const AdminLayout: React.FC = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Relatórios">
+                    <SidebarMenuButton asChild tooltip="Relatórios" className="hover:bg-primary/10 hover:text-primary">
                       <a href="/admin/reports">
                         <BarChart />
                         <span>Relatórios</span>
@@ -107,7 +113,7 @@ const AdminLayout: React.FC = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Configurações">
+                    <SidebarMenuButton asChild tooltip="Configurações" className="hover:bg-primary/10 hover:text-primary">
                       <a href="/admin/settings">
                         <Settings />
                         <span>Configurações</span>
@@ -118,11 +124,11 @@ const AdminLayout: React.FC = () => {
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
-          <SidebarFooter>
+          <SidebarFooter className="border-t border-gray-200 bg-white">
             <UserCard />
             <Button 
               variant="outline" 
-              className="w-full flex gap-2" 
+              className="w-full flex gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200" 
               onClick={handleLogout}
             >
               <LogOut className="h-4 w-4" />
@@ -130,12 +136,13 @@ const AdminLayout: React.FC = () => {
             </Button>
           </SidebarFooter>
         </Sidebar>
-        <SidebarInset>
-          <div className="flex items-center gap-2 p-4 border-b">
-            <SidebarTrigger />
-            <h1 className="text-lg font-semibold">Admin Dashboard</h1>
+        <SidebarInset className="bg-gray-50">
+          <div className="flex items-center gap-2 p-4 bg-white border-b border-gray-200 shadow-sm">
+            <SidebarTrigger className="hover:bg-gray-100" />
+            <div className="w-px h-6 bg-gray-300 mx-2" />
+            <h1 className="text-lg font-semibold text-gray-900">Painel Administrativo</h1>
           </div>
-          <div className="p-4 md:p-6">
+          <div className="p-6">
             <Outlet />
           </div>
         </SidebarInset>

@@ -1,40 +1,52 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { TabsContent } from '@/components/ui/tabs';
-import { BarChart, LineChart, Package, ShoppingCart, TrendingUp, Truck } from 'lucide-react';
+import { TrendingUp, ShoppingCart, Package, Truck, Plus } from 'lucide-react';
+import { StatsCard } from '@/components/admin/dashboard/StatsCard';
+import { ChartCard } from '@/components/admin/dashboard/ChartCard';
+import { ModernTable } from '@/components/admin/dashboard/ModernTable';
+import { PageHeader } from '@/components/admin/layout/PageHeader';
 
-// Sample data for dashboard
 const stats = [
   {
     title: "Total de Vendas",
     value: "R$ 15.231,89",
-    description: "+20% em relação ao mês passado",
+    description: "Vendas no mês atual",
     icon: TrendingUp,
-    color: "text-green-500"
+    trend: 'up' as const,
+    trendValue: '+20%'
   },
   {
     title: "Pedidos",
     value: "124",
-    description: "23 aguardando despacho",
+    description: "Pedidos este mês",
     icon: ShoppingCart,
-    color: "text-blue-500"
+    trend: 'up' as const,
+    trendValue: '+12%'
   },
   {
     title: "Produtos",
     value: "1.342",
-    description: "12 com estoque baixo",
+    description: "Total no catálogo",
     icon: Package,
-    color: "text-amber-500"
+    trend: 'neutral' as const,
+    trendValue: '12 baixo estoque'
   },
   {
     title: "Entregas",
     value: "87",
-    description: "14 em trânsito",
+    description: "Entregas realizadas",
     icon: Truck,
-    color: "text-purple-500"
+    trend: 'up' as const,
+    trendValue: '+8%'
   },
+];
+
+const recentOrdersColumns = [
+  { key: 'id', label: 'ID', width: '80px' },
+  { key: 'customer', label: 'Cliente' },
+  { key: 'date', label: 'Data', width: '120px' },
+  { key: 'status', label: 'Status', width: '140px', align: 'center' as const },
+  { key: 'total', label: 'Total', width: '100px', align: 'right' as const },
 ];
 
 const recentOrders = [
@@ -45,124 +57,93 @@ const recentOrders = [
   { id: "#4828", customer: "Juliana Costa", date: "10/05/2025", status: "Entregue", total: "R$ 199,00" },
 ];
 
+const lowStockColumns = [
+  { key: 'id', label: 'ID', width: '80px' },
+  { key: 'name', label: 'Produto' },
+  { key: 'stock', label: 'Atual', width: '80px', align: 'center' as const },
+  { key: 'minStock', label: 'Mínimo', width: '80px', align: 'center' as const },
+  { key: 'status', label: 'Status', width: '80px', align: 'center' as const },
+];
+
 const lowStockProducts = [
-  { id: "P345", name: "Smartwatch Premium", stock: 3, minStock: 5 },
-  { id: "P212", name: "Caixa de Som Bluetooth Portátil", stock: 2, minStock: 10 },
-  { id: "P187", name: "Mouse Sem Fio Ergonômico", stock: 4, minStock: 8 },
-  { id: "P156", name: "Carregador Sem Fio Rápido", stock: 6, minStock: 10 },
+  { id: "P345", name: "Smartwatch Premium", stock: 3, minStock: 5, status: "🔴" },
+  { id: "P212", name: "Caixa de Som Bluetooth Portátil", stock: 2, minStock: 10, status: "🔴" },
+  { id: "P187", name: "Mouse Sem Fio Ergonômico", stock: 4, minStock: 8, status: "🔴" },
+  { id: "P156", name: "Carregador Sem Fio Rápido", stock: 6, minStock: 10, status: "🔴" },
+];
+
+const salesData = [
+  { name: 'Jan', value: 4000 },
+  { name: 'Fev', value: 3000 },
+  { name: 'Mar', value: 6000 },
+  { name: 'Abr', value: 8000 },
+  { name: 'Mai', value: 5000 },
+  { name: 'Jun', value: 7000 },
 ];
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="space-y-6">
-      <SectionHeader title="Dashboard" description="Visão geral da sua loja" />
+    <div className="space-y-8 p-1">
+      <PageHeader
+        title="Dashboard"
+        description="Visão geral da sua loja"
+        breadcrumbs={[
+          { label: 'Admin' },
+          { label: 'Dashboard' }
+        ]}
+        action={{
+          label: 'Novo Produto',
+          icon: Plus,
+          onClick: () => console.log('Novo produto')
+        }}
+      />
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-              <stat.icon className={`h-5 w-5 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
-            </CardContent>
-          </Card>
+          <StatsCard key={index} {...stat} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Pedidos Recentes</CardTitle>
-            <CardDescription>Os últimos 5 pedidos recebidos</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2 px-2 font-medium">ID</th>
-                    <th className="text-left py-2 px-2 font-medium">Cliente</th>
-                    <th className="text-left py-2 px-2 font-medium">Data</th>
-                    <th className="text-left py-2 px-2 font-medium">Status</th>
-                    <th className="text-right py-2 px-2 font-medium">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentOrders.map((order, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="py-2 px-2">{order.id}</td>
-                      <td className="py-2 px-2">{order.customer}</td>
-                      <td className="py-2 px-2">{order.date}</td>
-                      <td className="py-2 px-2">
-                        <span className={`inline-block px-2 py-1 text-xs rounded-full ${
-                          order.status === "Entregue" ? "bg-green-100 text-green-800" :
-                          order.status === "Enviado" ? "bg-blue-100 text-blue-800" :
-                          order.status === "Em processamento" ? "bg-yellow-100 text-yellow-800" :
-                          "bg-gray-100 text-gray-800"
-                        }`}>
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="text-right py-2 px-2">{order.total}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Produtos com Estoque Baixo</CardTitle>
-            <CardDescription>Produtos que precisam de reposição</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2 px-2 font-medium">ID</th>
-                    <th className="text-left py-2 px-2 font-medium">Produto</th>
-                    <th className="text-center py-2 px-2 font-medium">Atual</th>
-                    <th className="text-center py-2 px-2 font-medium">Mínimo</th>
-                    <th className="text-center py-2 px-2 font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {lowStockProducts.map((product, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="py-2 px-2">{product.id}</td>
-                      <td className="py-2 px-2">{product.name}</td>
-                      <td className="py-2 px-2 text-center">{product.stock}</td>
-                      <td className="py-2 px-2 text-center">{product.minStock}</td>
-                      <td className="py-2 px-2 text-center">
-                        <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <ChartCard 
+            title="Vendas nos Últimos 6 Meses" 
+            data={salesData}
+            height={350}
+          />
+        </div>
+        <div className="lg:col-span-1">
+          <ChartCard 
+            title="Pedidos por Dia" 
+            data={[
+              { name: 'Seg', value: 12 },
+              { name: 'Ter', value: 19 },
+              { name: 'Qua', value: 15 },
+              { name: 'Qui', value: 22 },
+              { name: 'Sex', value: 18 },
+              { name: 'Sáb', value: 8 },
+              { name: 'Dom', value: 5 },
+            ]}
+            height={350}
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Vendas nos Últimos 30 Dias</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center text-muted-foreground">
-              <LineChart className="h-16 w-16 mb-2" />
-              <p>Gráfico de vendas seria exibido aqui</p>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Tables Row */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <ModernTable
+          title="Pedidos Recentes"
+          columns={recentOrdersColumns}
+          data={recentOrders}
+        />
+        
+        <ModernTable
+          title="Produtos com Estoque Baixo"
+          columns={lowStockColumns}
+          data={lowStockProducts}
+        />
       </div>
     </div>
   );

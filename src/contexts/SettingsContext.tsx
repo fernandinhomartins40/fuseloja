@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { StoreSettings } from '@/types/settings';
 import { defaultSettings } from '@/utils/defaultSettings';
@@ -47,18 +46,59 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     const applyVisualSettings = () => {
       const root = document.documentElement;
       
-      // Apply CSS custom properties
+      // Apply configurable CSS custom properties
       root.style.setProperty('--color-primary', settings.visual.colors.primary);
       root.style.setProperty('--color-secondary', settings.visual.colors.secondary);
       root.style.setProperty('--color-background', settings.visual.colors.background);
       root.style.setProperty('--color-text', settings.visual.colors.text);
       root.style.setProperty('--font-family', settings.visual.fontFamily);
       
+      // Also update the HSL-based Tailwind variables for better integration
+      // Convert hex to HSL for better Tailwind integration
+      const hexToHsl = (hex: string) => {
+        const r = parseInt(hex.slice(1, 3), 16) / 255;
+        const g = parseInt(hex.slice(3, 5), 16) / 255;
+        const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        let h = 0;
+        let s = 0;
+        const l = (max + min) / 2;
+
+        if (max !== min) {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+          }
+          h /= 6;
+        }
+
+        return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+      };
+
+      // Update primary color in HSL format
+      try {
+        const primaryHsl = hexToHsl(settings.visual.colors.primary);
+        root.style.setProperty('--primary', primaryHsl);
+      } catch (error) {
+        console.warn('Error converting primary color to HSL:', error);
+      }
+      
       // Update favicon if set
       if (settings.visual.favicon) {
         const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
         if (favicon) {
           favicon.href = settings.visual.favicon;
+        } else {
+          // Create favicon link if it doesn't exist
+          const newFavicon = document.createElement('link');
+          newFavicon.rel = 'icon';
+          newFavicon.href = settings.visual.favicon;
+          document.head.appendChild(newFavicon);
         }
       }
       

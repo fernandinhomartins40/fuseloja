@@ -30,16 +30,16 @@ export const ModernTable: React.FC<ModernTableProps> = ({
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       'Entregue': { 
-        className: 'bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold px-3 py-1 rounded-full text-xs shadow-md' 
+        className: 'bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold px-4 py-2 rounded-full text-xs shadow-lg hover:shadow-xl transition-all duration-300' 
       },
       'Enviado': { 
-        className: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold px-3 py-1 rounded-full text-xs shadow-md' 
+        className: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold px-4 py-2 rounded-full text-xs shadow-lg hover:shadow-xl transition-all duration-300' 
       },
       'Em processamento': { 
-        className: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold px-3 py-1 rounded-full text-xs shadow-md' 
+        className: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-4 py-2 rounded-full text-xs shadow-lg hover:shadow-xl transition-all duration-300' 
       },
       'Aguardando pagamento': { 
-        className: 'bg-gradient-to-r from-slate-500 to-gray-500 text-white font-semibold px-3 py-1 rounded-full text-xs shadow-md' 
+        className: 'bg-gradient-to-r from-slate-500 to-gray-500 text-white font-bold px-4 py-2 rounded-full text-xs shadow-lg hover:shadow-xl transition-all duration-300' 
       },
     };
 
@@ -60,35 +60,38 @@ export const ModernTable: React.FC<ModernTableProps> = ({
   };
 
   return (
-    <Card className="bg-gradient-to-br from-white to-slate-50 border-0 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-      <CardHeader className="pb-4 bg-gradient-to-r from-violet-50 to-purple-50 rounded-t-2xl border-b-0">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-bold text-slate-900">
+    <Card className="bg-gradient-to-br from-white via-slate-50 to-blue-50 border-0 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 group overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-pink-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <CardHeader className="pb-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-t-3xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-white bg-opacity-10 rounded-full -translate-y-20 translate-x-20"></div>
+        <div className="flex items-center justify-between relative z-10">
+          <CardTitle className="text-xl font-bold">
             {title}
           </CardTitle>
           <div className="flex space-x-2">
-            <div className="w-3 h-3 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full animate-pulse" />
-            <div className="w-3 h-3 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full" />
+            <div className="w-3 h-3 bg-white bg-opacity-60 rounded-full animate-pulse" />
+            <div className="w-3 h-3 bg-white bg-opacity-40 rounded-full" />
+            <div className="w-3 h-3 bg-white bg-opacity-20 rounded-full" />
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-0 relative z-10">
         {data.length === 0 ? (
-          <div className="p-8 text-center">
-            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center">
-              <span className="text-3xl">📊</span>
+          <div className="p-12 text-center">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-3xl flex items-center justify-center">
+              <span className="text-4xl">📊</span>
             </div>
-            <p className="text-slate-600 font-semibold">{emptyMessage}</p>
+            <p className="text-slate-600 font-bold text-lg">{emptyMessage}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-slate-50 to-gray-50">
+                <tr className="bg-gradient-to-r from-slate-100 via-blue-50 to-indigo-100">
                   {columns.map((column) => (
                     <th
                       key={column.key}
-                      className={`px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider ${
+                      className={`px-8 py-5 text-left text-xs font-black text-slate-800 uppercase tracking-wider ${
                         column.align === 'center' ? 'text-center' :
                         column.align === 'right' ? 'text-right' : ''
                       }`}
@@ -99,13 +102,13 @@ export const ModernTable: React.FC<ModernTableProps> = ({
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-200">
                 {data.map((row, index) => (
-                  <tr key={index} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
+                  <tr key={index} className="hover:bg-gradient-to-r hover:from-blue-50 hover:via-indigo-50 hover:to-purple-50 transition-all duration-300 group">
                     {columns.map((column) => (
                       <td
                         key={column.key}
-                        className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-700 ${
+                        className={`px-8 py-5 whitespace-nowrap text-sm font-bold text-slate-700 group-hover:text-slate-900 transition-colors duration-300 ${
                           column.align === 'center' ? 'text-center' :
                           column.align === 'right' ? 'text-right' : ''
                         }`}

@@ -20,54 +20,62 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   trend = 'neutral',
   trendValue
 }) => {
-  const getTrendColor = () => {
+  const getCardStyles = () => {
     switch (trend) {
-      case 'up': return 'text-emerald-600';
-      case 'down': return 'text-rose-600';
-      default: return 'text-slate-600';
+      case 'up': 
+        return {
+          gradient: 'bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100',
+          iconBg: 'bg-gradient-to-br from-emerald-400 to-teal-500',
+          iconColor: 'text-white',
+          trendColor: 'text-emerald-600',
+          trendIcon: '↗️',
+          border: 'border-emerald-200'
+        };
+      case 'down': 
+        return {
+          gradient: 'bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100',
+          iconBg: 'bg-gradient-to-br from-rose-400 to-pink-500',
+          iconColor: 'text-white',
+          trendColor: 'text-rose-600',
+          trendIcon: '↘️',
+          border: 'border-rose-200'
+        };
+      default: 
+        return {
+          gradient: 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100',
+          iconBg: 'bg-gradient-to-br from-blue-400 to-indigo-500',
+          iconColor: 'text-white',
+          trendColor: 'text-blue-600',
+          trendIcon: '➡️',
+          border: 'border-blue-200'
+        };
     }
   };
 
-  const getCardGradient = () => {
-    switch (trend) {
-      case 'up': return 'bg-gradient-to-br from-emerald-50 to-emerald-100';
-      case 'down': return 'bg-gradient-to-br from-rose-50 to-rose-100';
-      default: return 'bg-gradient-to-br from-blue-50 to-blue-100';
-    }
-  };
-
-  const getIconColor = () => {
-    switch (trend) {
-      case 'up': return 'text-emerald-600';
-      case 'down': return 'text-rose-600';
-      default: return 'text-blue-600';
-    }
-  };
+  const styles = getCardStyles();
 
   return (
-    <Card className={`${getCardGradient()} border-0 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105`}>
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
+    <Card className={`${styles.gradient} ${styles.border} border-2 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:-translate-y-1 group overflow-hidden relative`}>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white bg-opacity-10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-700"></div>
+      <CardContent className="p-6 relative z-10">
+        <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <p className="text-sm font-semibold text-slate-700 mb-2">{title}</p>
-            <p className="text-3xl font-bold text-slate-900 mb-2">{value}</p>
-            <div className="flex items-center">
-              <p className="text-sm text-slate-600">{description}</p>
-              {trendValue && (
-                <span className={`text-sm font-bold ml-2 ${getTrendColor()} flex items-center gap-1`}>
-                  <span className="text-lg">
-                    {trend === 'up' ? '↗' : trend === 'down' ? '↘' : '→'}
-                  </span>
-                  {trendValue}
-                </span>
-              )}
-            </div>
+            <p className="text-sm font-bold text-slate-700 mb-1 uppercase tracking-wide">{title}</p>
+            <p className="text-3xl font-black text-slate-900 mb-2 leading-none">{value}</p>
           </div>
-          <div className="ml-4">
-            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-md">
-              <Icon className={`w-8 h-8 ${getIconColor()}`} />
-            </div>
+          <div className={`w-16 h-16 ${styles.iconBg} rounded-2xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-all duration-300`}>
+            <Icon className={`w-8 h-8 ${styles.iconColor}`} />
           </div>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-slate-600 font-medium">{description}</p>
+          {trendValue && (
+            <div className={`flex items-center gap-1 ${styles.trendColor} bg-white bg-opacity-70 px-3 py-1 rounded-full`}>
+              <span className="text-sm">{styles.trendIcon}</span>
+              <span className="text-sm font-bold">{trendValue}</span>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

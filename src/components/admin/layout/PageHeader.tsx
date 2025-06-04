@@ -25,19 +25,19 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   breadcrumbs
 }) => {
   return (
-    <div className="mb-10">
+    <div className="mb-8">
       {breadcrumbs && (
-        <nav className="flex mb-6" aria-label="Breadcrumb">
-          <ol className="flex items-center space-x-3 text-sm">
+        <nav className="flex mb-4" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-2 text-sm">
             {breadcrumbs.map((breadcrumb, index) => (
               <li key={index} className="flex items-center">
-                {index > 0 && <span className="mx-3 text-slate-400 text-lg">•</span>}
+                {index > 0 && <span className="mx-2 text-gray-400">/</span>}
                 {breadcrumb.href ? (
-                  <a href={breadcrumb.href} className="text-slate-600 hover:text-indigo-600 transition-all duration-300 font-bold rounded-xl px-4 py-2 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:scale-105">
+                  <a href={breadcrumb.href} className="text-gray-600 hover:text-blue-600 transition-colors duration-200">
                     {breadcrumb.label}
                   </a>
                 ) : (
-                  <span className="text-slate-900 font-black bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-5 py-2 rounded-xl shadow-md">
+                  <span className="text-gray-900 font-medium">
                     {breadcrumb.label}
                   </span>
                 )}
@@ -48,29 +48,23 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       )}
       
       <div className="flex items-center justify-between">
-        <div className="relative">
-          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg blur-lg opacity-20"></div>
-          <div className="relative">
-            <h1 className="text-5xl font-black bg-gradient-to-r from-slate-900 via-indigo-700 to-purple-700 bg-clip-text text-transparent mb-4 leading-tight">
-              {title}
-            </h1>
-            {description && (
-              <p className="text-xl text-slate-600 font-bold bg-white bg-opacity-70 px-4 py-2 rounded-xl inline-block">{description}</p>
-            )}
-          </div>
+        <div>
+          <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+            {title}
+          </h1>
+          {description && (
+            <p className="text-gray-600">{description}</p>
+          )}
         </div>
         
         {action && (
-          <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl blur-lg opacity-30"></div>
-            <Button
-              onClick={action.onClick}
-              className="relative flex items-center gap-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white font-black px-8 py-4 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-110 border-0 text-lg"
-            >
-              {action.icon && <action.icon className="w-6 h-6" />}
-              {action.label}
-            </Button>
-          </div>
+          <Button
+            onClick={action.onClick}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+          >
+            {action.icon && <action.icon className="w-4 h-4" />}
+            {action.label}
+          </Button>
         )}
       </div>
     </div>

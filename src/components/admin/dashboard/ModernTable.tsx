@@ -30,25 +30,25 @@ export const ModernTable: React.FC<ModernTableProps> = ({
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       'Entregue': { 
-        className: 'bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold px-4 py-2 rounded-full text-xs shadow-lg hover:shadow-xl transition-all duration-300' 
+        className: 'bg-green-100 text-green-800 hover:bg-green-200' 
       },
       'Enviado': { 
-        className: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold px-4 py-2 rounded-full text-xs shadow-lg hover:shadow-xl transition-all duration-300' 
+        className: 'bg-blue-100 text-blue-800 hover:bg-blue-200' 
       },
       'Em processamento': { 
-        className: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-4 py-2 rounded-full text-xs shadow-lg hover:shadow-xl transition-all duration-300' 
+        className: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' 
       },
       'Aguardando pagamento': { 
-        className: 'bg-gradient-to-r from-slate-500 to-gray-500 text-white font-bold px-4 py-2 rounded-full text-xs shadow-lg hover:shadow-xl transition-all duration-300' 
+        className: 'bg-gray-100 text-gray-800 hover:bg-gray-200' 
       },
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig['Aguardando pagamento'];
     
     return (
-      <span className={config.className}>
+      <Badge className={`${config.className} text-xs font-medium px-2 py-1`}>
         {status}
-      </span>
+      </Badge>
     );
   };
 
@@ -60,38 +60,29 @@ export const ModernTable: React.FC<ModernTableProps> = ({
   };
 
   return (
-    <Card className="bg-gradient-to-br from-white via-slate-50 to-blue-50 border-0 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 group overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-pink-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-      <CardHeader className="pb-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-t-3xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-white bg-opacity-10 rounded-full -translate-y-20 translate-x-20"></div>
-        <div className="flex items-center justify-between relative z-10">
-          <CardTitle className="text-xl font-bold">
-            {title}
-          </CardTitle>
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 bg-white bg-opacity-60 rounded-full animate-pulse" />
-            <div className="w-3 h-3 bg-white bg-opacity-40 rounded-full" />
-            <div className="w-3 h-3 bg-white bg-opacity-20 rounded-full" />
-          </div>
-        </div>
+    <Card className="bg-white border border-gray-200 rounded-lg shadow-sm">
+      <CardHeader className="pb-4 border-b border-gray-100">
+        <CardTitle className="text-lg font-semibold text-gray-900">
+          {title}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="p-0 relative z-10">
+      <CardContent className="p-0">
         {data.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-3xl flex items-center justify-center">
-              <span className="text-4xl">📊</span>
+            <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">📊</span>
             </div>
-            <p className="text-slate-600 font-bold text-lg">{emptyMessage}</p>
+            <p className="text-gray-600">{emptyMessage}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-slate-100 via-blue-50 to-indigo-100">
+                <tr className="bg-gray-50 border-b border-gray-200">
                   {columns.map((column) => (
                     <th
                       key={column.key}
-                      className={`px-8 py-5 text-left text-xs font-black text-slate-800 uppercase tracking-wider ${
+                      className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
                         column.align === 'center' ? 'text-center' :
                         column.align === 'right' ? 'text-right' : ''
                       }`}
@@ -102,13 +93,13 @@ export const ModernTable: React.FC<ModernTableProps> = ({
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-gray-200">
                 {data.map((row, index) => (
-                  <tr key={index} className="hover:bg-gradient-to-r hover:from-blue-50 hover:via-indigo-50 hover:to-purple-50 transition-all duration-300 group">
+                  <tr key={index} className="hover:bg-gray-50 transition-colors duration-150">
                     {columns.map((column) => (
                       <td
                         key={column.key}
-                        className={`px-8 py-5 whitespace-nowrap text-sm font-bold text-slate-700 group-hover:text-slate-900 transition-colors duration-300 ${
+                        className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${
                           column.align === 'center' ? 'text-center' :
                           column.align === 'right' ? 'text-right' : ''
                         }`}

@@ -23,41 +23,33 @@ const UserCard: React.FC = () => {
   };
 
   return (
-    <Card className="border-0 bg-gradient-to-br from-white via-blue-50 to-indigo-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 rounded-2xl overflow-hidden">
-      <CardContent className="p-0">
-        <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-12 relative">
-          <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-        </div>
-        <div className="p-4 -mt-6 relative">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Avatar className="h-14 w-14 border-4 border-white shadow-lg ring-2 ring-indigo-200">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-lg font-bold">
-                  {getInitials(user.name)}
-                </AvatarFallback>
-              </Avatar>
-              {/* Online status indicator with glow */}
-              <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-emerald-500 border-3 border-white rounded-full shadow-lg">
-                <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-75"></div>
-              </div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <p className="text-sm font-bold text-slate-800 truncate">
-                  {user.name}
-                </p>
-                <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs px-2 py-0.5 rounded-full border-0">
-                  Admin
-                </Badge>
-              </div>
-              <p className="text-xs text-slate-600 truncate font-medium">
-                {user.email}
+    <Card className="bg-white border border-gray-200 rounded-lg shadow-sm">
+      <CardContent className="p-4">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Avatar className="h-10 w-10 border-2 border-gray-200">
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-medium">
+                {getInitials(user.name)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user.name}
               </p>
-              <div className="flex items-center gap-1 mt-1">
-                <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                <span className="text-xs text-emerald-600 font-semibold">Online agora</span>
-              </div>
+              <Badge className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5">
+                Admin
+              </Badge>
+            </div>
+            <p className="text-xs text-gray-600 truncate">
+              {user.email}
+            </p>
+            <div className="flex items-center gap-1 mt-1">
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+              <span className="text-xs text-green-600">Online agora</span>
             </div>
           </div>
         </div>

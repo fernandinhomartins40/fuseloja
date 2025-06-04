@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+
+import { useState, useCallback, useRef } from 'react';
 import { SmartImageUploadState, PendingImage, SmartImageUploadOptions, SmartUploadProfile } from '@/types/smartImageUpload';
 import { CropSettings } from '@/types/imageUpload';
 import { toast } from '@/hooks/use-toast';
@@ -12,6 +13,8 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
   });
 
   const profile = options.profile;
+  const onImagesReadyRef = useRef(options.onImagesReady);
+  onImagesReadyRef.current = options.onImagesReady;
 
   const validateFile = useCallback((file: File): { isValid: boolean; error?: string } => {
     if (!profile) return { isValid: true };
@@ -140,6 +143,11 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
     });
   }, [profile]);
 
+  const notifyImagesReady = useCallback((updatedImages: PendingImage[]) => {
+    const processedImages = updatedImages.filter(img => img.isProcessed || !profile?.requiredCrop);
+    onImagesReadyRef.current?.(processedImages);
+  }, [profile]);
+
   const addFiles = useCallback(async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
     
@@ -167,18 +175,21 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
         newPendingImages.push(pendingImage);
       }
 
-      setState(prev => ({
-        ...prev,
-        pendingImages: options.multiple 
+      setState(prev => {
+        const updatedImages = options.multiple 
           ? [...prev.pendingImages, ...newPendingImages]
-          : newPendingImages,
-        isProcessing: false
-      }));
-
-      // Auto-open crop for first image if required
-      if (profile?.autoOpenCrop && newPendingImages.length > 0) {
-        setState(prev => ({ ...prev, currentCropImage: newPendingImages[0] }));
-      }
+          : newPendingImages;
+        
+        // Notify parent with a delay to prevent infinite loops
+        setTimeout(() => notifyImagesReady(updatedImages), 0);
+        
+        return {
+          ...prev,
+          pendingImages: updatedImages,
+          isProcessing: false,
+          currentCropImage: profile?.autoOpenCrop && newPendingImages.length > 0 ? newPendingImages[0] : prev.currentCropImage
+        };
+      });
 
     } catch (error) {
       setState(prev => ({
@@ -193,7 +204,7 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
         variant: "destructive"
       });
     }
-  }, [options.multiple, profile, validateFile, createPendingImage]);
+  }, [options.multiple, profile, validateFile, createPendingImage, notifyImagesReady]);
 
   const openCropDialog = useCallback((imageId: string) => {
     const image = state.pendingImages.find(img => img.id === imageId);
@@ -211,9 +222,8 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
       const croppedBlob = await processImageWithCrop(state.currentCropImage, cropSettings);
       const croppedUrl = URL.createObjectURL(croppedBlob);
 
-      setState(prev => ({
-        ...prev,
-        pendingImages: prev.pendingImages.map(img => 
+      setState(prev => {
+        const updatedImages = prev.pendingImages.map(img => 
           img.id === state.currentCropImage!.id
             ? { 
                 ...img, 
@@ -223,10 +233,18 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
                 isProcessed: true 
               }
             : img
-        ),
-        currentCropImage: null,
-        isProcessing: false
-      }));
+        );
+
+        // Notify parent with a delay to prevent infinite loops
+        setTimeout(() => notifyImagesReady(updatedImages), 0);
+
+        return {
+          ...prev,
+          pendingImages: updatedImages,
+          currentCropImage: null,
+          isProcessing: false
+        };
+      });
 
       const updatedImage = state.pendingImages.find(img => img.id === state.currentCropImage.id);
       if (updatedImage) {
@@ -252,7 +270,7 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
         variant: "destructive"
       });
     }
-  }, [state.currentCropImage, state.pendingImages, processImageWithCrop, options]);
+  }, [state.currentCropImage, state.pendingImages, processImageWithCrop, options, notifyImagesReady]);
 
   const removePendingImage = useCallback((imageId: string) => {
     setState(prev => {
@@ -264,12 +282,17 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
         }
       }
 
+      const updatedImages = prev.pendingImages.filter(img => img.id !== imageId);
+      
+      // Notify parent with a delay to prevent infinite loops
+      setTimeout(() => notifyImagesReady(updatedImages), 0);
+
       return {
         ...prev,
-        pendingImages: prev.pendingImages.filter(img => img.id !== imageId)
+        pendingImages: updatedImages
       };
     });
-  }, []);
+  }, [notifyImagesReady]);
 
   const clearAllImages = useCallback(() => {
     state.pendingImages.forEach(img => {
@@ -285,7 +308,10 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
       error: null,
       currentCropImage: null
     });
-  }, [state.pendingImages]);
+
+    // Notify parent with empty array
+    setTimeout(() => notifyImagesReady([]), 0);
+  }, [state.pendingImages, notifyImagesReady]);
 
   const closeCropDialog = useCallback(() => {
     setState(prev => ({ ...prev, currentCropImage: null }));

@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
@@ -38,14 +38,12 @@ export const SmartImageUploader: React.FC<SmartImageUploaderProps> = ({
     removePendingImage,
     clearAllImages,
     getProcessedImages
-  } = useSmartImageUpload(options);
+  } = useSmartImageUpload({
+    ...options,
+    onImagesReady: onImagesChange
+  });
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Notify parent of changes
-  React.useEffect(() => {
-    onImagesChange?.(getProcessedImages());
-  }, [pendingImages, onImagesChange, getProcessedImages]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {

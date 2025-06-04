@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { SmartImageUploadState, PendingImage, SmartImageUploadOptions, SmartUploadProfile } from '@/types/smartImageUpload';
 import { CropSettings } from '@/types/imageUpload';
@@ -51,27 +50,77 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
       const img = new Image();
       
       img.onload = () => {
-        canvas.width = cropSettings.width;
-        canvas.height = cropSettings.height;
+        // Calculate the actual crop dimensions relative to the original image
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d')!;
+        
+        // Create a temporary container to calculate display dimensions
+        const containerWidth = 800; // Approximate container width
+        const containerHeight = 384; // Approximate container height (h-96)
+        
+        const imgAspect = img.naturalWidth / img.naturalHeight;
+        const containerAspect = containerWidth / containerHeight;
+        
+        let displayWidth, displayHeight, offsetX, offsetY;
+        
+        if (imgAspect > containerAspect) {
+          displayWidth = containerWidth;
+          displayHeight = containerWidth / imgAspect;
+          offsetX = 0;
+          offsetY = (containerHeight - displayHeight) / 2;
+        } else {
+          displayHeight = containerHeight;
+          displayWidth = containerHeight * imgAspect;
+          offsetX = (containerWidth - displayWidth) / 2;
+          offsetY = 0;
+        }
+        
+        // Calculate scale factors from display to natural image size
+        const scaleX = img.naturalWidth / displayWidth;
+        const scaleY = img.naturalHeight / displayHeight;
+        
+        // Map crop coordinates from display space to natural image space
+        const naturalCropX = (cropSettings.x - offsetX) * scaleX;
+        const naturalCropY = (cropSettings.y - offsetY) * scaleY;
+        const naturalCropWidth = cropSettings.width * scaleX;
+        const naturalCropHeight = cropSettings.height * scaleY;
+        
+        // Ensure crop is within image bounds
+        const clampedX = Math.max(0, Math.min(naturalCropX, img.naturalWidth));
+        const clampedY = Math.max(0, Math.min(naturalCropY, img.naturalHeight));
+        const clampedWidth = Math.min(naturalCropWidth, img.naturalWidth - clampedX);
+        const clampedHeight = Math.min(naturalCropHeight, img.naturalHeight - clampedY);
+        
+        // Set canvas size to desired output dimensions
+        const outputWidth = profile?.maxWidth || cropSettings.width;
+        const outputHeight = profile?.maxHeight || cropSettings.height;
+        
+        canvas.width = outputWidth;
+        canvas.height = outputHeight;
         
         // Apply transformations
         ctx.save();
         
+        // Handle rotation
         if (cropSettings.rotate) {
           ctx.translate(canvas.width / 2, canvas.height / 2);
           ctx.rotate((cropSettings.rotate * Math.PI) / 180);
           ctx.translate(-canvas.width / 2, -canvas.height / 2);
         }
         
+        // Apply scale
         const scale = cropSettings.scale || 1;
-        ctx.scale(scale, scale);
+        if (scale !== 1) {
+          ctx.scale(scale, scale);
+        }
         
+        // Draw the cropped portion of the image
         ctx.drawImage(
           img,
-          cropSettings.x / scale,
-          cropSettings.y / scale,
-          cropSettings.width / scale,
-          cropSettings.height / scale,
+          clampedX,
+          clampedY,
+          clampedWidth,
+          clampedHeight,
           0,
           0,
           canvas.width,
@@ -83,7 +132,7 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
         canvas.toBlob(
           (blob) => resolve(blob!), 
           pendingImage.originalFile.type, 
-          (profile?.quality || 80) / 100
+          (profile?.quality || 85) / 100
         );
       };
       

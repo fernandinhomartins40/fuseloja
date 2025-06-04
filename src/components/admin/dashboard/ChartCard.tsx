@@ -81,8 +81,8 @@ export const ChartCard: React.FC<ChartCardProps> = ({
                   stroke="url(#colorValue)"
                   strokeWidth={4}
                   fill="url(#colorValue)"
-                  dot={{ fill: '#6366F1', strokeWidth: 4, r: 6, shadow: '0 4px 8px rgba(99, 102, 241, 0.3)' }}
-                  activeDot={{ r: 10, stroke: '#6366F1', strokeWidth: 4, fill: 'white', shadow: '0 8px 16px rgba(99, 102, 241, 0.4)' }}
+                  dot={{ fill: '#6366F1', strokeWidth: 4, r: 6 }}
+                  activeDot={{ r: 10, stroke: '#6366F1', strokeWidth: 4, fill: 'white' }}
                 />
               </AreaChart>
             ) : (

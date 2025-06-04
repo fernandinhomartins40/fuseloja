@@ -25,7 +25,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
   isOpen,
   onClose,
   imageUrl,
-  aspectRatio = 1,
+  aspectRatio,
   onCrop
 }) => {
   const [cropSettings, setCropSettings] = useState<CropSettings>({
@@ -41,7 +41,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
   const [isResizing, setIsResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState<string>('');
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const [maintainAspectRatio, setMaintainAspectRatio] = useState(!!aspectRatio);
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -79,28 +79,31 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       if (info) {
         const { displayWidth, displayHeight, offsetX, offsetY } = info;
         
-        // Set initial crop to center 80% of the image
-        const cropWidth = displayWidth * 0.8;
-        const cropHeight = cropWidth / aspectRatio;
+        // Set initial crop to a reasonable size (60% of image)
+        const initialSize = Math.min(displayWidth, displayHeight) * 0.6;
+        let cropWidth = initialSize;
+        let cropHeight = initialSize;
         
-        // Ensure crop fits within image bounds
-        const maxHeight = displayHeight * 0.8;
-        const finalCropHeight = Math.min(cropHeight, maxHeight);
-        const finalCropWidth = finalCropHeight * aspectRatio;
+        // Apply aspect ratio if specified and enabled
+        if (maintainAspectRatio && aspectRatio) {
+          if (aspectRatio > 1) {
+            cropHeight = cropWidth / aspectRatio;
+          } else {
+            cropWidth = cropHeight * aspectRatio;
+          }
+        }
         
         setCropSettings({
-          x: offsetX + (displayWidth - finalCropWidth) / 2,
-          y: offsetY + (displayHeight - finalCropHeight) / 2,
-          width: finalCropWidth,
-          height: finalCropHeight,
+          x: offsetX + (displayWidth - cropWidth) / 2,
+          y: offsetY + (displayHeight - cropHeight) / 2,
+          width: cropWidth,
+          height: cropHeight,
           scale: 1,
           rotate: 0
         });
-        
-        setImageDimensions({ width: displayWidth, height: displayHeight });
       }
     }
-  }, [isOpen, aspectRatio, getImageDisplayInfo]);
+  }, [isOpen, aspectRatio, maintainAspectRatio, getImageDisplayInfo]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent, handle?: string) => {
     e.preventDefault();
@@ -112,7 +115,10 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       setIsDragging(true);
     }
     
-    setDragStart({ x: e.clientX - cropSettings.x, y: e.clientY - cropSettings.y });
+    setDragStart({ 
+      x: e.clientX - cropSettings.x, 
+      y: e.clientY - cropSettings.y 
+    });
   }, [cropSettings]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
@@ -129,41 +135,73 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       
       setCropSettings(prev => ({ ...prev, x: newX, y: newY }));
     } else if (isResizing) {
-      const deltaX = e.clientX - (cropSettings.x + dragStart.x);
-      const deltaY = e.clientY - (cropSettings.y + dragStart.y);
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
       
       let newWidth = cropSettings.width;
       let newHeight = cropSettings.height;
       let newX = cropSettings.x;
       let newY = cropSettings.y;
       
+      // Minimum size for usability (much smaller than before)
+      const minSize = 20;
+      
+      // Calculate new dimensions based on resize handle
       if (resizeHandle.includes('right')) {
-        newWidth = Math.max(50, Math.min(deltaX, offsetX + displayWidth - cropSettings.x));
+        newWidth = Math.max(minSize, mouseX - cropSettings.x);
+        newWidth = Math.min(newWidth, offsetX + displayWidth - cropSettings.x);
       }
       if (resizeHandle.includes('left')) {
-        const maxDelta = cropSettings.width - 50;
-        const constrainedDelta = Math.max(-maxDelta, Math.min(deltaX, cropSettings.x - offsetX));
-        newWidth = cropSettings.width - constrainedDelta;
-        newX = cropSettings.x + constrainedDelta;
+        const newLeft = Math.max(offsetX, Math.min(mouseX, cropSettings.x + cropSettings.width - minSize));
+        newWidth = cropSettings.x + cropSettings.width - newLeft;
+        newX = newLeft;
+      }
+      if (resizeHandle.includes('bottom')) {
+        newHeight = Math.max(minSize, mouseY - cropSettings.y);
+        newHeight = Math.min(newHeight, offsetY + displayHeight - cropSettings.y);
+      }
+      if (resizeHandle.includes('top')) {
+        const newTop = Math.max(offsetY, Math.min(mouseY, cropSettings.y + cropSettings.height - minSize));
+        newHeight = cropSettings.y + cropSettings.height - newTop;
+        newY = newTop;
       }
       
-      // Maintain aspect ratio
-      if (aspectRatio) {
-        newHeight = newWidth / aspectRatio;
-        
-        // Adjust if height exceeds bounds
-        const maxHeight = offsetY + displayHeight - newY;
-        if (newHeight > maxHeight) {
-          newHeight = maxHeight;
+      // Apply aspect ratio constraint only if enabled
+      if (maintainAspectRatio && aspectRatio) {
+        if (resizeHandle.includes('right') || resizeHandle.includes('left')) {
+          newHeight = newWidth / aspectRatio;
+          // Adjust if height exceeds bounds
+          if (newY + newHeight > offsetY + displayHeight) {
+            newHeight = offsetY + displayHeight - newY;
+            newWidth = newHeight * aspectRatio;
+          }
+        } else if (resizeHandle.includes('top') || resizeHandle.includes('bottom')) {
           newWidth = newHeight * aspectRatio;
+          // Adjust if width exceeds bounds
+          if (newX + newWidth > offsetX + displayWidth) {
+            newWidth = offsetX + displayWidth - newX;
+            newHeight = newWidth / aspectRatio;
+          }
         }
         
-        // Adjust Y position for top handles
-        if (resizeHandle.includes('top')) {
-          const heightDelta = newHeight - cropSettings.height;
-          newY = Math.max(offsetY, cropSettings.y - heightDelta);
+        // For corner handles, maintain aspect ratio based on the primary direction
+        if (resizeHandle.includes('right') && resizeHandle.includes('bottom')) {
+          const ratioFromWidth = newWidth / aspectRatio;
+          const ratioFromHeight = newHeight * aspectRatio;
+          
+          if (Math.abs(newHeight - ratioFromWidth) < Math.abs(newWidth - ratioFromHeight)) {
+            newHeight = ratioFromWidth;
+          } else {
+            newWidth = ratioFromHeight;
+          }
         }
       }
+      
+      // Ensure crop stays within image bounds
+      newWidth = Math.min(newWidth, offsetX + displayWidth - newX);
+      newHeight = Math.min(newHeight, offsetY + displayHeight - newY);
+      newX = Math.max(offsetX, Math.min(newX, offsetX + displayWidth - newWidth));
+      newY = Math.max(offsetY, Math.min(newY, offsetY + displayHeight - newHeight));
       
       setCropSettings(prev => ({
         ...prev,
@@ -173,7 +211,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
         height: newHeight
       }));
     }
-  }, [isDragging, isResizing, resizeHandle, dragStart, cropSettings, aspectRatio, getImageDisplayInfo]);
+  }, [isDragging, isResizing, resizeHandle, dragStart, cropSettings, aspectRatio, maintainAspectRatio, getImageDisplayInfo]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -201,6 +239,10 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
       ...prev, 
       scale: Math.max((prev.scale || 1) - 0.1, 0.5) 
     }));
+  }, []);
+
+  const toggleAspectRatio = useCallback(() => {
+    setMaintainAspectRatio(prev => !prev);
   }, []);
 
   const handleCrop = useCallback(() => {
@@ -245,7 +287,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
               }}
               onMouseDown={(e) => handleMouseDown(e)}
             >
-              {/* Resize handles */}
+              {/* Corner resize handles */}
               <div 
                 className="absolute -top-1 -left-1 w-3 h-3 bg-blue-500 border border-white rounded-sm cursor-nw-resize" 
                 onMouseDown={(e) => handleMouseDown(e, 'top-left')}
@@ -263,7 +305,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
                 onMouseDown={(e) => handleMouseDown(e, 'bottom-right')}
               />
               
-              {/* Edge handles for better UX */}
+              {/* Edge handles for free-form resizing */}
               <div 
                 className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-blue-500 border border-white rounded-sm cursor-n-resize"
                 onMouseDown={(e) => handleMouseDown(e, 'top')}
@@ -319,8 +361,21 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
               <span className="text-xs text-muted-foreground">
                 {Math.round(cropSettings.width)}×{Math.round(cropSettings.height)}
               </span>
+              
+              {aspectRatio && (
+                <Button
+                  variant={maintainAspectRatio ? "default" : "outline"}
+                  size="sm"
+                  onClick={toggleAspectRatio}
+                  title={maintainAspectRatio ? "Desativar proporção fixa" : "Ativar proporção fixa"}
+                >
+                  {aspectRatio.toFixed(2)}:1
+                </Button>
+              )}
+              
               <Button
                 variant="outline"
+                size="sm"
                 onClick={handleRotateClick}
               >
                 <RotateCw className="w-4 h-4 mr-2" />

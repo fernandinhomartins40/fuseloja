@@ -13,11 +13,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@/components/ui/separator';
-import { ArrowRight, MessageSquare, ShoppingCart, Trash2, User } from 'lucide-react';
+import { ArrowRight, MessageSquare, ShoppingCart, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ProvisionalUserForm } from '@/components/user/ProvisionalUserForm';
-import { UserLoginForm } from '@/components/user/UserLoginForm';
 
 const checkoutFormSchema = z.object({
   name: z.string().min(3, { message: 'Nome deve ter pelo menos 3 caracteres' }),
@@ -29,7 +26,6 @@ type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
 const Checkout: React.FC = () => {
   const { items, subtotal, removeItem, updateQuantity, totalItems } = useCart();
   const { user, isAuthenticated } = useUser();
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -79,12 +75,12 @@ ${productsText}
     window.open(whatsappUrl, '_blank');
   };
 
-  const handleLoginSuccess = () => {
-    setShowLoginDialog(false);
-  };
-
-  // Redirect if cart is empty
+  // Redirect if cart is empty or user not authenticated
   if (items.length === 0) {
+    return <Navigate to="/" />;
+  }
+
+  if (!isAuthenticated) {
     return <Navigate to="/" />;
   }
 
@@ -153,29 +149,11 @@ ${productsText}
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">Seus Dados</h2>
-                {!isAuthenticated && (
-                  <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <User className="h-4 w-4 mr-2" />
-                        Entrar/Cadastrar
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Entrar ou Criar Conta</DialogTitle>
-                      </DialogHeader>
-                      <UserLoginForm onSuccess={handleLoginSuccess} />
-                    </DialogContent>
-                  </Dialog>
-                )}
-              </div>
+              <h2 className="text-xl font-semibold mb-4">Seus Dados</h2>
               
               <Card>
                 <CardContent className="p-6">
-                  {isAuthenticated && user?.isProvisional && (
+                  {user?.isProvisional && (
                     <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
                       <p className="text-sm text-yellow-800">
                         Você está usando uma conta provisória. 

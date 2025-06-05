@@ -1,11 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
-import { MinusIcon, PlusIcon, Trash2 } from 'lucide-react';
+import { MinusIcon, PlusIcon, Trash2, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
+import { UserLoginForm } from '@/components/user/UserLoginForm';
 
 interface CartDrawerProps {
   open: boolean;
@@ -14,11 +16,26 @@ interface CartDrawerProps {
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onOpenChange }) => {
   const { items, removeItem, updateQuantity, subtotal, totalItems, clearCart } = useCart();
+  const { user, isAuthenticated } = useUser();
   const navigate = useNavigate();
+  const [showAuthForm, setShowAuthForm] = useState(false);
 
   const handleCheckout = () => {
+    if (!isAuthenticated) {
+      setShowAuthForm(true);
+      return;
+    }
     onOpenChange(false);
     navigate('/checkout');
+  };
+
+  const handleAuthSuccess = () => {
+    setShowAuthForm(false);
+    // Automatically proceed to checkout after successful login/registration
+    setTimeout(() => {
+      onOpenChange(false);
+      navigate('/checkout');
+    }, 100);
   };
 
   return (
@@ -99,6 +116,42 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onOpenChange }) =>
               ))}
             </div>
 
+            {/* Authentication Form Section */}
+            {!isAuthenticated && (
+              <div className="border-t pt-4 mb-4">
+                <div className="mb-4">
+                  <h3 className="font-medium text-lg mb-2">Para finalizar sua compra</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Faça login ou crie uma conta rápida para continuar
+                  </p>
+                </div>
+                
+                {showAuthForm ? (
+                  <div className="max-h-96 overflow-y-auto">
+                    <UserLoginForm onSuccess={handleAuthSuccess} />
+                    <div className="mt-4 text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowAuthForm(false)}
+                      >
+                        Ocultar formulário
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => setShowAuthForm(true)}
+                    variant="outline"
+                    className="w-full flex items-center gap-2"
+                  >
+                    <User className="h-4 w-4" />
+                    Entrar ou Criar Conta
+                  </Button>
+                )}
+              </div>
+            )}
+
             <div className="pt-4">
               <Separator className="mb-4" />
               <div className="space-y-2">
@@ -113,12 +166,23 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onOpenChange }) =>
               </div>
 
               <SheetFooter className="flex flex-col gap-2 sm:flex-col mt-6">
-                <Button 
-                  onClick={handleCheckout}
-                  className="w-full"
-                >
-                  Finalizar Compra
-                </Button>
+                {isAuthenticated ? (
+                  <Button 
+                    onClick={handleCheckout}
+                    className="w-full"
+                  >
+                    Finalizar Compra
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleCheckout}
+                    className="w-full"
+                    variant="outline"
+                    disabled
+                  >
+                    Entre para Finalizar Compra
+                  </Button>
+                )}
                 <Button 
                   variant="outline" 
                   onClick={() => clearCart()}

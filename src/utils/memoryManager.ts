@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 export class MemoryManager {
   private objectUrls = new Set<string>();
   private cleanupCallbacks = new Map<string, () => void>();

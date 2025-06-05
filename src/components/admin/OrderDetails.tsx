@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Order } from '@/pages/admin/Orders';
+import { Order, OrderStatus } from '@/contexts/OrderContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   Select,
@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 
 interface OrderDetailsProps {
   order: Order;
-  onUpdateStatus: (orderId: string, status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled') => void;
+  onUpdateStatus: (orderId: string, status: OrderStatus) => void;
 }
 
 const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onUpdateStatus }) => {
@@ -59,7 +59,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onUpdateStatus }) =>
             <span className="text-sm text-muted-foreground mb-1">Atualizar status</span>
             <Select 
               value={order.status} 
-              onValueChange={(value) => onUpdateStatus(order.id, value as any)}
+              onValueChange={(value) => onUpdateStatus(order.id, value as OrderStatus)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Selecionar status" />
@@ -82,9 +82,11 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onUpdateStatus }) =>
             <h4 className="font-medium mb-2">Informações do Cliente</h4>
             <div className="space-y-1 text-sm">
               <p className="font-medium">{order.customer.name}</p>
-              <p>{order.customer.email}</p>
+              {order.customer.email && <p>{order.customer.email}</p>}
               <p>{order.customer.phone}</p>
-              <p className="text-muted-foreground">{order.customer.address}</p>
+              {order.customer.address && (
+                <p className="text-muted-foreground">{order.customer.address}</p>
+              )}
             </div>
           </CardContent>
         </Card>

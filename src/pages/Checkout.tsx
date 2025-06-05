@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Navigation } from '@/components/layout/Navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
+import { useOrders } from '@/contexts/OrderContext';
 import { Link, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -24,8 +24,9 @@ const checkoutFormSchema = z.object({
 type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
 
 const Checkout: React.FC = () => {
-  const { items, subtotal, removeItem, updateQuantity, totalItems } = useCart();
+  const { items, subtotal, removeItem, updateQuantity, totalItems, clearCart } = useCart();
   const { user, isAuthenticated } = useUser();
+  const { createOrder } = useOrders();
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -69,9 +70,25 @@ ${productsText}
   };
 
   const onSubmit = (data: CheckoutFormValues) => {
+    // Create order before redirecting to WhatsApp
+    const order = createOrder(
+      {
+        name: data.name,
+        phone: data.whatsapp,
+        email: user?.email
+      },
+      items,
+      subtotal
+    );
+
     const message = formatWhatsAppMessage(data);
     // WhatsApp business API URL
     const whatsappUrl = `https://wa.me/5542999140484?text=${message}`;
+    
+    // Clear cart after creating order
+    clearCart();
+    
+    // Open WhatsApp
     window.open(whatsappUrl, '_blank');
   };
 

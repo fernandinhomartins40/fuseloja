@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -44,7 +43,8 @@ export const ProvisionalUserForm: React.FC<ProvisionalUserFormProps> = ({
   const onSubmit = async (data: ProvisionalUserFormValues) => {
     setIsLoading(true);
     try {
-      await createProvisionalUser(data);
+      // Now data is guaranteed to match ProvisionalUserData type
+      await createProvisionalUser(data as ProvisionalUserData);
       if (onSuccess) {
         onSuccess();
       }

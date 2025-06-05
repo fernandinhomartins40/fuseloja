@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigation } from '@/components/layout/Navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useCart } from '@/contexts/CartContext';
+import { useUser } from '@/contexts/UserContext';
 import { Link, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -12,8 +13,11 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@/components/ui/separator';
-import { ArrowRight, MessageSquare, ShoppingCart, Trash2 } from 'lucide-react';
+import { ArrowRight, MessageSquare, ShoppingCart, Trash2, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ProvisionalUserForm } from '@/components/user/ProvisionalUserForm';
+import { UserLoginForm } from '@/components/user/UserLoginForm';
 
 const checkoutFormSchema = z.object({
   name: z.string().min(3, { message: 'Nome deve ter pelo menos 3 caracteres' }),
@@ -24,14 +28,24 @@ type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
 
 const Checkout: React.FC = () => {
   const { items, subtotal, removeItem, updateQuantity, totalItems } = useCart();
+  const { user, isAuthenticated } = useUser();
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
-      name: '',
-      whatsapp: ''
+      name: user?.name || '',
+      whatsapp: user?.phone || ''
     }
   });
+
+  // Update form when user logs in
+  React.useEffect(() => {
+    if (user) {
+      form.setValue('name', user.name);
+      form.setValue('whatsapp', user.phone || '');
+    }
+  }, [user, form]);
 
   const formatWhatsAppMessage = (formData: CheckoutFormValues) => {
     // Format the products list
@@ -63,6 +77,10 @@ ${productsText}
     // WhatsApp business API URL
     const whatsappUrl = `https://wa.me/5542999140484?text=${message}`;
     window.open(whatsappUrl, '_blank');
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLoginDialog(false);
   };
 
   // Redirect if cart is empty
@@ -135,9 +153,39 @@ ${productsText}
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold mb-4">Seus Dados</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold">Seus Dados</h2>
+                {!isAuthenticated && (
+                  <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <User className="h-4 w-4 mr-2" />
+                        Entrar/Cadastrar
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Entrar ou Criar Conta</DialogTitle>
+                      </DialogHeader>
+                      <UserLoginForm onSuccess={handleLoginSuccess} />
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
+              
               <Card>
                 <CardContent className="p-6">
+                  {isAuthenticated && user?.isProvisional && (
+                    <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                      <p className="text-sm text-yellow-800">
+                        Você está usando uma conta provisória. 
+                        <Link to="/perfil" className="underline ml-1">
+                          Complete seu cadastro
+                        </Link> para ter acesso completo.
+                      </p>
+                    </div>
+                  )}
+                  
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                       <FormField

@@ -46,11 +46,28 @@ export type User = {
   email: string;
   avatar?: string;
   phone?: string;
+  cpf?: string;
+  birthDate?: string;
   addresses: UserAddress[];
   preferences: UserPreferences;
   orders: UserOrder[];
   createdAt: Date;
   updatedAt: Date;
+  isProvisional: boolean;
+};
+
+// Provisional user creation type
+export type ProvisionalUserData = {
+  name: string;
+  whatsapp: string;
+  birthDate: string; // DDMMAAAA format
+};
+
+// Account upgrade data
+export type AccountUpgradeData = {
+  email: string;
+  cpf: string;
+  newPassword: string;
 };
 
 // Sample user data for initialization
@@ -60,6 +77,8 @@ export const initialUser: User = {
   email: "joao.silva@example.com",
   avatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200&auto=format&fit=crop",
   phone: "(11) 98765-4321",
+  cpf: "123.456.789-10",
+  birthDate: "15031990",
   addresses: [
     {
       id: "addr001",
@@ -117,5 +136,6 @@ export const initialUser: User = {
     }
   ],
   createdAt: new Date("2023-01-01"),
-  updatedAt: new Date("2023-05-15")
+  updatedAt: new Date("2023-05-15"),
+  isProvisional: false
 };

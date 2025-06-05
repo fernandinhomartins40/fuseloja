@@ -83,3 +83,109 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
 }
+
+/* Admin Panel specific styles - NOT configurable via admin */
+@layer components {
+  /* Admin layout specific styles */
+  .admin-panel {
+    font-family: Inter, sans-serif;
+  }
+
+  .admin-panel .admin-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .admin-panel .admin-sidebar {
+    background: var(--sidebar-background);
+    border-right: 1px solid var(--sidebar-border);
+  }
+
+  .admin-panel .admin-content {
+    background: hsl(var(--background));
+  }
+
+  /* Admin-specific component overrides */
+  .admin-panel .settings-section {
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    background: hsl(var(--card));
+  }
+
+  .admin-panel .settings-preview {
+    border: 2px dashed hsl(var(--border));
+    background: hsl(var(--muted));
+  }
+
+  /* Form styling for admin */
+  .admin-panel .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .admin-panel .form-label {
+    color: hsl(var(--foreground));
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Settings tabs styling */
+  .admin-panel .settings-tabs {
+    background: hsl(var(--card));
+  }
+
+  .admin-panel .settings-tab-trigger {
+    color: hsl(var(--muted-foreground));
+    border-bottom: 2px solid transparent;
+  }
+
+  .admin-panel .settings-tab-trigger.active {
+    color: hsl(var(--primary));
+    border-bottom-color: hsl(var(--primary));
+  }
+
+  /* Color picker specific styles */
+  .admin-panel .color-picker-wrapper {
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.375rem;
+    overflow: hidden;
+  }
+
+  /* Preview section styles */
+  .admin-panel .preview-container {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  /* Upload area styles */
+  .admin-panel .upload-area {
+    border: 2px dashed hsl(var(--border));
+    border-radius: 0.5rem;
+    background: hsl(var(--muted) / 0.5);
+    transition: all 0.2s ease;
+  }
+
+  .admin-panel .upload-area:hover {
+    border-color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.05);
+  }
+
+  /* Settings section headers */
+  .admin-panel .section-header {
+    border-bottom: 1px solid hsl(var(--border));
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .admin-panel .section-title {
+    color: hsl(var(--foreground));
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .admin-panel .section-description {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+}

@@ -4,10 +4,11 @@ import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
-import { MinusIcon, PlusIcon, Trash2, User } from 'lucide-react';
+import { MinusIcon, PlusIcon, Trash2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 import { UserLoginForm } from '@/components/user/UserLoginForm';
+import { InlineProvisionalUserForm } from '@/components/user/InlineProvisionalUserForm';
 
 interface CartDrawerProps {
   open: boolean;
@@ -18,11 +19,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onOpenChange }) =>
   const { items, removeItem, updateQuantity, subtotal, totalItems, clearCart } = useCart();
   const { user, isAuthenticated } = useUser();
   const navigate = useNavigate();
-  const [showAuthForm, setShowAuthForm] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
-      setShowAuthForm(true);
       return;
     }
     onOpenChange(false);
@@ -30,7 +30,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onOpenChange }) =>
   };
 
   const handleAuthSuccess = () => {
-    setShowAuthForm(false);
+    setShowLoginForm(false);
     // Automatically proceed to checkout after successful login/registration
     setTimeout(() => {
       onOpenChange(false);
@@ -116,38 +116,45 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onOpenChange }) =>
               ))}
             </div>
 
-            {/* Authentication Form Section */}
+            {/* Registration/Login Section */}
             {!isAuthenticated && (
               <div className="border-t pt-4 mb-4">
-                <div className="mb-4">
-                  <h3 className="font-medium text-lg mb-2">Para finalizar sua compra</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Faça login ou crie uma conta rápida para continuar
-                  </p>
-                </div>
-                
-                {showAuthForm ? (
+                {showLoginForm ? (
                   <div className="max-h-96 overflow-y-auto">
+                    <div className="mb-4">
+                      <h3 className="font-medium text-lg mb-2">Entrar na sua conta</h3>
+                    </div>
                     <UserLoginForm onSuccess={handleAuthSuccess} />
                     <div className="mt-4 text-center">
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setShowAuthForm(false)}
+                        onClick={() => setShowLoginForm(false)}
                       >
-                        Ocultar formulário
+                        Voltar ao cadastro rápido
                       </Button>
                     </div>
                   </div>
                 ) : (
-                  <Button
-                    onClick={() => setShowAuthForm(true)}
-                    variant="outline"
-                    className="w-full flex items-center gap-2"
-                  >
-                    <User className="h-4 w-4" />
-                    Entrar ou Criar Conta
-                  </Button>
+                  <div>
+                    <div className="mb-4">
+                      <h3 className="font-medium text-lg mb-2">Finalizar compra</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Preencha seus dados para continuar
+                      </p>
+                    </div>
+                    
+                    <InlineProvisionalUserForm onSuccess={handleAuthSuccess} />
+                    
+                    <div className="mt-4 text-center">
+                      <button
+                        onClick={() => setShowLoginForm(true)}
+                        className="text-sm text-muted-foreground hover:text-foreground underline"
+                      >
+                        Já tem uma conta? Entre aqui
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
@@ -166,23 +173,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onOpenChange }) =>
               </div>
 
               <SheetFooter className="flex flex-col gap-2 sm:flex-col mt-6">
-                {isAuthenticated ? (
-                  <Button 
-                    onClick={handleCheckout}
-                    className="w-full"
-                  >
-                    Finalizar Compra
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={handleCheckout}
-                    className="w-full"
-                    variant="outline"
-                    disabled
-                  >
-                    Entre para Finalizar Compra
-                  </Button>
-                )}
+                <Button 
+                  onClick={handleCheckout}
+                  className="w-full"
+                  disabled={!isAuthenticated}
+                >
+                  {isAuthenticated ? "Finalizar Compra" : "Preencha os dados para continuar"}
+                </Button>
                 <Button 
                   variant="outline" 
                   onClick={() => clearCart()}

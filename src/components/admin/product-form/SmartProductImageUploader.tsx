@@ -19,6 +19,9 @@ const SmartProductImageUploader: React.FC<SmartProductImageUploaderProps> = ({
 }) => {
   const [mainImageProcessed, setMainImageProcessed] = React.useState<PendingImage | null>(null);
   
+  // Use the same product profile for both main image and gallery
+  const productProfile = getUploadProfile('product');
+  
   const handleMainImageChange = (processedImages: PendingImage[]) => {
     if (processedImages.length > 0) {
       const processedImage = processedImages[0];
@@ -44,7 +47,7 @@ const SmartProductImageUploader: React.FC<SmartProductImageUploaderProps> = ({
       <div>
         <h3 className="text-lg font-medium mb-4">Imagem Principal do Produto</h3>
         <SmartImageUploader
-          profile={getUploadProfile('product')}
+          profile={productProfile}
           multiple={false}
           onImagesChange={handleMainImageChange}
         />
@@ -54,7 +57,7 @@ const SmartProductImageUploader: React.FC<SmartProductImageUploaderProps> = ({
       <div>
         <h3 className="text-lg font-medium mb-4">Galeria de Imagens</h3>
         <SmartImageUploader
-          profile={getUploadProfile('gallery')}
+          profile={productProfile}
           multiple={true}
           onImagesChange={handleGalleryImagesChange}
         />

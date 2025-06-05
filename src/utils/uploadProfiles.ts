@@ -57,14 +57,14 @@ export const UPLOAD_PROFILES: Record<string, SmartUploadProfile> = {
   gallery: {
     id: 'gallery',
     name: 'Galeria',
-    aspectRatio: 4/3,
-    maxWidth: 1200,
-    maxHeight: 900,
-    quality: 80,
-    maxSize: 6,
+    aspectRatio: 1,
+    maxWidth: 800,
+    maxHeight: 800,
+    quality: 85,
+    maxSize: 5,
     allowedFormats: ['image/jpeg', 'image/png', 'image/webp'],
-    autoOpenCrop: false,
-    requiredCrop: false
+    autoOpenCrop: true,
+    requiredCrop: true
   }
 };
 

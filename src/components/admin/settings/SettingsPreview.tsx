@@ -18,18 +18,54 @@ export const SettingsPreview: React.FC<SettingsPreviewProps> = ({
     '--preview-secondary': visualSettings.colors.secondary,
     '--preview-background': visualSettings.colors.background,
     '--preview-text': visualSettings.colors.text,
+    '--button-hover-primary': visualSettings.buttonHover.primaryColor,
+    '--button-hover-secondary': visualSettings.buttonHover.secondaryColor,
+    '--button-hover-duration': `${visualSettings.buttonHover.duration}ms`,
+    '--button-hover-intensity': `${visualSettings.buttonHover.intensity}`,
     fontFamily: visualSettings.fontFamily,
   } as React.CSSProperties;
 
   const getButtonClasses = () => {
-    const baseClasses = "px-4 py-2 text-white transition-colors";
+    const baseClasses = "px-4 py-2 text-white transition-all";
     const styleClasses = {
       rounded: "rounded-md",
       square: "rounded-none", 
       bordered: "rounded-md border-2 border-white"
     };
     
-    return `${baseClasses} ${styleClasses[visualSettings.buttonStyle]}`;
+    let hoverClasses = "";
+    if (visualSettings.buttonHover.enabled) {
+      switch (visualSettings.buttonHover.animationType) {
+        case 'scale':
+          hoverClasses = "hover:scale-105";
+          break;
+        case 'fade':
+          hoverClasses = "hover:opacity-90";
+          break;
+        case 'slide':
+          hoverClasses = "hover:-translate-y-0.5";
+          break;
+        case 'bounce':
+          hoverClasses = "hover:animate-bounce";
+          break;
+      }
+    }
+    
+    return `${baseClasses} ${styleClasses[visualSettings.buttonStyle]} ${hoverClasses}`;
+  };
+
+  const getButtonStyle = (isPrimary: boolean = true) => {
+    const baseColor = isPrimary ? visualSettings.colors.primary : visualSettings.colors.secondary;
+    const hoverColor = isPrimary ? visualSettings.buttonHover.primaryColor : visualSettings.buttonHover.secondaryColor;
+    
+    return {
+      backgroundColor: baseColor,
+      transition: `all ${visualSettings.buttonHover.duration}ms ease`,
+      ...(visualSettings.buttonHover.enabled && {
+        '--tw-scale-x': '1',
+        '--tw-scale-y': '1',
+      })
+    };
   };
 
   return (
@@ -84,21 +120,47 @@ export const SettingsPreview: React.FC<SettingsPreviewProps> = ({
             </p>
           </div>
           
-          {/* Buttons Preview */}
+          {/* Interactive Buttons Preview */}
           <div className="flex gap-2 mb-4">
             <button 
               className={getButtonClasses()}
-              style={{ backgroundColor: visualSettings.colors.primary }}
+              style={getButtonStyle(true)}
+              onMouseEnter={(e) => {
+                if (visualSettings.buttonHover.enabled) {
+                  e.currentTarget.style.backgroundColor = visualSettings.buttonHover.primaryColor;
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = visualSettings.colors.primary;
+              }}
             >
               Botão Primário
             </button>
             <button 
               className={getButtonClasses()}
-              style={{ backgroundColor: visualSettings.colors.secondary }}
+              style={getButtonStyle(false)}
+              onMouseEnter={(e) => {
+                if (visualSettings.buttonHover.enabled) {
+                  e.currentTarget.style.backgroundColor = visualSettings.buttonHover.secondaryColor;
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = visualSettings.colors.secondary;
+              }}
             >
               Botão Secundário
             </button>
           </div>
+          
+          {/* Animation Info */}
+          {visualSettings.buttonHover.enabled && (
+            <div className="mb-4 p-2 bg-gray-50 rounded text-xs">
+              <strong>Configurações de Hover:</strong><br />
+              Animação: {visualSettings.buttonHover.animationType}<br />
+              Duração: {visualSettings.buttonHover.duration}ms<br />
+              Intensidade: {visualSettings.buttonHover.intensity}%
+            </div>
+          )}
           
           {/* Card Preview */}
           <div 

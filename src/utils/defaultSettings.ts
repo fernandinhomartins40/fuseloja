@@ -102,7 +102,15 @@ export const defaultSettings: StoreSettings = {
       text: "#54595F"
     },
     fontFamily: "Inter, sans-serif",
-    buttonStyle: "rounded"
+    buttonStyle: "rounded",
+    buttonHover: {
+      enabled: true,
+      primaryColor: "#B8031E",
+      secondaryColor: "#1F2235",
+      animationType: "scale",
+      duration: 300,
+      intensity: 5
+    }
   },
   banners: {
     mainBanners: [

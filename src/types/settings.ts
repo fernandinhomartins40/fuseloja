@@ -87,6 +87,14 @@ export interface VisualSettings {
   };
   fontFamily: string;
   buttonStyle: 'rounded' | 'square' | 'bordered';
+  buttonHover: {
+    enabled: boolean;
+    primaryColor: string;
+    secondaryColor: string;
+    animationType: 'none' | 'scale' | 'fade' | 'slide' | 'bounce';
+    duration: number;
+    intensity: number;
+  };
 }
 
 export interface BannerSettings {

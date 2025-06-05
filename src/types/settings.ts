@@ -1,9 +1,10 @@
+
 export interface GeneralSettings {
   storeName: string;
   slogan: string;
   email: string;
   phone: string;
-  whatsApp: string; // Added WhatsApp field
+  whatsApp: string;
   address: string;
   socialMedia: {
     facebook: string;
@@ -14,9 +15,69 @@ export interface GeneralSettings {
   taxId: string;
 }
 
+export interface NavbarSettings {
+  logo: string;
+  showSearch: boolean;
+  showCategories: boolean;
+  backgroundColor: string;
+  textColor: string;
+  sticky: boolean;
+}
+
+export interface SliderSettings {
+  banners: Array<{
+    id: string;
+    image: string;
+    title: string;
+    subtitle: string;
+    actionText: string;
+    actionLink: string;
+    active: boolean;
+  }>;
+  autoplay: boolean;
+  duration: number;
+  transition: 'fade' | 'slide';
+  showDots: boolean;
+  showArrows: boolean;
+}
+
+export interface FeatureCardsSettings {
+  enabled: boolean;
+  title: string;
+  subtitle: string;
+  cards: Array<{
+    id: string;
+    icon: string;
+    title: string;
+    description: string;
+    active: boolean;
+  }>;
+  layout: 'grid' | 'carousel';
+  backgroundColor: string;
+}
+
+export interface FooterSettings {
+  logo: string;
+  description: string;
+  backgroundColor: string;
+  textColor: string;
+  showSocialMedia: boolean;
+  showNewsletter: boolean;
+  newsletterTitle: string;
+  newsletterDescription: string;
+  copyright: string;
+  links: {
+    aboutUs: boolean;
+    contact: boolean;
+    privacyPolicy: boolean;
+    termsOfService: boolean;
+    faq: boolean;
+  };
+}
+
 export interface VisualSettings {
   logo: string;
-  footerLogo: string;  // Added footer logo
+  footerLogo: string;
   favicon: string;
   colors: {
     primary: string;
@@ -44,8 +105,8 @@ export interface BannerSettings {
     image: string;
     title: string;
     actionLink: string;
-    buttonText: string;  // Added button text for secondary banners
-    buttonStyle: 'primary' | 'secondary' | 'outline' | 'text';  // Added button style
+    buttonText: string;
+    buttonStyle: 'primary' | 'secondary' | 'outline' | 'text';
   }>;
 }
 
@@ -59,6 +120,10 @@ export interface PageContent {
 
 export interface StoreSettings {
   general: GeneralSettings;
+  navbar: NavbarSettings;
+  slider: SliderSettings;
+  featureCards: FeatureCardsSettings;
+  footer: FooterSettings;
   visual: VisualSettings;
   banners: BannerSettings;
   pageContent: PageContent;

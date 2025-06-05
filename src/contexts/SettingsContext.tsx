@@ -34,7 +34,17 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     if (savedSettings) {
       try {
         const parsedSettings = JSON.parse(savedSettings);
-        setSettings({ ...defaultSettings, ...parsedSettings });
+        // Merge with default settings to ensure all new properties exist
+        const mergedSettings = {
+          ...defaultSettings,
+          ...parsedSettings,
+          // Ensure new sections exist with defaults if not present
+          navbar: { ...defaultSettings.navbar, ...parsedSettings.navbar },
+          slider: { ...defaultSettings.slider, ...parsedSettings.slider },
+          featureCards: { ...defaultSettings.featureCards, ...parsedSettings.featureCards },
+          footer: { ...defaultSettings.footer, ...parsedSettings.footer }
+        };
+        setSettings(mergedSettings);
       } catch (error) {
         console.error('Error loading settings:', error);
       }
@@ -53,7 +63,14 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
       root.style.setProperty('--color-text', settings.visual.colors.text);
       root.style.setProperty('--font-family', settings.visual.fontFamily);
       
-      // Also update the HSL-based Tailwind variables for better integration
+      // Apply navbar colors
+      root.style.setProperty('--navbar-bg', settings.navbar.backgroundColor);
+      root.style.setProperty('--navbar-text', settings.navbar.textColor);
+      
+      // Apply footer colors
+      root.style.setProperty('--footer-bg', settings.footer.backgroundColor);
+      root.style.setProperty('--footer-text', settings.footer.textColor);
+      
       // Convert hex to HSL for better Tailwind integration
       const hexToHsl = (hex: string) => {
         const r = parseInt(hex.slice(1, 3), 16) / 255;
@@ -94,7 +111,6 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
         if (favicon) {
           favicon.href = settings.visual.favicon;
         } else {
-          // Create favicon link if it doesn't exist
           const newFavicon = document.createElement('link');
           newFavicon.rel = 'icon';
           newFavicon.href = settings.visual.favicon;
@@ -107,7 +123,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     };
 
     applyVisualSettings();
-  }, [settings.visual, settings.general.storeName]);
+  }, [settings.visual, settings.general.storeName, settings.navbar, settings.footer]);
 
   const updateSettings = (newSettings: StoreSettings) => {
     setSettings(newSettings);

@@ -4,3 +4,6 @@
 
 /* Import configurable styles (admin panel customizable) */
 @import './styles/configurable.css';
+
+/* Import admin panel specific styles */
+@import './styles/admin-panel.css';

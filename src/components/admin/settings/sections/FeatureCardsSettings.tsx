@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -154,7 +153,7 @@ export const FeatureCardsSettings: React.FC<FeatureCardsSettingsProps> = ({ sett
                     <Label className="mb-2">Ícone</Label>
                     <IconSelector
                       value={card.icon}
-                      onSelect={(icon) => updateCard(index, 'icon', icon)}
+                      onChange={(icon) => updateCard(index, 'icon', icon)}
                     />
                   </div>
 

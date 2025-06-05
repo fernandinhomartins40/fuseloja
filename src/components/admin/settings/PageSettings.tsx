@@ -686,7 +686,7 @@ export const PageSettings: React.FC<PageSettingsProps> = ({ settings, onChange }
         
         <TabsContent value="privacy">
           <div className="flex justify-between items-center mb-4">
-            <h4 class name="text-sm font-medium">Política de Privacidade</h4>
+            <h4 className="text-sm font-medium">Política de Privacidade</h4>
             <Button 
               variant="outline" 
               size="sm"

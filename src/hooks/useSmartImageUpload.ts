@@ -53,51 +53,31 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
       const img = new Image();
       
       img.onload = () => {
-        // Calculate the actual crop dimensions relative to the original image
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d')!;
+        // Use the crop coordinates directly as they're already calculated correctly by ImageCropper
+        const cropX = Math.max(0, Math.min(cropSettings.x, img.naturalWidth));
+        const cropY = Math.max(0, Math.min(cropSettings.y, img.naturalHeight));
+        const cropWidth = Math.min(cropSettings.width, img.naturalWidth - cropX);
+        const cropHeight = Math.min(cropSettings.height, img.naturalHeight - cropY);
         
-        // Create a temporary container to calculate display dimensions
-        const containerWidth = 800; // Approximate container width
-        const containerHeight = 384; // Approximate container height (h-96)
+        // Calculate output dimensions based on profile or crop settings
+        let outputWidth = cropWidth;
+        let outputHeight = cropHeight;
         
-        const imgAspect = img.naturalWidth / img.naturalHeight;
-        const containerAspect = containerWidth / containerHeight;
-        
-        let displayWidth, displayHeight, offsetX, offsetY;
-        
-        if (imgAspect > containerAspect) {
-          displayWidth = containerWidth;
-          displayHeight = containerWidth / imgAspect;
-          offsetX = 0;
-          offsetY = (containerHeight - displayHeight) / 2;
-        } else {
-          displayHeight = containerHeight;
-          displayWidth = containerHeight * imgAspect;
-          offsetX = (containerWidth - displayWidth) / 2;
-          offsetY = 0;
+        // If we have a profile with specific dimensions, scale to those
+        if (profile?.maxWidth && profile?.maxHeight) {
+          const aspectRatio = cropWidth / cropHeight;
+          const targetAspectRatio = profile.maxWidth / profile.maxHeight;
+          
+          if (aspectRatio > targetAspectRatio) {
+            outputWidth = profile.maxWidth;
+            outputHeight = profile.maxWidth / aspectRatio;
+          } else {
+            outputHeight = profile.maxHeight;
+            outputWidth = profile.maxHeight * aspectRatio;
+          }
         }
         
-        // Calculate scale factors from display to natural image size
-        const scaleX = img.naturalWidth / displayWidth;
-        const scaleY = img.naturalHeight / displayHeight;
-        
-        // Map crop coordinates from display space to natural image space
-        const naturalCropX = (cropSettings.x - offsetX) * scaleX;
-        const naturalCropY = (cropSettings.y - offsetY) * scaleY;
-        const naturalCropWidth = cropSettings.width * scaleX;
-        const naturalCropHeight = cropSettings.height * scaleY;
-        
-        // Ensure crop is within image bounds
-        const clampedX = Math.max(0, Math.min(naturalCropX, img.naturalWidth));
-        const clampedY = Math.max(0, Math.min(naturalCropY, img.naturalHeight));
-        const clampedWidth = Math.min(naturalCropWidth, img.naturalWidth - clampedX);
-        const clampedHeight = Math.min(naturalCropHeight, img.naturalHeight - clampedY);
-        
-        // Set canvas size to desired output dimensions
-        const outputWidth = profile?.maxWidth || cropSettings.width;
-        const outputHeight = profile?.maxHeight || cropSettings.height;
-        
+        // Set canvas size to output dimensions
         canvas.width = outputWidth;
         canvas.height = outputHeight;
         
@@ -114,16 +94,20 @@ export const useSmartImageUpload = (options: SmartImageUploadOptions = {}) => {
         // Apply scale
         const scale = cropSettings.scale || 1;
         if (scale !== 1) {
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+          ctx.translate(centerX, centerY);
           ctx.scale(scale, scale);
+          ctx.translate(-centerX, -centerY);
         }
         
         // Draw the cropped portion of the image
         ctx.drawImage(
           img,
-          clampedX,
-          clampedY,
-          clampedWidth,
-          clampedHeight,
+          cropX,
+          cropY,
+          cropWidth,
+          cropHeight,
           0,
           0,
           canvas.width,

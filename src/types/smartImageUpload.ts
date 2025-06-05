@@ -14,6 +14,12 @@ export interface SmartUploadProfile {
   requiredCrop: boolean;
 }
 
+export interface CompressionStats {
+  originalSize: number;
+  compressedSize: number;
+  compressionRatio: number;
+}
+
 export interface PendingImage {
   id: string;
   originalFile: File;
@@ -22,6 +28,7 @@ export interface PendingImage {
   croppedUrl?: string;
   cropSettings?: CropSettings;
   isProcessed: boolean;
+  compressionStats?: CompressionStats;
 }
 
 export interface SmartImageUploadState {

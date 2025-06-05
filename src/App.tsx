@@ -12,6 +12,9 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import FAQ from "./pages/FAQ";
 import AdminLayout from "./components/layout/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
@@ -39,6 +42,9 @@ const AppRoutes = () => (
     <Route path="/" element={<Index />} />
     <Route path="/sobre" element={<AboutUs />} />
     <Route path="/contato" element={<Contact />} />
+    <Route path="/privacidade" element={<PrivacyPolicy />} />
+    <Route path="/termos" element={<TermsOfService />} />
+    <Route path="/faq" element={<FAQ />} />
     <Route path="/produto/:id" element={<ProductDetail />} />
     <Route path="/perfil" element={<Profile />} />
     <Route path="/checkout" element={<Checkout />} />

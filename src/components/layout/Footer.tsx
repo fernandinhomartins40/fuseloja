@@ -34,8 +34,21 @@ export const Footer: React.FC = () => {
               <Link to="/" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Início</Link>
               <Link to="/" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Ofertas</Link>
               <Link to="/" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Categorias</Link>
-              <Link to="/sobre" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Sobre</Link>
-              <Link to="/contato" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Contato</Link>
+              {settings.footer.links.aboutUs && (
+                <Link to="/sobre" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Sobre</Link>
+              )}
+              {settings.footer.links.contact && (
+                <Link to="/contato" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Contato</Link>
+              )}
+              {settings.footer.links.privacyPolicy && (
+                <Link to="/privacidade" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Política de Privacidade</Link>
+              )}
+              {settings.footer.links.termsOfService && (
+                <Link to="/termos" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Termos de Uso</Link>
+              )}
+              {settings.footer.links.faq && (
+                <Link to="/faq" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">FAQ</Link>
+              )}
             </nav>
           </div>
           
@@ -57,27 +70,29 @@ export const Footer: React.FC = () => {
             </div>
           </div>
           
-          <div>
-            <h4 className="text-white text-2xl mb-5">Newsletter</h4>
-            <p className="text-[#999] mb-5">Receba nossas novidades e promoções</p>
-            <form className="flex">
-              <input 
-                type="email" 
-                placeholder="Seu e-mail" 
-                className="w-full px-4 py-2 rounded-l-[3px] border-[none] focus:outline-none"
-              />
-              <button 
-                type="submit" 
-                className="bg-[#D90429] text-white px-4 py-2 rounded-r-[3px] border-[none] cursor-pointer hover:bg-[#b8031f] transition-colors"
-              >
-                Enviar
-              </button>
-            </form>
-          </div>
+          {settings.footer.showNewsletter && (
+            <div>
+              <h4 className="text-white text-2xl mb-5">{settings.footer.newsletterTitle}</h4>
+              <p className="text-[#999] mb-5">{settings.footer.newsletterDescription}</p>
+              <form className="flex">
+                <input 
+                  type="email" 
+                  placeholder="Seu e-mail" 
+                  className="w-full px-4 py-2 rounded-l-[3px] border-[none] focus:outline-none"
+                />
+                <button 
+                  type="submit" 
+                  className="bg-[#D90429] text-white px-4 py-2 rounded-r-[3px] border-[none] cursor-pointer hover:bg-[#b8031f] transition-colors"
+                >
+                  Enviar
+                </button>
+              </form>
+            </div>
+          )}
         </div>
         
         <div className="border-t border-solid border-[#333] py-5 flex flex-col md:flex-row justify-between items-center text-[#999]">
-          <p>© 2025 {storeName}. Todos os direitos reservados.</p>
+          <p>{settings.footer.copyright}</p>
           <Button 
             variant="outline" 
             className="mt-4 md:mt-0 border-[#D90429] text-[#D90429] hover:bg-[#D90429] hover:text-white"

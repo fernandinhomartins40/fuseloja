@@ -34,10 +34,12 @@ export const FooterSettings: React.FC<FooterSettingsProps> = ({ settings, onChan
   const handleChange = (field: string, value: any) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
+      const parentKey = parent as keyof typeof settings;
+      
       onChange({
         ...settings,
-        [parent]: {
-          ...settings[parent as keyof typeof settings],
+        [parentKey]: {
+          ...(settings[parentKey] as object),
           [child]: value
         }
       });

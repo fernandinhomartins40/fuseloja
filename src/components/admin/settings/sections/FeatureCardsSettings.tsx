@@ -137,7 +137,6 @@ export const FeatureCardsSettings: React.FC<FeatureCardsSettingsProps> = ({ sett
                       <Switch
                         checked={card.active}
                         onCheckedChange={(checked) => updateCard(index, 'active', checked)}
-                        size="sm"
                       />
                       <Button
                         variant="ghost"
@@ -154,8 +153,8 @@ export const FeatureCardsSettings: React.FC<FeatureCardsSettingsProps> = ({ sett
                   <div>
                     <Label className="mb-2">Ícone</Label>
                     <IconSelector
-                      selectedIcon={card.icon}
-                      onIconSelect={(icon) => updateCard(index, 'icon', icon)}
+                      value={card.icon}
+                      onSelect={(icon) => updateCard(index, 'icon', icon)}
                     />
                   </div>
 

@@ -160,7 +160,6 @@ export const SliderSettings: React.FC<SliderSettingsProps> = ({ settings, onChan
                       <Switch
                         checked={banner.active}
                         onCheckedChange={(checked) => updateBanner(index, 'active', checked)}
-                        size="sm"
                       />
                       <Button
                         variant="ghost"

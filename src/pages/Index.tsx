@@ -13,6 +13,7 @@ import { BestSellerProducts } from '../components/sections/BestSellerProducts';
 import { CategoryProducts } from '../components/sections/CategoryProducts';
 import { PromotionProducts } from '../components/sections/PromotionProducts';
 import { RecommendedProducts } from '../components/sections/RecommendedProducts';
+import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 
 const Index = () => {
   return (
@@ -42,6 +43,9 @@ const Index = () => {
       </div>
       <RecommendedProducts />
       <Footer />
+      
+      {/* Ícone flutuante do carrinho */}
+      <FloatingCartButton />
     </div>
   );
 };

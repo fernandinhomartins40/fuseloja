@@ -22,7 +22,7 @@ export const FloatingCartButton: React.FC = () => {
           className="relative h-16 w-16 rounded-full bg-[#D90429] hover:bg-[#B8031E] shadow-lg transition-all duration-300 hover:scale-110 p-0"
           aria-label="Abrir carrinho de compras"
         >
-          <ShoppingCart size={28} className="text-white" />
+          <ShoppingCart size={32} className="text-white" />
           
           {/* Badge com contador de itens */}
           <div className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs bg-[#0B0909] rounded-full flex items-center justify-center font-bold border-2 border-white shadow-sm">

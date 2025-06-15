@@ -14,6 +14,7 @@ import { CategoryProducts } from '../components/sections/CategoryProducts';
 import { PromotionProducts } from '../components/sections/PromotionProducts';
 import { RecommendedProducts } from '../components/sections/RecommendedProducts';
 import { FloatingCartButton } from '../components/cart/FloatingCartButton';
+import { SimpleImageUploaderExample } from '../components/examples/SimpleImageUploaderExample';
 
 const Index = () => {
   return (
@@ -30,6 +31,12 @@ const Index = () => {
         </div>
       </div>
       <HeroSlider />
+      
+      {/* Simple Image Uploader Demo Section */}
+      <div className="bg-gray-50 py-12">
+        <SimpleImageUploaderExample />
+      </div>
+      
       <div className="container mx-auto">
         <Features />
       </div>

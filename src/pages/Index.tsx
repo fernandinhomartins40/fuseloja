@@ -9,7 +9,7 @@ import { Footer } from '../components/layout/Footer';
 import { SearchBar } from '../components/ui/SearchBar';
 
 import { BestSellerProducts } from '../components/sections/BestSellerProducts';
-import { CategoryProducts } from '../components/sections/CategoryProducts';
+import { DynamicCategoryCarousels } from '../components/sections/DynamicCategoryCarousels';
 import { PromotionProducts } from '../components/sections/PromotionProducts';
 import { RecommendedProducts } from '../components/sections/RecommendedProducts';
 import { FloatingCartButton } from '../components/cart/FloatingCartButton';
@@ -35,7 +35,7 @@ const Index = () => {
         <NewArrivals />
         
         <BestSellerProducts />
-        <CategoryProducts />
+        <DynamicCategoryCarousels />
         
         <RecommendedProducts />
         <Footer />

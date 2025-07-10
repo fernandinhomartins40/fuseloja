@@ -17,7 +17,7 @@ import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocom
 const Index = () => {
   return <div className="min-h-screen flex flex-col">
       <div className="bg-background border-b border-border">
-        <div className="container mx-auto">
+        <div className="container mx-auto bg-slate-950 py-[15px]">
           <Navigation />
         </div>
       </div>

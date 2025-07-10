@@ -31,8 +31,8 @@ const Index = () => {
             <SearchBarWithAutocomplete onSearch={value => console.log('Busca avançada:', value)} onProductSelect={product => console.log('Produto selecionado:', product)} />
           </div>
         </section>
-        <NewArrivals />
         <CategoryIcons />
+        <NewArrivals />
         <RecentlyAddedProducts />
         <BestSellerProducts />
         <CategoryProducts />

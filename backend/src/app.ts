@@ -188,7 +188,7 @@ export class App {
           return res.status(404).json({ error: 'API endpoint not found' });
         }
         
-        res.sendFile(path.join(publicPath, 'index.html'));
+        return res.sendFile(path.join(publicPath, 'index.html'));
       });
     } else {
       // Development mode - redirect to API docs

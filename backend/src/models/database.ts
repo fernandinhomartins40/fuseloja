@@ -177,10 +177,13 @@ export class DatabaseManager {
       this.data[tableName] = [];
     }
 
+    const id = data.id || this.generateId();
+    const createdAt = data.createdAt || new Date().toISOString();
+    
     const record: DatabaseRecord = {
       ...data,
-      id: data.id || this.generateId(),
-      createdAt: data.createdAt || new Date().toISOString(),
+      id,
+      createdAt,
       updatedAt: new Date().toISOString()
     };
 
@@ -251,9 +254,9 @@ export class DatabaseManager {
         const bVal = b[sortBy];
         
         if (sortOrder === 'asc') {
-          return aVal > bVal ? 1 : -1;
+          return (aVal as any) > (bVal as any) ? 1 : -1;
         } else {
-          return aVal < bVal ? 1 : -1;
+          return (aVal as any) < (bVal as any) ? 1 : -1;
         }
       });
     }

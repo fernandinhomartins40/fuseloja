@@ -97,7 +97,7 @@ declare global {
 
 // Validation middleware helper
 export const validate = (schema: Joi.ObjectSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const { error, value } = schema.validate(req.body, {
       abortEarly: false,
       allowUnknown: false,
@@ -110,12 +110,13 @@ export const validate = (schema: Joi.ObjectSchema) => {
         message: detail.message
       }));
 
-      return res.status(422).json({
+      res.status(422).json({
         success: false,
         message: 'Validation failed',
         errors: validationErrors,
         timestamp: new Date().toISOString()
       });
+      return;
     }
 
     req.validatedData = value;
@@ -125,7 +126,7 @@ export const validate = (schema: Joi.ObjectSchema) => {
 
 // Query validation helper
 export const validateQuery = (schema: Joi.ObjectSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const { error, value } = schema.validate(req.query, {
       abortEarly: false,
       allowUnknown: false,
@@ -138,12 +139,13 @@ export const validateQuery = (schema: Joi.ObjectSchema) => {
         message: detail.message
       }));
 
-      return res.status(422).json({
+      res.status(422).json({
         success: false,
         message: 'Query validation failed',
         errors: validationErrors,
         timestamp: new Date().toISOString()
       });
+      return;
     }
 
     req.validatedQuery = value;
@@ -153,7 +155,7 @@ export const validateQuery = (schema: Joi.ObjectSchema) => {
 
 // Params validation helper
 export const validateParams = (schema: Joi.ObjectSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const { error, value } = schema.validate(req.params, {
       abortEarly: false,
       allowUnknown: false,
@@ -166,12 +168,13 @@ export const validateParams = (schema: Joi.ObjectSchema) => {
         message: detail.message
       }));
 
-      return res.status(422).json({
+      res.status(422).json({
         success: false,
         message: 'Parameters validation failed',
         errors: validationErrors,
         timestamp: new Date().toISOString()
       });
+      return;
     }
 
     req.validatedParams = value;

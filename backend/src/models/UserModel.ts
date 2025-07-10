@@ -25,8 +25,8 @@ export class UserModel {
         lastLogin: null
       });
 
-      logger.info(`User created: ${user.email}`);
-      return user;
+      logger.info(`User created: ${(user as any).email}`);
+      return user as unknown as User;
     } catch (error) {
       logger.error('Failed to create user', error);
       throw error;
@@ -35,7 +35,8 @@ export class UserModel {
 
   async findById(id: string): Promise<User | null> {
     try {
-      return await this.db.findById(this.tableName, id);
+      const user = await this.db.findById(this.tableName, id);
+      return user as unknown as User | null;
     } catch (error) {
       logger.error('Failed to find user by ID', error);
       throw error;
@@ -44,7 +45,8 @@ export class UserModel {
 
   async findByEmail(email: string): Promise<User | null> {
     try {
-      return await this.db.findOne(this.tableName, { email });
+      const user = await this.db.findOne(this.tableName, { email });
+      return user as unknown as User | null;
     } catch (error) {
       logger.error('Failed to find user by email', error);
       throw error;
@@ -205,8 +207,9 @@ export class UserModel {
       };
 
       activeUsers.forEach(user => {
-        if (user.role in byRole) {
-          byRole[user.role as UserRole]++;
+        const userRole = (user as any).role;
+        if (userRole in byRole) {
+          byRole[userRole as UserRole]++;
         }
       });
 

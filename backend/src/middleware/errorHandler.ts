@@ -3,9 +3,24 @@ import { logError } from '../utils/logger';
 import ResponseHelper from '../utils/response';
 import config from '../utils/config';
 
+// Extend Request interface to include user
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+  };
+}
+
 export interface AppError extends Error {
   statusCode?: number;
   isOperational?: boolean;
+}
+
+export interface MulterError extends Error {
+  code: string;
+  field?: string;
+  storageErrors?: unknown[];
 }
 
 export class AppErrorClass extends Error implements AppError {
@@ -37,7 +52,7 @@ export const errorHandler = (
     params: req.params,
     query: req.query,
     body: req.body,
-    user: (req as any).user?.id || 'anonymous',
+    user: (req as AuthenticatedRequest).user?.id || 'anonymous',
     ip: req.ip,
     userAgent: req.get('User-Agent')
   });
@@ -57,7 +72,7 @@ export const errorHandler = (
     message = 'Token expired';
   } else if (error.name === 'MulterError') {
     statusCode = 400;
-    message = handleMulterError(error);
+    message = handleMulterError(error as MulterError);
   }
 
   // Don't expose internal errors in production
@@ -72,7 +87,7 @@ export const errorHandler = (
 };
 
 // Handle Multer file upload errors
-const handleMulterError = (error: any): string => {
+const handleMulterError = (error: MulterError): string => {
   switch (error.code) {
     case 'LIMIT_FILE_SIZE':
       return 'File too large';
@@ -149,7 +164,13 @@ export class RateLimitError extends AppErrorClass {
 }
 
 // Database error handler
-export const handleDatabaseError = (error: any): AppErrorClass => {
+export interface DatabaseError extends Error {
+  code: string;
+  errno?: number;
+  sqlMessage?: string;
+}
+
+export const handleDatabaseError = (error: DatabaseError): AppErrorClass => {
   if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
     return new ConflictError('Resource already exists');
   } else if (error.code === 'SQLITE_CONSTRAINT_FOREIGNKEY') {

@@ -24,10 +24,25 @@ import authRoutes from './routes/auth';
 import { AuthService } from './services/AuthService';
 import { EmailService } from './services/EmailService';
 import { FileService } from './services/FileService';
+import { Server } from 'http';
+import path from 'path';
+
+// Types for socket notifications
+export interface NotificationData {
+  type: string;
+  title: string;
+  message: string;
+  timestamp: Date;
+  [key: string]: unknown;
+}
+
+export interface BroadcastData {
+  [key: string]: unknown;
+}
 
 export class App {
   public app: express.Application;
-  public server: any;
+  public server: Server;
   public io: SocketIOServer;
   private authService!: AuthService;
   private emailService!: EmailService;
@@ -157,7 +172,6 @@ export class App {
 
     // Serve frontend static files
     if (config.nodeEnv === 'production') {
-      const path = require('path');
       const publicPath = path.join(__dirname, '..', 'public');
       
       // Serve static files
@@ -341,12 +355,12 @@ export class App {
   }
 
   // Method to send notifications via WebSocket
-  public sendNotification(userId: string, notification: any): void {
+  public sendNotification(userId: string, notification: NotificationData): void {
     this.io.to(`user:${userId}`).emit('notification', notification);
   }
 
   // Method to broadcast to all connected clients
-  public broadcast(event: string, data: any): void {
+  public broadcast(event: string, data: BroadcastData): void {
     this.io.emit(event, data);
   }
 

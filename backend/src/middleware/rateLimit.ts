@@ -4,6 +4,15 @@ import config from '../utils/config';
 import { logSecurity } from '../utils/logger';
 import ResponseHelper from '../utils/response';
 
+// Extend Request interface to include user
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+  };
+}
+
 // Store for custom rate limiting
 interface RateLimitStore {
   [key: string]: {
@@ -204,7 +213,7 @@ export const passwordResetRateLimit = CustomRateLimit.create({
 export const uploadRateLimit = CustomRateLimit.create({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 50, // 50 uploads per hour
-  keyGenerator: (req) => `upload:${(req as any).user?.id || req.ip}`,
+  keyGenerator: (req) => `upload:${(req as AuthenticatedRequest).user?.id || req.ip}`,
   skipFailedRequests: true
 });
 
@@ -233,7 +242,7 @@ export const emailVerificationRateLimit = CustomRateLimit.create({
 export const searchRateLimit = CustomRateLimit.create({
   windowMs: 60 * 1000, // 1 minute
   max: 30, // 30 searches per minute
-  keyGenerator: (req) => `search:${(req as any).user?.id || req.ip}`,
+  keyGenerator: (req) => `search:${(req as AuthenticatedRequest).user?.id || req.ip}`,
   skipFailedRequests: true
 });
 
@@ -242,7 +251,7 @@ export const createUserRateLimit = (maxRequests: number, windowMs: number) => {
   return CustomRateLimit.create({
     windowMs,
     max: maxRequests,
-    keyGenerator: (req) => `user:${(req as any).user?.id || req.ip}`
+    keyGenerator: (req) => `user:${(req as AuthenticatedRequest).user?.id || req.ip}`
   });
 };
 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Navigation } from '@/components/layout/Navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useCart } from '@/contexts/CartContext';
@@ -103,7 +102,6 @@ ${productsText}
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navigation />
       <Header />
       
       <div className="flex-1 container mx-auto py-8 px-4">

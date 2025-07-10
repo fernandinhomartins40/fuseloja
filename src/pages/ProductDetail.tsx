@@ -3,7 +3,6 @@ import { useParams, Link } from 'react-router-dom';
 import { useProduct } from '@/hooks/useProduct';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { Navigation } from '@/components/layout/Navigation';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -45,7 +44,6 @@ const ProductDetail: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Navigation />
         <Header />
         <div className="container mx-auto py-12 flex justify-center items-center min-h-[60vh]">
           <div className="w-16 h-16 border-4 border-destructive rounded-full border-t-transparent animate-spin"></div>
@@ -58,7 +56,6 @@ const ProductDetail: React.FC = () => {
   if (error || !product) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Navigation />
         <Header />
         <div className="container mx-auto py-12 flex flex-col items-center justify-center min-h-[60vh]">
           <h2 className="text-2xl font-bold mb-4">Produto não encontrado</h2>
@@ -93,7 +90,6 @@ const ProductDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navigation />
       <Header />
       
       <div className="container mx-auto py-6 px-4 md:py-12">

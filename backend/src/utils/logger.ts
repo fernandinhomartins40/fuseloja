@@ -1,7 +1,21 @@
 import winston from 'winston';
 import path from 'path';
 import fs from 'fs';
+import { Request, Response } from 'express';
 import config from './config';
+
+// Types for logging
+export interface LogContext {
+  [key: string]: unknown;
+}
+
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+  };
+}
 
 // Ensure logs directory exists
 const logsDir = path.dirname(config.logFile);
@@ -65,7 +79,7 @@ if (config.nodeEnv === 'development') {
 }
 
 // Helper functions for structured logging
-export const logRequest = (req: any, res: any, responseTime: number) => {
+export const logRequest = (req: AuthenticatedRequest, res: Response, responseTime: number) => {
   const logData = {
     method: req.method,
     url: req.url,
@@ -79,7 +93,7 @@ export const logRequest = (req: any, res: any, responseTime: number) => {
   logger.info('HTTP Request', logData);
 };
 
-export const logError = (error: Error, context?: any) => {
+export const logError = (error: Error, context?: LogContext) => {
   logger.error('Application Error', {
     message: error.message,
     stack: error.stack,
@@ -87,7 +101,7 @@ export const logError = (error: Error, context?: any) => {
   });
 };
 
-export const logAuth = (action: string, userId: string, details?: any) => {
+export const logAuth = (action: string, userId: string, details?: LogContext) => {
   logger.info('Authentication Event', {
     action,
     userId,
@@ -110,14 +124,14 @@ export const logDatabase = (query: string, duration: number, error?: Error) => {
   }
 };
 
-export const logSecurity = (event: string, details: any) => {
+export const logSecurity = (event: string, details: LogContext) => {
   logger.warn('Security Event', {
     event,
     details
   });
 };
 
-export const logPerformance = (operation: string, duration: number, metadata?: any) => {
+export const logPerformance = (operation: string, duration: number, metadata?: LogContext) => {
   logger.info('Performance Metric', {
     operation,
     duration: `${duration}ms`,

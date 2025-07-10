@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { Request, Response, NextFunction } from 'express';
 import { LoginRequest, RegisterRequest, UpdateUserRequest, ChangePasswordRequest } from '../types';
 
 // Common validation schemas
@@ -83,9 +84,20 @@ export const genericSchemas = {
   })
 };
 
+// Extend Request interface to include validation data
+declare global {
+  namespace Express {
+    interface Request {
+      validatedData?: unknown;
+      validatedQuery?: unknown;
+      validatedParams?: unknown;
+    }
+  }
+}
+
 // Validation middleware helper
 export const validate = (schema: Joi.ObjectSchema) => {
-  return (req: any, res: any, next: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const { error, value } = schema.validate(req.body, {
       abortEarly: false,
       allowUnknown: false,
@@ -93,7 +105,7 @@ export const validate = (schema: Joi.ObjectSchema) => {
     });
 
     if (error) {
-      const validationErrors = error.details.map((detail: any) => ({
+      const validationErrors = error.details.map((detail: Joi.ValidationErrorItem) => ({
         field: detail.path.join('.'),
         message: detail.message
       }));
@@ -113,7 +125,7 @@ export const validate = (schema: Joi.ObjectSchema) => {
 
 // Query validation helper
 export const validateQuery = (schema: Joi.ObjectSchema) => {
-  return (req: any, res: any, next: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const { error, value } = schema.validate(req.query, {
       abortEarly: false,
       allowUnknown: false,
@@ -121,7 +133,7 @@ export const validateQuery = (schema: Joi.ObjectSchema) => {
     });
 
     if (error) {
-      const validationErrors = error.details.map((detail: any) => ({
+      const validationErrors = error.details.map((detail: Joi.ValidationErrorItem) => ({
         field: detail.path.join('.'),
         message: detail.message
       }));
@@ -141,7 +153,7 @@ export const validateQuery = (schema: Joi.ObjectSchema) => {
 
 // Params validation helper
 export const validateParams = (schema: Joi.ObjectSchema) => {
-  return (req: any, res: any, next: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const { error, value } = schema.validate(req.params, {
       abortEarly: false,
       allowUnknown: false,
@@ -149,7 +161,7 @@ export const validateParams = (schema: Joi.ObjectSchema) => {
     });
 
     if (error) {
-      const validationErrors = error.details.map((detail: any) => ({
+      const validationErrors = error.details.map((detail: Joi.ValidationErrorItem) => ({
         field: detail.path.join('.'),
         message: detail.message
       }));

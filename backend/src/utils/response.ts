@@ -1,6 +1,12 @@
 import { Response } from 'express';
 import { ApiResponse, PaginatedResponse } from '../types';
 
+// Types for validation errors
+export interface ValidationError {
+  field: string;
+  message: string;
+}
+
 export class ResponseHelper {
   static success<T>(
     res: Response,
@@ -128,7 +134,7 @@ export class ResponseHelper {
 
   static validationError(
     res: Response,
-    errors: any[],
+    errors: ValidationError[],
     message: string = 'Validation failed'
   ): Response {
     return ResponseHelper.error(res, message, 422, JSON.stringify(errors));

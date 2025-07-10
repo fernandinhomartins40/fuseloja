@@ -1,17 +1,11 @@
 import React from 'react';
 import { Header } from '../components/layout/Header';
-import { Navigation } from '../components/layout/Navigation';
 import { HeroSlider } from '../components/sections/HeroSlider';
 import { Marquee } from '../components/sections/Marquee';
 import { CategoryIcons } from '../components/sections/CategoryIcons';
-import { CategoryGrid } from '../components/sections/CategoryGrid';
 import { Footer } from '../components/layout/Footer';
-import { SearchBar } from '../components/ui/SearchBar';
-
-
 import { DynamicCategoryCarousels } from '../components/sections/DynamicCategoryCarousels';
 import { PromotionProducts } from '../components/sections/PromotionProducts';
-
 import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocomplete';
 import { NewArrivals } from '../components/sections/NewArrivals';

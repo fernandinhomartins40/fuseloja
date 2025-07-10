@@ -77,7 +77,7 @@ export class FileService {
       }
     });
 
-    const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    const fileFilter: multer.Options['fileFilter'] = (req, file, cb) => {
       const ext = path.extname(file.originalname).toLowerCase().substring(1);
       
       if (!allowedTypes.includes(ext)) {

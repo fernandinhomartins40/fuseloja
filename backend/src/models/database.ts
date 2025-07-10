@@ -8,11 +8,44 @@ const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 const mkdir = promisify(fs.mkdir);
 
+// Database types
+export interface DatabaseRecord {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  [key: string]: unknown;
+}
+
+export interface DatabaseTable {
+  [key: string]: DatabaseRecord[];
+}
+
+export interface PaginationOptions {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface SearchCriteria {
+  [key: string]: unknown;
+}
+
 // In-memory database implementation for development
 // In production, you would use a real database like PostgreSQL or MongoDB
 export class DatabaseManager {
   private static instance: DatabaseManager;
-  private data: { [tableName: string]: any[] } = {};
+  private data: DatabaseTable = {};
   private initialized = false;
   private dbPath: string;
 
@@ -81,20 +114,20 @@ export class DatabaseManager {
     }
 
     // Add any new fields to existing records if needed
-    this.data.users = this.data.users.map((user: any) => ({
+    this.data.users = this.data.users.map((user: DatabaseRecord) => ({
+      ...user,
       id: user.id || this.generateId(),
-      email: user.email || '',
-      password: user.password || '',
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      role: user.role || 'user',
-      isActive: user.isActive !== undefined ? user.isActive : true,
-      isEmailVerified: user.isEmailVerified || false,
-      avatar: user.avatar || null,
-      lastLogin: user.lastLogin || null,
+      email: (user.email as string) || '',
+      password: (user.password as string) || '',
+      firstName: (user.firstName as string) || '',
+      lastName: (user.lastName as string) || '',
+      role: (user.role as string) || 'user',
+      isActive: user.isActive !== undefined ? (user.isActive as boolean) : true,
+      isEmailVerified: (user.isEmailVerified as boolean) || false,
+      avatar: (user.avatar as string) || null,
+      lastLogin: (user.lastLogin as string) || null,
       createdAt: user.createdAt || new Date().toISOString(),
-      updatedAt: user.updatedAt || new Date().toISOString(),
-      ...user
+      updatedAt: user.updatedAt || new Date().toISOString()
     }));
 
     await this.saveToFile();
@@ -113,7 +146,7 @@ export class DatabaseManager {
   }
 
   // Generic CRUD operations
-  async find(tableName: string, criteria: any = {}): Promise<any[]> {
+  async find(tableName: string, criteria: SearchCriteria = {}): Promise<DatabaseRecord[]> {
     if (!this.data[tableName]) {
       return [];
     }
@@ -130,24 +163,24 @@ export class DatabaseManager {
     return results;
   }
 
-  async findOne(tableName: string, criteria: any): Promise<any | null> {
+  async findOne(tableName: string, criteria: SearchCriteria): Promise<DatabaseRecord | null> {
     const results = await this.find(tableName, criteria);
-    return results.length > 0 ? results[0] : null;
+    return results.length > 0 ? results[0] ?? null : null;
   }
 
-  async findById(tableName: string, id: string): Promise<any | null> {
+  async findById(tableName: string, id: string): Promise<DatabaseRecord | null> {
     return await this.findOne(tableName, { id });
   }
 
-  async insert(tableName: string, data: any): Promise<any> {
+  async insert(tableName: string, data: Partial<DatabaseRecord>): Promise<DatabaseRecord> {
     if (!this.data[tableName]) {
       this.data[tableName] = [];
     }
 
-    const record = {
-      id: this.generateId(),
+    const record: DatabaseRecord = {
       ...data,
-      createdAt: new Date().toISOString(),
+      id: data.id || this.generateId(),
+      createdAt: data.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
 
@@ -157,12 +190,12 @@ export class DatabaseManager {
     return record;
   }
 
-  async update(tableName: string, id: string, updates: any): Promise<boolean> {
+  async update(tableName: string, id: string, updates: Partial<DatabaseRecord>): Promise<boolean> {
     if (!this.data[tableName]) {
       return false;
     }
 
-    const index = this.data[tableName].findIndex((item: any) => item.id === id);
+    const index = this.data[tableName].findIndex((item: DatabaseRecord) => item.id === id);
     if (index === -1) {
       return false;
     }
@@ -182,7 +215,7 @@ export class DatabaseManager {
       return false;
     }
 
-    const index = this.data[tableName].findIndex((item: any) => item.id === id);
+    const index = this.data[tableName].findIndex((item: DatabaseRecord) => item.id === id);
     if (index === -1) {
       return false;
     }

@@ -1,13 +1,13 @@
 
 import React from 'react';
-import { Navigation } from '@/components/layout/Navigation';
+import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 
 const AboutUs = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      <Navigation />
+      <Header />
       
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-12">

@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { User, initialUser, UserAddress, UserPreferences, ProvisionalUserData, AccountUpgradeData } from '@/types/user';
 import { toast } from '@/components/ui/sonner';
+import { useAuth } from '@/hooks/useAuth';
 
 interface UserContextType {
   user: User | null;
@@ -21,176 +22,35 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const auth = useAuth();
+  
+  // For backward compatibility, use the auth hook's user state
+  const user = auth.user;
+  const isAuthenticated = auth.isAuthenticated;
 
-  // Check for existing user in localStorage on component mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      // Convert string dates back to Date objects
-      if (parsedUser.createdAt) parsedUser.createdAt = new Date(parsedUser.createdAt);
-      if (parsedUser.updatedAt) parsedUser.updatedAt = new Date(parsedUser.updatedAt);
-      parsedUser.orders = parsedUser.orders.map((order: any) => ({
-        ...order,
-        date: new Date(order.date),
-      }));
-      
-      setUser(parsedUser);
-      setIsAuthenticated(true);
-    }
-  }, []);
+  // Delegate to auth hook
+  const login = auth.login;
 
-  // Update localStorage whenever user changes
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
-    }
-  }, [user]);
+  // Delegate to auth hook
+  const phoneLogin = auth.phoneLogin;
 
-  // Mock login function - in a real app this would make an API request
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock validation (in a real app, this would be handled by the server)
-    if (email === "joao.silva@example.com" && password === "password") {
-      setUser(initialUser);
-      setIsAuthenticated(true);
-      toast.success("Login realizado com sucesso!");
-      return true;
-    } else {
-      toast.error("Email ou senha incorretos");
-      return false;
-    }
-  };
+  // Delegate to auth hook
+  const createProvisionalUser = auth.createProvisionalUser;
 
-  // Phone login for provisional users
-  const phoneLogin = async (phone: string, birthDate: string): Promise<boolean> => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Check for existing provisional users in localStorage
-    const storedUsers = localStorage.getItem('provisionalUsers');
-    const provisionalUsers = storedUsers ? JSON.parse(storedUsers) : [];
-    
-    const foundUser = provisionalUsers.find((u: User) => 
-      u.phone === phone && u.birthDate === birthDate && u.isProvisional
-    );
-    
-    if (foundUser) {
-      // Convert string dates back to Date objects
-      if (foundUser.createdAt) foundUser.createdAt = new Date(foundUser.createdAt);
-      if (foundUser.updatedAt) foundUser.updatedAt = new Date(foundUser.updatedAt);
-      foundUser.orders = foundUser.orders.map((order: any) => ({
-        ...order,
-        date: new Date(order.date),
-      }));
-      
-      setUser(foundUser);
-      setIsAuthenticated(true);
-      toast.success("Login realizado com sucesso!");
-      return true;
-    } else {
-      toast.error("Usuário não encontrado ou dados incorretos");
-      return false;
-    }
-  };
+  // Delegate to auth hook
+  const upgradeAccount = auth.upgradeAccount;
 
-  // Create provisional user
-  const createProvisionalUser = async (data: ProvisionalUserData): Promise<User> => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const newUser: User = {
-      id: `provisional_${Date.now()}`,
-      name: data.name,
-      email: '', // Empty for provisional users
-      phone: data.whatsapp,
-      birthDate: data.birthDate,
-      addresses: [],
-      preferences: {
-        newsletter: false,
-        marketing: false,
-        notifications: {
-          orders: true,
-          promotions: false,
-          news: false
-        }
-      },
-      orders: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      isProvisional: true
-    };
-
-    // Store provisional user separately
-    const storedUsers = localStorage.getItem('provisionalUsers');
-    const provisionalUsers = storedUsers ? JSON.parse(storedUsers) : [];
-    provisionalUsers.push(newUser);
-    localStorage.setItem('provisionalUsers', JSON.stringify(provisionalUsers));
-
-    setUser(newUser);
-    setIsAuthenticated(true);
-    toast.success("Cadastro provisório criado com sucesso!");
-    
-    return newUser;
-  };
-
-  // Upgrade provisional account to full account
-  const upgradeAccount = async (upgradeData: AccountUpgradeData): Promise<boolean> => {
-    if (!user || !user.isProvisional) {
-      toast.error("Apenas contas provisórias podem ser atualizadas");
-      return false;
-    }
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const upgradedUser: User = {
-      ...user,
-      email: upgradeData.email,
-      cpf: upgradeData.cpf,
-      isProvisional: false,
-      updatedAt: new Date()
-    };
-
-    // Remove from provisional users and add to regular users
-    const storedProvisionalUsers = localStorage.getItem('provisionalUsers');
-    if (storedProvisionalUsers) {
-      const provisionalUsers = JSON.parse(storedProvisionalUsers);
-      const filteredUsers = provisionalUsers.filter((u: User) => u.id !== user.id);
-      localStorage.setItem('provisionalUsers', JSON.stringify(filteredUsers));
-    }
-
-    setUser(upgradedUser);
-    toast.success("Conta atualizada com sucesso!");
-    return true;
-  };
-
-  // Logout function
+  // Delegate to auth hook (convert to non-async for compatibility)
   const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('user');
-    toast.success("Logout realizado com sucesso");
+    auth.logout();
   };
 
-  // Update profile information
+  // Delegate to auth hook (convert to non-async for compatibility)
   const updateProfile = (userData: Partial<User>) => {
-    if (user) {
-      const updatedUser = {
-        ...user,
-        ...userData,
-        updatedAt: new Date()
-      };
-      setUser(updatedUser);
-      toast.success("Perfil atualizado com sucesso!");
-    }
+    auth.updateProfile(userData);
   };
 
-  // Add a new address
+  // Add a new address (keep local logic for compatibility)
   const addAddress = (address: Omit<UserAddress, 'id'>) => {
     if (user) {
       const newAddress = {
@@ -220,7 +80,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updatedAt: new Date()
       };
       
-      setUser(updatedUser);
+      // Update through auth hook to maintain consistency
+      auth.updateProfile(updatedUser);
       toast.success("Endereço adicionado com sucesso!");
     }
   };
@@ -249,7 +110,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updatedAt: new Date()
       };
       
-      setUser(updatedUser);
+      auth.updateProfile(updatedUser);
       toast.success("Endereço atualizado com sucesso!");
     }
   };
@@ -270,7 +131,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updatedAt: new Date()
       };
       
-      setUser(updatedUser);
+      auth.updateProfile(updatedUser);
       toast.success("Endereço removido com sucesso!");
     }
   };
@@ -289,7 +150,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updatedAt: new Date()
       };
       
-      setUser(updatedUser);
+      auth.updateProfile(updatedUser);
       toast.success("Endereço padrão atualizado!");
     }
   };
@@ -310,7 +171,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updatedAt: new Date()
       };
       
-      setUser(updatedUser);
+      auth.updateProfile(updatedUser);
       toast.success("Preferências atualizadas com sucesso!");
     }
   };

@@ -11,7 +11,7 @@ import { SearchBar } from '../components/ui/SearchBar';
 
 import { DynamicCategoryCarousels } from '../components/sections/DynamicCategoryCarousels';
 import { PromotionProducts } from '../components/sections/PromotionProducts';
-import { RecommendedProducts } from '../components/sections/RecommendedProducts';
+
 import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocomplete';
 import { NewArrivals } from '../components/sections/NewArrivals';
@@ -37,7 +37,7 @@ const Index = () => {
         
         <DynamicCategoryCarousels />
         
-        <RecommendedProducts />
+        
         <Footer />
         
         {/* Ícone flutuante do carrinho */}

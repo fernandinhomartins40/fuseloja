@@ -12,8 +12,8 @@ import { FooterSettings } from '@/components/admin/settings/sections/FooterSetti
 import { VisualSettings } from '@/components/admin/settings/VisualSettings';
 import { PageSettings } from '@/components/admin/settings/PageSettings';
 import { useSettings } from '@/contexts/SettingsContext';
-import { Save, RotateCcw, Download, Upload, AlertCircle } from 'lucide-react';
-import { PageHeader } from '@/components/admin/layout/PageHeader';
+import { Save, RotateCcw, Download, Upload, AlertCircle, Settings as SettingsIcon } from 'lucide-react';
+import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
 
 const Settings: React.FC = () => {
   const {
@@ -111,26 +111,32 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 admin-panel">
-      <PageHeader
-        title="Configurações da Loja"
-        description="Personalize todos os aspectos da sua loja online de forma organizada."
-        action={{
-          label: isLoading ? "Salvando..." : "Salvar Configurações",
-          icon: Save,
-          onClick: handleSaveSettings,
-          variant: "default"
-        }}
-      />
-      
+    <AdminPageLayout
+      title="Configurações da Loja"
+      description="Personalize todos os aspectos da sua loja online de forma organizada."
+      breadcrumbs={[
+        { label: 'Admin', href: '/admin' },
+        { label: 'Configurações' }
+      ]}
+      badge={{
+        text: hasUnsavedChanges ? 'Não Salvo' : 'Atualizado',
+        variant: hasUnsavedChanges ? 'destructive' : 'default'
+      }}
+      action={{
+        label: isLoading ? "Salvando..." : "Salvar Configurações",
+        icon: <Save className="h-4 w-4" />,
+        onClick: handleSaveSettings,
+        variant: "default"
+      }}
+    >
       {hasUnsavedChanges && (
-        <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800">
+        <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 mb-6">
           <AlertCircle className="h-4 w-4" />
           <span className="text-sm">Você possui alterações não salvas.</span>
         </div>
       )}
       
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div className="flex items-center gap-2">
           <Button 
             variant="outline" 
@@ -232,7 +238,7 @@ const Settings: React.FC = () => {
           </TabsContent>
         </Tabs>
       </Card>
-    </div>
+    </AdminPageLayout>
   );
 };
 

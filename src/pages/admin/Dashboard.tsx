@@ -1,11 +1,14 @@
 
-import React from 'react';
-import { TrendingUp, ShoppingCart, Package, Truck } from 'lucide-react';
+import React, { useState } from 'react';
+import { TrendingUp, ShoppingCart, Package, Truck, Plus, Search, Users, BarChart3 } from 'lucide-react';
 import { StatsCard } from '@/components/admin/dashboard/StatsCard';
 import { ChartCard } from '@/components/admin/dashboard/ChartCard';
 import { ModernTable } from '@/components/admin/dashboard/ModernTable';
 import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
 import { StatusBadge } from '@/components/admin/ui/StatusBadge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const stats = [
   {
@@ -82,7 +85,71 @@ const salesData = [
   { name: 'Jun', value: 7000 },
 ];
 
+interface QuickAction {
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  count: string;
+  countLabel: string;
+  hasNotification?: boolean;
+  notificationCount?: number;
+  action: () => void;
+}
+
 const Dashboard: React.FC = () => {
+  const [loadingAction, setLoadingAction] = useState<number | null>(null);
+
+  const handleActionClick = (action: () => void, index: number) => {
+    setLoadingAction(index);
+    // Simula um pequeno delay para melhor UX
+    setTimeout(() => {
+      action();
+      setLoadingAction(null);
+    }, 800);
+  };
+
+  const quickActions: QuickAction[] = [
+    {
+      title: 'Cadastrar Produto',
+      description: 'Adicionar novo produto ao catálogo',
+      icon: Plus,
+      color: 'bg-blue-500 hover:bg-blue-600',
+      count: '1.342',
+      countLabel: 'produtos ativos',
+      action: () => window.location.href = '/admin/products?action=new'
+    },
+    {
+      title: 'Consultar Pedidos',
+      description: 'Ver pedidos e atualizar status',
+      icon: Search,
+      color: 'bg-green-500 hover:bg-green-600',
+      count: '24',
+      countLabel: 'pedidos hoje',
+      hasNotification: true,
+      notificationCount: 3,
+      action: () => window.location.href = '/admin/orders'
+    },
+    {
+      title: 'Gerenciar Categorias',
+      description: 'Organizar categorias de produtos',
+      icon: Package,
+      color: 'bg-purple-500 hover:bg-purple-600',
+      count: '15',
+      countLabel: 'categorias ativas',
+      action: () => window.location.href = '/admin/categories'
+    },
+    {
+      title: 'Ver Relatórios',
+      description: 'Análises e métricas detalhadas',
+      icon: BarChart3,
+      color: 'bg-orange-500 hover:bg-orange-600',
+      count: 'R$ 15.2k',
+      countLabel: 'vendas hoje',
+      action: () => window.location.href = '/admin/reports'
+    }
+  ];
+
   return (
     <AdminPageLayout
       title="Dashboard"
@@ -101,7 +168,73 @@ const Dashboard: React.FC = () => {
         onClick: () => window.location.href = '/admin/products'
       }}
     >
-      
+      {/* Quick Actions */}
+      <section className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Ações Rápidas</h2>
+          <p className="text-sm text-gray-600">Acesse rapidamente as principais funcionalidades da sua loja</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {quickActions.map((action, index) => {
+            const IconComponent = action.icon;
+            return (
+              <TooltipProvider key={index}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card 
+                      className={`border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group relative overflow-hidden ${
+                        loadingAction === index ? 'opacity-75 pointer-events-none' : ''
+                      }`}
+                      onClick={() => handleActionClick(action.action, index)}
+                    >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardContent className="p-4 sm:p-6 relative z-10">
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="relative">
+                      <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${action.color} flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-lg`}>
+                        {loadingAction === index ? (
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <IconComponent className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                        )}
+                      </div>
+                      {action.hasNotification && (
+                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-lg animate-pulse">
+                          {action.notificationCount}
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="font-bold text-sm sm:text-base text-gray-900 group-hover:text-gray-800 transition-colors leading-tight">
+                        {action.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-gray-600 group-hover:text-gray-700 leading-relaxed transition-colors">
+                        {action.description}
+                      </p>
+                      <div className="bg-gray-50 group-hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors duration-300">
+                        <div className="text-lg sm:text-xl font-bold text-gray-900">{action.count}</div>
+                        <div className="text-xs text-gray-500">{action.countLabel}</div>
+                      </div>
+                    </div>
+                    <div className="w-full pt-2">
+                      <div className="h-1 bg-gray-200 rounded-full overflow-hidden group-hover:bg-gray-300 transition-colors duration-300">
+                        <div className={`h-full ${action.color.split(' ')[0]} transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out`} />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Clique para {action.title.toLowerCase()}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            );
+          })}
+        </div>
+      </section>
+
       {/* Stats Grid */}
       <section className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
         <div className="mb-6">

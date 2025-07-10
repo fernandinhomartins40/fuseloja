@@ -1,14 +1,30 @@
 import { Pool, PoolClient } from 'pg';
-import { MongoClient, Db, Collection } from 'mongodb';
+import { MongoClient, Db, Collection, ClientSession } from 'mongodb';
 import config from '../utils/config';
 import logger from '../utils/logger';
+
+// Type definitions for database operations
+export type QueryParams = (string | number | boolean | null | Date)[];
+export type QueryResult = {
+  rows?: unknown[];
+  rowCount?: number;
+  [key: string]: unknown;
+};
+
+export type MongoQueryParams = {
+  filter?: Record<string, unknown>;
+  document?: Record<string, unknown>;
+  documents?: Record<string, unknown>[];
+  update?: Record<string, unknown>;
+  options?: Record<string, unknown>;
+};
 
 export interface DatabaseAdapter {
   connect(): Promise<void>;
   disconnect(): Promise<void>;
   isConnected(): boolean;
-  query(sql: string, params?: any[]): Promise<any>;
-  transaction<T>(callback: (client: any) => Promise<T>): Promise<T>;
+  query(sql: string, params?: QueryParams | MongoQueryParams): Promise<QueryResult>;
+  transaction<T>(callback: (client: PoolClient | ClientSession) => Promise<T>): Promise<T>;
   health(): Promise<{ connected: boolean; responseTime: number }>;
 }
 
@@ -58,7 +74,7 @@ export class PostgreSQLAdapter implements DatabaseAdapter {
     return this.connected && this.pool !== null;
   }
 
-  async query(sql: string, params: any[] = []): Promise<any> {
+  async query(sql: string, params: QueryParams = []): Promise<QueryResult> {
     if (!this.pool) {
       throw new Error('Database not connected');
     }
@@ -169,7 +185,7 @@ export class MongoDBAdapter implements DatabaseAdapter {
     return this.connected && this.client !== null;
   }
 
-  async query(operation: string, params: any = {}): Promise<any> {
+  async query(operation: string, params: MongoQueryParams = {}): Promise<QueryResult> {
     if (!this.db) {
       throw new Error('Database not connected');
     }
@@ -179,7 +195,7 @@ export class MongoDBAdapter implements DatabaseAdapter {
       const [collection, method] = operation.split('.');
       const coll = this.db.collection(collection);
       
-      let result;
+      let result: unknown;
       switch (method) {
         case 'find':
           result = await coll.find(params.filter || {}, params.options || {}).toArray();
@@ -188,22 +204,22 @@ export class MongoDBAdapter implements DatabaseAdapter {
           result = await coll.findOne(params.filter || {}, params.options || {});
           break;
         case 'insertOne':
-          result = await coll.insertOne(params.document);
+          result = await coll.insertOne(params.document || {});
           break;
         case 'insertMany':
-          result = await coll.insertMany(params.documents);
+          result = await coll.insertMany(params.documents || []);
           break;
         case 'updateOne':
-          result = await coll.updateOne(params.filter, params.update, params.options || {});
+          result = await coll.updateOne(params.filter || {}, params.update || {}, params.options || {});
           break;
         case 'updateMany':
-          result = await coll.updateMany(params.filter, params.update, params.options || {});
+          result = await coll.updateMany(params.filter || {}, params.update || {}, params.options || {});
           break;
         case 'deleteOne':
-          result = await coll.deleteOne(params.filter);
+          result = await coll.deleteOne(params.filter || {});
           break;
         case 'deleteMany':
-          result = await coll.deleteMany(params.filter);
+          result = await coll.deleteMany(params.filter || {});
           break;
         case 'countDocuments':
           result = await coll.countDocuments(params.filter || {});
@@ -219,7 +235,7 @@ export class MongoDBAdapter implements DatabaseAdapter {
         collection
       });
 
-      return result;
+      return { result };
     } catch (error) {
       logger.error('MongoDB operation failed', {
         operation,
@@ -230,7 +246,7 @@ export class MongoDBAdapter implements DatabaseAdapter {
     }
   }
 
-  async transaction<T>(callback: (session: any) => Promise<T>): Promise<T> {
+  async transaction<T>(callback: (session: ClientSession) => Promise<T>): Promise<T> {
     if (!this.client) {
       throw new Error('Database not connected');
     }
@@ -274,13 +290,18 @@ export class MongoDBAdapter implements DatabaseAdapter {
 }
 
 // Database Factory
+export type DatabaseConfig = {
+  connectionString: string;
+  databaseName?: string;
+};
+
 export class DatabaseFactory {
-  static create(type: 'postgresql' | 'mongodb', config: any): DatabaseAdapter {
+  static create(type: 'postgresql' | 'mongodb', config: DatabaseConfig): DatabaseAdapter {
     switch (type) {
       case 'postgresql':
         return new PostgreSQLAdapter(config.connectionString);
       case 'mongodb':
-        return new MongoDBAdapter(config.connectionString, config.databaseName);
+        return new MongoDBAdapter(config.connectionString, config.databaseName || 'database');
       default:
         throw new Error(`Unsupported database type: ${type}`);
     }

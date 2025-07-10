@@ -189,7 +189,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
             key={category.id} 
             className="py-16 relative overflow-hidden"
             style={{
-              background: `linear-gradient(135deg, ${category.color}15, ${category.color}05)`
+              background: `linear-gradient(135deg, ${category.color}25, ${category.color}10, hsl(var(--background)))`
             }}
           >
             {/* Background decorative elements */}
@@ -220,10 +220,10 @@ export const DynamicCategoryCarousels: React.FC = () => {
                     style={{ backgroundColor: category.color }}
                   />
                 </div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent mb-4">
+                <h2 className="text-4xl font-bold text-foreground mb-4">
                   {category.name}
                 </h2>
-                <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   Descubra os melhores produtos da categoria {category.name.toLowerCase()}
                 </p>
               </div>
@@ -241,7 +241,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
                     {category.products.map((product, index) => (
                       <CarouselItem key={index} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                         <div 
-                          className="group bg-white/90 backdrop-blur-sm border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                          className="group bg-card/95 backdrop-blur-sm border border-border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                           style={{ 
                             borderColor: `${category.color}30`,
                             boxShadow: `0 4px 6px -1px ${category.color}10`
@@ -281,22 +281,22 @@ export const DynamicCategoryCarousels: React.FC = () => {
                           </div>
                           
                           <div className="p-6 space-y-4">
-                            <h3 className="font-semibold text-slate-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                            <h3 className="font-semibold text-foreground text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors">
                               {product.title}
                             </h3>
                             
                             <div className="space-y-2">
                               <div className="flex items-baseline gap-2">
                                 {product.originalPrice && (
-                                  <span className="text-sm text-slate-400 line-through">
+                                  <span className="text-sm text-muted-foreground line-through">
                                     R$ {product.originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                   </span>
                                 )}
                               </div>
-                              <div className="text-xl font-bold text-slate-900">
+                              <div className="text-xl font-bold text-foreground">
                                 R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                               </div>
-                              <div className="text-xs text-slate-500">
+                              <div className="text-xs text-muted-foreground">
                                 6x de R$ {(product.price / 6).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} sem juros
                               </div>
                             </div>

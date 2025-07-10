@@ -18,13 +18,13 @@ import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="bg-white">
+      <div className="bg-background border-b border-border">
         <div className="container mx-auto">
           <Navigation />
         </div>
       </div>
       <Header />
-      <div className="bg-[#0B0909] py-4">
+      <div className="bg-secondary py-4">
         <div className="container mx-auto flex justify-center">
           <SearchBar onSearch={(value) => console.log('Pesquisa:', value)} />
         </div>

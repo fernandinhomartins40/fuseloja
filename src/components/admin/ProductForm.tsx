@@ -12,7 +12,7 @@ import {
 import ProductPriceFields from './product-form/ProductPriceFields';
 import ProductCategoryField from './product-form/ProductCategoryField';
 import ProductTagField from './product-form/ProductTagField';
-import SimpleProductImageUploader from './product-form/SimpleProductImageUploader';
+import { UnifiedProductImageUploader } from './product-form/UnifiedProductImageUploader';
 import ProductDescriptionField from './product-form/ProductDescriptionField';
 import ProductSpecificationsField from './product-form/ProductSpecificationsField';
 import ProductInventoryField from './product-form/ProductInventoryField';
@@ -136,7 +136,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
         
         {/* Images Tab */}
         <TabsContent value="images" className="pt-4">
-          <SimpleProductImageUploader
+          <UnifiedProductImageUploader
             images={images}
             mainImage={product.image}
             onImagesChange={handleImagesChange}

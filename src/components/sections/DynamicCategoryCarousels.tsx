@@ -211,7 +211,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
                   }}
                 >
                   <IconComponent size={20} />
-                  <span>Categoria</span>
+                  <span>{category.name}</span>
                   <div 
                     className="w-2 h-2 rounded-full animate-pulse"
                     style={{ backgroundColor: category.color }}

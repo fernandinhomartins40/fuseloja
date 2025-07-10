@@ -284,17 +284,17 @@ export const DynamicCategoryCarousels: React.FC = () => {
                             </div>
                           </div>
                           
-                          <div className="p-6 space-y-4">
+                            <div className="p-6 space-y-4">
                             <h3 
-                              className="font-semibold text-foreground text-sm leading-tight line-clamp-2 transition-colors"
+                              className="font-semibold text-sm leading-tight line-clamp-2 transition-colors"
                               style={{
-                                '--hover-color': category.color
-                              } as React.CSSProperties}
+                                color: `${category.color}dd`
+                              }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.color = category.color;
+                                e.currentTarget.style.color = `${category.color}ee`;
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.color = '';
+                                e.currentTarget.style.color = `${category.color}dd`;
                               }}
                             >
                               {product.title}

@@ -16,35 +16,33 @@ import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocomplete';
 const Index = () => {
   return <div className="min-h-screen flex flex-col">
-      <div className="bg-background border-b border-border">
-        <div className="container mx-auto bg-slate-950 py-[15px]">
-          <Navigation />
-        </div>
-      </div>
       <Header />
       
-      <Marquee />
-      <HeroSlider />
-      
-      {/* Barra de busca moderna com autocomplete */}
-      <section className="py-8 bg-background/50">
-        <div className="container mx-auto px-4">
-          <SearchBarWithAutocomplete onSearch={value => console.log('Busca avançada:', value)} onProductSelect={product => console.log('Produto selecionado:', product)} />
+      {/* Add top padding to account for fixed header */}
+      <div className="pt-20">
+        <Marquee />
+        <HeroSlider />
+        
+        {/* Barra de busca moderna com autocomplete */}
+        <section className="py-8 bg-background/50">
+          <div className="container mx-auto px-4">
+            <SearchBarWithAutocomplete onSearch={value => console.log('Busca avançada:', value)} onProductSelect={product => console.log('Produto selecionado:', product)} />
+          </div>
+        </section>
+        <CategoryIcons />
+        <RecentlyAddedProducts />
+        <BestSellerProducts />
+        <CategoryProducts />
+        <PromotionProducts />
+        <div className="container mx-auto">
+          <CategoryGrid />
         </div>
-      </section>
-      <CategoryIcons />
-      <RecentlyAddedProducts />
-      <BestSellerProducts />
-      <CategoryProducts />
-      <PromotionProducts />
-      <div className="container mx-auto">
-        <CategoryGrid />
+        <RecommendedProducts />
+        <Footer />
+        
+        {/* Ícone flutuante do carrinho */}
+        <FloatingCartButton />
       </div>
-      <RecommendedProducts />
-      <Footer />
-      
-      {/* Ícone flutuante do carrinho */}
-      <FloatingCartButton />
     </div>;
 };
 export default Index;

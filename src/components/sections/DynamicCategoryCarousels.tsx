@@ -238,11 +238,12 @@ export const DynamicCategoryCarousels: React.FC = () => {
                     {category.products.map((product, index) => (
                       <CarouselItem key={index} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                         <div 
-                          className="group bg-card/95 backdrop-blur-sm border border-border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                          className="group bg-card/95 backdrop-blur-sm border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                           style={{ 
-                            borderColor: `${category.color}30`,
-                            boxShadow: `0 4px 6px -1px ${category.color}10`
-                          }}
+                            borderColor: `${category.color}60`,
+                            boxShadow: `0 4px 6px -1px ${category.color}20`,
+                            '--category-color': category.color
+                          } as React.CSSProperties}
                         >
                           <div className="relative overflow-hidden">
                             <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-50 relative">
@@ -278,7 +279,18 @@ export const DynamicCategoryCarousels: React.FC = () => {
                           </div>
                           
                           <div className="p-6 space-y-4">
-                            <h3 className="font-semibold text-foreground text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                            <h3 
+                              className="font-semibold text-foreground text-sm leading-tight line-clamp-2 transition-colors"
+                              style={{
+                                '--hover-color': category.color
+                              } as React.CSSProperties}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.color = category.color;
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.color = '';
+                              }}
+                            >
                               {product.title}
                             </h3>
                             

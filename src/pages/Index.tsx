@@ -24,7 +24,7 @@ const Index = () => {
         <HeroSlider />
         
         {/* Barra de busca moderna com autocomplete */}
-        <section className="py-8 bg-background/50">
+        <section className="bg-slate-50 py-[35px]">
           <div className="container mx-auto px-4">
             <SearchBarWithAutocomplete onSearch={value => console.log('Busca avançada:', value)} onProductSelect={product => console.log('Produto selecionado:', product)} />
           </div>

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { SectionHeader } from '@/components/ui/SectionHeader';
+import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -41,13 +41,17 @@ const Reports: React.FC = () => {
   const [timeRange, setTimeRange] = useState('ultimo_mes');
 
   return (
-    <div className="space-y-6">
-      <SectionHeader 
-        title="Relatórios e Análises" 
-        description="Visualize o desempenho da sua loja"
-      />
-
-      <div className="flex justify-between items-center">
+    <AdminPageLayout
+      title="Relatórios"
+      description="Visualize e analise o desempenho completo da sua loja"
+      breadcrumbs={[
+        { label: 'Admin', href: '/admin' },
+        { label: 'Análises', href: '/admin' },
+        { label: 'Relatórios' }
+      ]}
+    >
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
         <Tabs defaultValue="sales" className="w-full">
           <div className="flex items-center justify-between mb-4">
             <TabsList>
@@ -209,8 +213,9 @@ const Reports: React.FC = () => {
             </div>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
-    </div>
+    </AdminPageLayout>
   );
 };
 

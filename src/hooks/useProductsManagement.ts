@@ -5,16 +5,8 @@ import { toast } from '@/hooks/use-toast';
 
 export const useProductsManagement = () => {
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-
-  const filteredProducts = products.filter(product =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.shortDescription?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleDeleteProduct = (id: string) => {
     if (confirm('Tem certeza que deseja excluir este produto?')) {
@@ -74,11 +66,9 @@ export const useProductsManagement = () => {
   };
 
   return {
-    products: filteredProducts,
-    searchTerm,
+    products,
     editingProduct,
     isFormOpen,
-    setSearchTerm,
     setIsFormOpen,
     handleDeleteProduct,
     handleEditProduct,

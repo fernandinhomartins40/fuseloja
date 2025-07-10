@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { SectionHeader } from '@/components/ui/SectionHeader';
+import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
 import { 
   Table, 
   TableBody, 
@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, Truck, MapPin } from 'lucide-react';
+import { Truck, MapPin } from 'lucide-react';
 import { 
   Dialog, 
   DialogContent, 
@@ -191,11 +191,19 @@ const Deliveries: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <SectionHeader 
-        title="Gerenciamento de Entregas" 
-        description="Acompanhe e atualize o status das entregas"
-      />
+    <AdminPageLayout
+      title="Entregas"
+      description="Acompanhe e gerencie todas as entregas da sua loja"
+      breadcrumbs={[
+        { label: 'Admin', href: '/admin' },
+        { label: 'Vendas', href: '/admin' },
+        { label: 'Entregas' }
+      ]}
+      badge={{
+        text: `${filteredDeliveries.length} entregas`,
+        variant: 'secondary'
+      }}
+    >
       
       <Card>
         <CardContent className="p-6">
@@ -343,7 +351,7 @@ const Deliveries: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminPageLayout>
   );
 };
 

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUp, ShoppingCart, Package, Truck, Plus } from 'lucide-react';
+import { TrendingUp, ShoppingCart, Package, Truck } from 'lucide-react';
 import { StatsCard } from '@/components/admin/dashboard/StatsCard';
 import { ChartCard } from '@/components/admin/dashboard/ChartCard';
 import { ModernTable } from '@/components/admin/dashboard/ModernTable';
@@ -96,9 +96,9 @@ const Dashboard: React.FC = () => {
         variant: 'default'
       }}
       action={{
-        label: 'Novo Produto',
-        icon: <Plus className="h-4 w-4" />,
-        onClick: () => console.log('Novo produto')
+        label: 'Ver Produtos',
+        icon: <Package className="h-4 w-4" />,
+        onClick: () => window.location.href = '/admin/products'
       }}
     >
       

@@ -1,27 +1,54 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Search, Plus, Tags } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { defaultCategories } from '@/utils/categoryIcons';
-import { Category, getContrastTextColor } from '@/types/category';
+import { Category } from '@/types/category';
 import CategoryCard from '@/components/admin/CategoryCard';
 import CategoryForm from '@/components/admin/CategoryForm';
 import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
+import { SearchFilter, FilterOption } from '@/components/admin/ui/SearchFilter';
+import { useSearchFilter } from '@/hooks/useSearchFilter';
 
 const Categories: React.FC = () => {
   // Initialize with default categories and add custom ones
   const [categories, setCategories] = useState<Category[]>(defaultCategories);
-  const [searchTerm, setSearchTerm] = useState('');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const filteredCategories = categories.filter(category =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    category.slug.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter configuration for categories
+  const filterConfig: FilterOption[] = [
+    {
+      key: 'isDefault',
+      label: 'Tipo',
+      type: 'select',
+      options: [
+        { value: 'true', label: 'Categorias Padrão' },
+        { value: 'false', label: 'Categorias Personalizadas' }
+      ],
+      placeholder: 'Todos os tipos'
+    },
+    {
+      key: 'hasIcon',
+      label: 'Com ícone',
+      type: 'checkbox',
+      placeholder: 'Apenas categorias com ícone'
+    }
+  ];
+
+  const {
+    searchValue,
+    setSearchValue,
+    activeFilters,
+    setActiveFilters,
+    clearFilters,
+    filteredData: filteredCategories
+  } = useSearchFilter(categories, {
+    filterConfig,
+    initialSearch: ''
+  });
 
   const handleAddCategory = (categoryData: Omit<Category, 'id'>) => {
     // Generate a new ID for the category
@@ -94,7 +121,7 @@ const Categories: React.FC = () => {
         { label: 'Categorias' }
       ]}
       badge={{
-        text: `${categories.length} categorias`,
+        text: `${filteredCategories.length} de ${categories.length} categorias`,
         variant: 'secondary'
       }}
       action={{
@@ -107,40 +134,34 @@ const Categories: React.FC = () => {
       }}
     >
       <div className="space-y-4 sm:space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar categorias..."
-              className="pl-10 w-full"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+        <SearchFilter
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          searchPlaceholder="Buscar categorias por nome, slug ou descrição..."
+          filters={filterConfig}
+          activeFilters={activeFilters}
+          onFiltersChange={setActiveFilters}
+          onClearFilters={clearFilters}
+          showFilterCount={true}
+        />
+        
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogContent className="w-[95vw] max-w-[550px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-lg sm:text-xl">
+                {editingCategory ? 'Editar Categoria' : 'Adicionar Nova Categoria'}
+              </DialogTitle>
+            </DialogHeader>
+            <CategoryForm
+              initialData={editingCategory}
+              onSubmit={editingCategory ? handleUpdateCategory : handleAddCategory}
+              onCancel={() => {
+                setIsFormOpen(false);
+                setEditingCategory(null);
+              }}
             />
-          </div>
-          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-            <DialogTrigger asChild>
-              <Button className="w-full sm:w-auto">
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Categoria
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[95vw] max-w-[550px] max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-lg sm:text-xl">
-                  {editingCategory ? 'Editar Categoria' : 'Adicionar Nova Categoria'}
-                </DialogTitle>
-              </DialogHeader>
-              <CategoryForm
-                initialData={editingCategory}
-                onSubmit={editingCategory ? handleUpdateCategory : handleAddCategory}
-                onCancel={() => {
-                  setIsFormOpen(false);
-                  setEditingCategory(null);
-                }}
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
+          </DialogContent>
+        </Dialog>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
           {filteredCategories.length > 0 ? (

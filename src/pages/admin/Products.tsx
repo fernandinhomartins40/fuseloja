@@ -3,19 +3,18 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ProductForm from '@/components/admin/ProductForm';
 import ProductsTable from '@/components/admin/ProductsTable';
-import ProductsSearchBar from '@/components/admin/ProductsSearchBar';
 import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
+import { SearchFilter, FilterOption } from '@/components/admin/ui/SearchFilter';
 import { useProductsManagement } from '@/hooks/useProductsManagement';
+import { useSearchFilter } from '@/hooks/useSearchFilter';
 import { Product } from '@/types/product';
 import { Package2, Plus } from 'lucide-react';
 
 const Products: React.FC = () => {
   const {
     products,
-    searchTerm,
     editingProduct,
     isFormOpen,
-    setSearchTerm,
     setIsFormOpen,
     handleDeleteProduct,
     handleEditProduct,
@@ -23,6 +22,76 @@ const Products: React.FC = () => {
     handleUpdateProduct,
     handleNewProductClick
   } = useProductsManagement();
+
+  // Filter configuration for products
+  const filterConfig: FilterOption[] = [
+    {
+      key: 'category',
+      label: 'Categoria',
+      type: 'select',
+      options: [
+        { value: 'electronics', label: 'Eletrônicos' },
+        { value: 'fashion', label: 'Moda' },
+        { value: 'home', label: 'Casa & Decoração' },
+        { value: 'sports', label: 'Esportes' },
+        { value: 'books', label: 'Livros' },
+        { value: 'health', label: 'Saúde & Beleza' }
+      ],
+      placeholder: 'Todas as categorias'
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select',
+      options: [
+        { value: 'active', label: 'Ativo' },
+        { value: 'inactive', label: 'Inativo' },
+        { value: 'draft', label: 'Rascunho' }
+      ],
+      placeholder: 'Todos os status'
+    },
+    {
+      key: 'stock',
+      label: 'Estoque',
+      type: 'select',
+      options: [
+        { value: 'in_stock', label: 'Em estoque' },
+        { value: 'low_stock', label: 'Estoque baixo' },
+        { value: 'out_of_stock', label: 'Sem estoque' }
+      ],
+      placeholder: 'Todos os estoques'
+    },
+    {
+      key: 'price_min',
+      label: 'Preço mínimo',
+      type: 'number',
+      placeholder: 'R$ 0,00'
+    },
+    {
+      key: 'price_max',
+      label: 'Preço máximo',
+      type: 'number',
+      placeholder: 'R$ 999.999,99'
+    },
+    {
+      key: 'featured',
+      label: 'Produto em destaque',
+      type: 'checkbox',
+      placeholder: 'Apenas produtos em destaque'
+    }
+  ];
+
+  const {
+    searchValue,
+    setSearchValue,
+    activeFilters,
+    setActiveFilters,
+    clearFilters,
+    filteredData
+  } = useSearchFilter(products, {
+    filterConfig,
+    initialSearch: ''
+  });
 
   return (
     <AdminPageLayout
@@ -34,7 +103,7 @@ const Products: React.FC = () => {
         { label: 'Produtos' }
       ]}
       badge={{
-        text: `${products.length} itens`,
+        text: `${filteredData.length} de ${products.length} itens`,
         variant: 'secondary'
       }}
       action={{
@@ -44,10 +113,15 @@ const Products: React.FC = () => {
       }}
     >
       <div className="space-y-4 sm:space-y-6">
-        <ProductsSearchBar 
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          onNewProduct={handleNewProductClick}
+        <SearchFilter
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          searchPlaceholder="Buscar produtos por nome, categoria, SKU..."
+          filters={filterConfig}
+          activeFilters={activeFilters}
+          onFiltersChange={setActiveFilters}
+          onClearFilters={clearFilters}
+          showFilterCount={true}
         />
         
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -68,7 +142,7 @@ const Products: React.FC = () => {
         </Dialog>
         
         <ProductsTable 
-          products={products}
+          products={filteredData}
           onEdit={handleEditProduct}
           onDelete={handleDeleteProduct}
         />

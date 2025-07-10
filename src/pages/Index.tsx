@@ -14,6 +14,7 @@ import { CategoryProducts } from '../components/sections/CategoryProducts';
 import { PromotionProducts } from '../components/sections/PromotionProducts';
 import { RecommendedProducts } from '../components/sections/RecommendedProducts';
 import { FloatingCartButton } from '../components/cart/FloatingCartButton';
+import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocomplete';
 
 const Index = () => {
   return (
@@ -30,6 +31,17 @@ const Index = () => {
         </div>
       </div>
       <HeroSlider />
+      
+      {/* Barra de busca moderna com autocomplete */}
+      <section className="py-8 bg-background/50">
+        <div className="container mx-auto px-4">
+          <SearchBarWithAutocomplete 
+            onSearch={(value) => console.log('Busca avançada:', value)}
+            onProductSelect={(product) => console.log('Produto selecionado:', product)}
+          />
+        </div>
+      </section>
+      
       <div className="container mx-auto">
         <Features />
       </div>

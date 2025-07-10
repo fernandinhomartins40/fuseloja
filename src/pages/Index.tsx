@@ -7,7 +7,7 @@ import { CategoryIcons } from '../components/sections/CategoryIcons';
 import { CategoryGrid } from '../components/sections/CategoryGrid';
 import { Footer } from '../components/layout/Footer';
 import { SearchBar } from '../components/ui/SearchBar';
-import { RecentlyAddedProducts } from '../components/sections/RecentlyAddedProducts';
+
 import { BestSellerProducts } from '../components/sections/BestSellerProducts';
 import { CategoryProducts } from '../components/sections/CategoryProducts';
 import { PromotionProducts } from '../components/sections/PromotionProducts';
@@ -33,7 +33,7 @@ const Index = () => {
         </section>
         <CategoryIcons />
         <NewArrivals />
-        <RecentlyAddedProducts />
+        
         <BestSellerProducts />
         <CategoryProducts />
         

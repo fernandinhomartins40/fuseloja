@@ -14,6 +14,7 @@ import { PromotionProducts } from '../components/sections/PromotionProducts';
 import { RecommendedProducts } from '../components/sections/RecommendedProducts';
 import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocomplete';
+import { NewArrivals } from '../components/sections/NewArrivals';
 const Index = () => {
   return <div className="min-h-screen flex flex-col">
       <Header />
@@ -30,6 +31,7 @@ const Index = () => {
             <SearchBarWithAutocomplete onSearch={value => console.log('Busca avançada:', value)} onProductSelect={product => console.log('Produto selecionado:', product)} />
           </div>
         </section>
+        <NewArrivals />
         <CategoryIcons />
         <RecentlyAddedProducts />
         <BestSellerProducts />

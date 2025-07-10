@@ -205,16 +205,16 @@ export const DynamicCategoryCarousels: React.FC = () => {
                 <div 
                   className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-sm font-medium mb-4 border"
                   style={{
-                    backgroundColor: `${category.color}20`,
-                    borderColor: `${category.color}30`,
-                    color: category.color
+                    backgroundColor: `${category.color}10`,
+                    borderColor: `${category.color}80`,
+                    color: `${category.color}dd`
                   }}
                 >
-                  <IconComponent size={20} style={{ color: category.color }} />
-                  <span style={{ color: category.color }}>{category.name}</span>
+                  <IconComponent size={20} style={{ color: `${category.color}dd` }} />
+                  <span style={{ color: `${category.color}dd` }}>{category.name}</span>
                   <div 
                     className="w-2 h-2 rounded-full animate-pulse"
-                    style={{ backgroundColor: category.color }}
+                    style={{ backgroundColor: `${category.color}dd` }}
                   />
                 </div>
                 <h2 className="text-4xl font-bold mb-4" style={{ color: category.color }}>

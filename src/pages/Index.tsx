@@ -34,9 +34,7 @@ const Index = () => {
         <BestSellerProducts />
         <CategoryProducts />
         <PromotionProducts />
-        <div className="container mx-auto">
-          <CategoryGrid />
-        </div>
+        
         <RecommendedProducts />
         <Footer />
         

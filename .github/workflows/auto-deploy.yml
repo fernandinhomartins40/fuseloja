@@ -17,13 +17,20 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'npm'
+        
+    - name: Check package-lock files
+      run: |
+        echo "Checking package-lock.json files..."
+        ls -la package-lock.json backend/package-lock.json || true
         
     - name: Install frontend dependencies
       run: npm ci
       
     - name: Install backend dependencies
-      run: cd backend && npm ci
+      run: |
+        cd backend
+        ls -la package-lock.json || echo "package-lock.json not found!"
+        npm ci
       
     - name: Run frontend linter
       run: npm run lint

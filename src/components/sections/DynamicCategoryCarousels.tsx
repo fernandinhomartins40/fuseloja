@@ -187,10 +187,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
         return (
           <section 
             key={category.id} 
-            className="py-16 relative overflow-hidden"
-            style={{
-              background: `linear-gradient(135deg, ${category.color}25, ${category.color}10, hsl(var(--background)))`
-            }}
+            className="py-16 relative overflow-hidden bg-muted/30"
           >
             {/* Background decorative elements */}
             <div 

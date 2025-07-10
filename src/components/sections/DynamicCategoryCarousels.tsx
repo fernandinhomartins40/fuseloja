@@ -207,17 +207,17 @@ export const DynamicCategoryCarousels: React.FC = () => {
                   style={{
                     backgroundColor: `${category.color}20`,
                     borderColor: `${category.color}30`,
-                    color: textColor
+                    color: category.color
                   }}
                 >
-                  <IconComponent size={20} />
-                  <span>{category.name}</span>
+                  <IconComponent size={20} style={{ color: category.color }} />
+                  <span style={{ color: category.color }}>{category.name}</span>
                   <div 
                     className="w-2 h-2 rounded-full animate-pulse"
                     style={{ backgroundColor: category.color }}
                   />
                 </div>
-                <h2 className="text-4xl font-bold text-foreground mb-4">
+                <h2 className="text-4xl font-bold mb-4" style={{ color: category.color }}>
                   {category.name}
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -240,8 +240,8 @@ export const DynamicCategoryCarousels: React.FC = () => {
                         <div 
                           className="group bg-card/95 backdrop-blur-sm border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                           style={{ 
-                            borderColor: `${category.color}60`,
-                            boxShadow: `0 4px 6px -1px ${category.color}20`,
+                            borderColor: category.color,
+                            boxShadow: `0 4px 6px -1px ${category.color}40`,
                             '--category-color': category.color
                           } as React.CSSProperties}
                         >
@@ -308,7 +308,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
                                   </span>
                                 )}
                               </div>
-                              <div className="text-xl font-bold text-foreground">
+                              <div className="text-xl font-bold" style={{ color: category.color }}>
                                 R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                               </div>
                               <div className="text-xs text-muted-foreground">
@@ -335,14 +335,14 @@ export const DynamicCategoryCarousels: React.FC = () => {
                   <CarouselPrevious 
                     className="left-4 border-2 bg-white/90 backdrop-blur-sm hover:bg-white"
                     style={{ 
-                      borderColor: `${category.color}40`,
+                      borderColor: category.color,
                       color: category.color
                     }}
                   />
                   <CarouselNext 
                     className="right-4 border-2 bg-white/90 backdrop-blur-sm hover:bg-white"
                     style={{ 
-                      borderColor: `${category.color}40`,
+                      borderColor: category.color,
                       color: category.color
                     }}
                   />

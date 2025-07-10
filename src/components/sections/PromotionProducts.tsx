@@ -3,6 +3,7 @@ import { HorizontalProductCard } from '../ui/HorizontalProductCard';
 
 // Sample promotion products data
 const promotionProducts = [{
+  id: "promo-1",
   title: "Headphone Bluetooth JBL",
   price: 199.99,
   originalPrice: 299.99,
@@ -10,6 +11,7 @@ const promotionProducts = [{
   tag: 'promocao' as const,
   discountPercentage: 33
 }, {
+  id: "promo-2",
   title: "Cafeteira Espresso",
   price: 399.99,
   originalPrice: 599.99,
@@ -17,6 +19,7 @@ const promotionProducts = [{
   tag: 'promocao' as const,
   discountPercentage: 33
 }, {
+  id: "promo-3",
   title: "Smart TV 4K 50 polegadas",
   price: 1999.99,
   originalPrice: 2499.99,
@@ -24,6 +27,7 @@ const promotionProducts = [{
   tag: 'promocao' as const,
   discountPercentage: 20
 }, {
+  id: "promo-4",
   title: "Relógio de Parede",
   price: 89.99,
   originalPrice: 119.99,
@@ -31,6 +35,7 @@ const promotionProducts = [{
   tag: 'promocao' as const,
   discountPercentage: 25
 }, {
+  id: "promo-5",
   title: "Tênis Esportivo",
   price: 199.99,
   originalPrice: 249.99,
@@ -38,6 +43,7 @@ const promotionProducts = [{
   tag: 'promocao' as const,
   discountPercentage: 20
 }, {
+  id: "promo-6",
   title: "Mochila Impermeável",
   price: 149.99,
   originalPrice: 199.99,

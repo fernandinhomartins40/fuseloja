@@ -1,7 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 interface HorizontalProductCardProps {
+  id?: string;
   title: string;
   price: number;
   originalPrice?: number;
@@ -10,6 +12,7 @@ interface HorizontalProductCardProps {
 }
 
 export const HorizontalProductCard: React.FC<HorizontalProductCardProps> = ({
+  id,
   title,
   price,
   originalPrice,
@@ -28,10 +31,13 @@ export const HorizontalProductCard: React.FC<HorizontalProductCardProps> = ({
     : 0;
 
   return (
-    <div className={cn(
-      "flex items-center gap-3 bg-background border border-border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200 min-w-[280px] h-[90px]",
-      className
-    )}>
+    <Link 
+      to={`/produto/${id || title.toLowerCase().replace(/\s+/g, '-')}`}
+      className={cn(
+        "block flex items-center gap-3 bg-background border border-border rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200 min-w-[280px] h-[90px] cursor-pointer hover:scale-[1.02]",
+        className
+      )}
+    >
       {/* Image */}
       <div className="relative flex-shrink-0">
         <img
@@ -64,6 +70,6 @@ export const HorizontalProductCard: React.FC<HorizontalProductCardProps> = ({
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };

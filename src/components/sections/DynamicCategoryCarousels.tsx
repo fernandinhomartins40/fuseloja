@@ -258,10 +258,16 @@ export const DynamicCategoryCarousels: React.FC = () => {
                               {product.tag && (
                                 <div className="absolute top-4 left-4">
                                   <span 
-                                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold text-white"
-                                    style={{ backgroundColor: category.color }}
+                                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold"
+                                    style={{ 
+                                      backgroundColor: category.color,
+                                      color: getContrastTextColor(category.color)
+                                    }}
                                   >
-                                    <span className="w-1.5 h-1.5 bg-white rounded-full" />
+                                    <span 
+                                      className="w-1.5 h-1.5 rounded-full" 
+                                      style={{ backgroundColor: getContrastTextColor(category.color) }}
+                                    />
                                     {product.tag.toUpperCase()}
                                   </span>
                                 </div>

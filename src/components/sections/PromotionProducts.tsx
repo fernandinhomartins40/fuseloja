@@ -1,6 +1,5 @@
 import React from 'react';
 import { HorizontalProductCard } from '../ui/HorizontalProductCard';
-import { SectionHeader } from '../ui/SectionHeader';
 
 // Sample promotion products data
 const promotionProducts = [{
@@ -48,14 +47,8 @@ const promotionProducts = [{
 }];
 export const PromotionProducts: React.FC = () => {
   return (
-    <section className="py-8 bg-slate-50">
+    <section className="py-6 bg-slate-50">
       <div className="container mx-auto px-4">
-        <SectionHeader 
-          title="Ofertas Imperdíveis" 
-          description="Promoções por tempo limitado com descontos especiais" 
-          className="mb-8" 
-        />
-        
         {/* Sliding animation container */}
         <div className="relative overflow-hidden">
           <div className="flex gap-4 animate-scroll hover:[animation-play-state:paused]">

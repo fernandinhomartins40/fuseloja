@@ -22,6 +22,7 @@ const Index = () => {
       <div className="pt-20 bg-slate-950 py-[75px]">
         <Marquee />
         <HeroSlider />
+        <PromotionProducts />
         
         {/* Barra de busca moderna com autocomplete */}
         <section className="bg-slate-50 py-[35px]">
@@ -33,7 +34,6 @@ const Index = () => {
         <RecentlyAddedProducts />
         <BestSellerProducts />
         <CategoryProducts />
-        <PromotionProducts />
         
         <RecommendedProducts />
         <Footer />

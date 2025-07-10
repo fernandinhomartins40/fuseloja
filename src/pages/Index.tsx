@@ -19,7 +19,7 @@ const Index = () => {
       <Header />
       
       {/* Add top padding to account for fixed header */}
-      <div className="pt-20">
+      <div className="pt-20 bg-slate-950 py-[75px]">
         <Marquee />
         <HeroSlider />
         

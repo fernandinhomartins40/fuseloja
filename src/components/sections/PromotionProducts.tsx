@@ -1,8 +1,6 @@
 import React from 'react';
-import { ProductCard } from '../ui/ProductCard';
+import { HorizontalProductCard } from '../ui/HorizontalProductCard';
 import { SectionHeader } from '../ui/SectionHeader';
-import { Percent } from 'lucide-react';
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Sample promotion products data
 const promotionProducts = [{
@@ -49,21 +47,29 @@ const promotionProducts = [{
   discountPercentage: 25
 }];
 export const PromotionProducts: React.FC = () => {
-  return <section className="py-12 bg-slate-50">
+  return (
+    <section className="py-8 bg-slate-50">
       <div className="container mx-auto px-4">
-        <SectionHeader title="Ofertas Imperdíveis" description="Promoções por tempo limitado com descontos especiais" actionLabel="Ver Todas as Promoções" onAction={() => console.log("Ver todas as promoções")} className="mb-12" />
+        <SectionHeader 
+          title="Ofertas Imperdíveis" 
+          description="Promoções por tempo limitado com descontos especiais" 
+          className="mb-8" 
+        />
         
-        <ScrollArea className="w-full whitespace-nowrap pb-6">
-          <div className="flex gap-4 md:gap-6">
-            {promotionProducts.map((product, index) => <div key={index} className="min-w-[240px] w-[280px] md:w-[320px] relative flex-shrink-0">
-                <div className="absolute top-4 left-4 z-20 bg-destructive text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
-                  <Percent size={14} />
-                  {product.discountPercentage}% OFF
-                </div>
-                <ProductCard {...product} />
-              </div>)}
+        {/* Sliding animation container */}
+        <div className="relative overflow-hidden">
+          <div className="flex gap-4 animate-scroll hover:[animation-play-state:paused]">
+            {/* First set of products */}
+            {promotionProducts.map((product, index) => (
+              <HorizontalProductCard key={`first-${index}`} {...product} />
+            ))}
+            {/* Duplicate set for seamless loop */}
+            {promotionProducts.map((product, index) => (
+              <HorizontalProductCard key={`second-${index}`} {...product} />
+            ))}
           </div>
-        </ScrollArea>
+        </div>
       </div>
-    </section>;
+    </section>
+  );
 };

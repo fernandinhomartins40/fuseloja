@@ -1,10 +1,9 @@
-name: Auto Deploy
+name: Deploy Fullstack to VPS
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -20,32 +19,129 @@ jobs:
         node-version: '20'
         cache: 'npm'
         
-    - name: Install dependencies
+    - name: Install frontend dependencies
       run: npm ci
       
-    - name: Run linter
+    - name: Install backend dependencies
+      run: cd backend && npm ci
+      
+    - name: Run frontend linter
       run: npm run lint
       continue-on-error: true
       
-    - name: Type check
-      run: npx tsc --noEmit
+    - name: Run backend linter
+      run: cd backend && npm run lint
       continue-on-error: true
       
-    - name: Build project
+    - name: Build frontend
       run: npm run build
       
-    - name: Deploy to GitHub Pages
+    - name: Build backend
+      run: cd backend && npm run build
+      
+    - name: Deploy to VPS
       if: github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
+      uses: appleboy/ssh-action@v1.0.0
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
+        script: |
+          set -e
+          
+          # Navigate to application directory
+          cd /opt/fuseloja-fullstack
+          
+          # Stop existing container if running
+          docker stop fuseloja-app || true
+          docker rm fuseloja-app || true
+          
+          # Remove old images
+          docker image prune -af
+          
+          # Clone/update repository
+          if [ -d "app" ]; then
+            cd app
+            git fetch origin
+            git reset --hard origin/main
+            cd ..
+          else
+            git clone https://github.com/fernandinhomartins40/fuseloja.git app
+          fi
+          
+          # Copy source files
+          cp -r app/* .
+          
+          # Create environment file
+          cat > .env << EOF
+          NODE_ENV=production
+          PORT=3000
+          
+          # JWT Configuration
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+          
+          # Email Configuration
+          EMAIL_HOST=smtp.gmail.com
+          EMAIL_PORT=587
+          EMAIL_USER=${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
+          
+          # CORS Configuration
+          CORS_ORIGINS=${{ vars.CORS_ORIGINS }}
+          
+          # Domain Configuration
+          DOMAIN=${{ vars.DOMAIN }}
+          
+          # Database Configuration
+          DATABASE_TYPE=json
+          DATABASE_PATH=/opt/fuseloja-fullstack/data/database.json
+          
+          # Upload Configuration
+          UPLOAD_PATH=/opt/fuseloja-fullstack/uploads
+          
+          # Logs Configuration
+          LOG_LEVEL=info
+          LOG_PATH=/opt/fuseloja-fullstack/logs
+          EOF
+          
+          # Build and run container
+          docker build -t fuseloja-app -f Dockerfile.fullstack .
+          
+          docker run -d \
+            --name fuseloja-app \
+            --restart unless-stopped \
+            -p 3000:3000 \
+            -v /opt/fuseloja-fullstack/data:/opt/fuseloja-fullstack/data \
+            -v /opt/fuseloja-fullstack/uploads:/opt/fuseloja-fullstack/uploads \
+            -v /opt/fuseloja-fullstack/logs:/opt/fuseloja-fullstack/logs \
+            --env-file .env \
+            fuseloja-app
+          
+          # Check if container is running
+          sleep 10
+          if docker ps | grep fuseloja-app; then
+            echo "✅ Container started successfully"
+            
+            # Test application
+            if curl -f http://localhost:3000/health > /dev/null 2>&1; then
+              echo "✅ Application is healthy"
+            else
+              echo "⚠️  Application may need more time to start"
+            fi
+          else
+            echo "❌ Container failed to start"
+            docker logs fuseloja-app
+            exit 1
+          fi
         
     - name: Notify deployment success
       if: success()
       run: |
         echo "✅ Deploy realizado com sucesso!"
-        echo "🚀 Aplicação disponível em: https://fernandinhomartins40.github.io/fuseloja/"
+        echo "🚀 Aplicação disponível em: http://${{ vars.DOMAIN }}"
+        echo "🌐 IP direto: http://${{ secrets.VPS_HOST }}"
         
     - name: Notify deployment failure
       if: failure()

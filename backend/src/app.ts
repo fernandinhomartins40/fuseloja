@@ -155,10 +155,33 @@ export class App {
       etag: true
     }));
 
-    // API documentation redirect
-    this.app.get('/', (req, res) => {
-      res.redirect('/api-docs');
-    });
+    // Serve frontend static files
+    if (config.nodeEnv === 'production') {
+      const path = require('path');
+      const publicPath = path.join(__dirname, '..', 'public');
+      
+      // Serve static files
+      this.app.use(express.static(publicPath, {
+        maxAge: '1y',
+        etag: true,
+        lastModified: true
+      }));
+
+      // Handle SPA routing - serve index.html for all non-API routes
+      this.app.get('*', (req, res) => {
+        // Don't serve index.html for API routes
+        if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/health')) {
+          return res.status(404).json({ error: 'API endpoint not found' });
+        }
+        
+        res.sendFile(path.join(publicPath, 'index.html'));
+      });
+    } else {
+      // Development mode - redirect to API docs
+      this.app.get('/', (req, res) => {
+        res.redirect('/api-docs');
+      });
+    }
   }
 
   private initializeSwagger(): void {

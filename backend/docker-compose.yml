@@ -1,12 +1,39 @@
 version: '3.8'
 
 services:
+  # Frontend development server
+  frontend:
+    build:
+      context: ..
+      dockerfile: Dockerfile.dev-frontend
+    container_name: fuseloja-frontend-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://localhost:3000
+      - VITE_API_PREFIX=/api/v1
+    volumes:
+      - ../src:/app/src
+      - ../public:/app/public
+      - ../index.html:/app/index.html
+      - ../vite.config.ts:/app/vite.config.ts
+      - ../package.json:/app/package.json
+      - /app/node_modules
+    command: npm run dev
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  # Backend development server
   backend:
     build:
       context: .
       dockerfile: Dockerfile
       target: builder
-    container_name: reusable-backend-dev
+    container_name: fuseloja-backend-dev
     ports:
       - "3000:3000"
     environment:
@@ -15,7 +42,7 @@ services:
       - DATABASE_URL=/app/database/dev.db
       - JWT_SECRET=dev-jwt-secret-change-in-production
       - JWT_REFRESH_SECRET=dev-refresh-secret-change-in-production
-      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:8080
     volumes:
       - ./src:/app/src
       - ./uploads:/app/uploads
@@ -25,7 +52,7 @@ services:
     command: npm run dev:ts
     restart: unless-stopped
     networks:
-      - backend-network
+      - app-network
 
   # Optional: Add Redis for caching in production
   redis:
@@ -37,14 +64,14 @@ services:
       - redis-data:/data
     restart: unless-stopped
     networks:
-      - backend-network
+      - app-network
     profiles:
       - redis
 
   # Optional: Add monitoring with Prometheus
   prometheus:
     image: prom/prometheus:latest
-    container_name: reusable-backend-prometheus
+    container_name: fuseloja-prometheus
     ports:
       - "9090:9090"
     volumes:
@@ -59,7 +86,7 @@ services:
       - '--web.enable-lifecycle'
     restart: unless-stopped
     networks:
-      - backend-network
+      - app-network
     profiles:
       - monitoring
 
@@ -80,7 +107,7 @@ services:
       - monitoring
 
 networks:
-  backend-network:
+  app-network:
     driver: bridge
 
 volumes:

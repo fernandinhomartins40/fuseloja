@@ -4,7 +4,8 @@ import { TrendingUp, ShoppingCart, Package, Truck, Plus } from 'lucide-react';
 import { StatsCard } from '@/components/admin/dashboard/StatsCard';
 import { ChartCard } from '@/components/admin/dashboard/ChartCard';
 import { ModernTable } from '@/components/admin/dashboard/ModernTable';
-import { PageHeader } from '@/components/admin/layout/PageHeader';
+import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
+import { StatusBadge } from '@/components/admin/ui/StatusBadge';
 
 const stats = [
   {
@@ -66,10 +67,10 @@ const lowStockColumns = [
 ];
 
 const lowStockProducts = [
-  { id: "P345", name: "Smartwatch Premium", stock: 3, minStock: 5, status: "🔴" },
-  { id: "P212", name: "Caixa de Som Bluetooth Portátil", stock: 2, minStock: 10, status: "🔴" },
-  { id: "P187", name: "Mouse Sem Fio Ergonômico", stock: 4, minStock: 8, status: "🔴" },
-  { id: "P156", name: "Carregador Sem Fio Rápido", stock: 6, minStock: 10, status: "🔴" },
+  { id: "P345", name: "Smartwatch Premium", stock: 3, minStock: 5, status: "error" },
+  { id: "P212", name: "Caixa de Som Bluetooth Portátil", stock: 2, minStock: 10, status: "error" },
+  { id: "P187", name: "Mouse Sem Fio Ergonômico", stock: 4, minStock: 8, status: "warning" },
+  { id: "P156", name: "Carregador Sem Fio Rápido", stock: 6, minStock: 10, status: "warning" },
 ];
 
 const salesData = [
@@ -83,20 +84,23 @@ const salesData = [
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Dashboard"
-        description="Visão geral da sua loja"
-        breadcrumbs={[
-          { label: 'Admin' },
-          { label: 'Dashboard' }
-        ]}
-        action={{
-          label: 'Novo Produto',
-          icon: Plus,
-          onClick: () => console.log('Novo produto')
-        }}
-      />
+    <AdminPageLayout
+      title="Dashboard"
+      description="Visão geral completa do desempenho da sua loja"
+      breadcrumbs={[
+        { label: 'Admin', href: '/admin' },
+        { label: 'Dashboard' }
+      ]}
+      badge={{
+        text: 'Tempo Real',
+        variant: 'default'
+      }}
+      action={{
+        label: 'Novo Produto',
+        icon: <Plus className="h-4 w-4" />,
+        onClick: () => console.log('Novo produto')
+      }}
+    >
       
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -167,17 +171,23 @@ const Dashboard: React.FC = () => {
             { key: 'name', label: 'Produto' },
             { key: 'stock', label: 'Atual', width: '80px', align: 'center' as const },
             { key: 'minStock', label: 'Mínimo', width: '80px', align: 'center' as const },
-            { key: 'status', label: 'Status', width: '80px', align: 'center' as const },
+            { 
+              key: 'status', 
+              label: 'Status', 
+              width: '120px', 
+              align: 'center' as const,
+              render: (value: string) => (
+                <StatusBadge 
+                  status={value as 'error' | 'warning'} 
+                  text={value === 'error' ? 'Crítico' : 'Baixo'}
+                />
+              )
+            },
           ]}
-          data={[
-            { id: "P345", name: "Smartwatch Premium", stock: 3, minStock: 5, status: "🔴" },
-            { id: "P212", name: "Caixa de Som Bluetooth Portátil", stock: 2, minStock: 10, status: "🔴" },
-            { id: "P187", name: "Mouse Sem Fio Ergonômico", stock: 4, minStock: 8, status: "🔴" },
-            { id: "P156", name: "Carregador Sem Fio Rápido", stock: 6, minStock: 10, status: "🔴" },
-          ]}
+          data={lowStockProducts}
         />
       </div>
-    </div>
+    </AdminPageLayout>
   );
 };
 

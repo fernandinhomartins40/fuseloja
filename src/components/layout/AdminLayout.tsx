@@ -16,15 +16,18 @@ import {
   SidebarProvider,
   SidebarTrigger
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Package2, Truck, ShoppingCart, BarChart, LogOut, Tags, Settings, Store } from 'lucide-react';
+import { LayoutDashboard, Package2, Truck, ShoppingCart, BarChart, LogOut, Tags, Settings, Store, TrendingUp, FileText, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
 import UserCard from '@/components/admin/UserCard';
+import { cn } from '@/lib/utils';
 
 const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout, login, isAuthenticated } = useUser();
   
   // Auto-login for admin access during development
@@ -34,6 +37,100 @@ const AdminLayout: React.FC = () => {
       login("joao.silva@example.com", "password");
     }
   }, [isAuthenticated, login]);
+
+  const isActiveRoute = (path: string) => {
+    return location.pathname === path;
+  };
+
+  const menuItems = [
+    {
+      group: 'Principal',
+      items: [
+        {
+          path: '/admin',
+          label: 'Dashboard',
+          icon: LayoutDashboard,
+          color: 'blue',
+          description: 'Visão geral do negócio'
+        }
+      ]
+    },
+    {
+      group: 'Catálogo',
+      items: [
+        {
+          path: '/admin/products',
+          label: 'Produtos',
+          icon: Package2,
+          color: 'green',
+          description: 'Gerenciar produtos'
+        },
+        {
+          path: '/admin/categories',
+          label: 'Categorias',
+          icon: Tags,
+          color: 'yellow',
+          description: 'Organizar categorias'
+        }
+      ]
+    },
+    {
+      group: 'Vendas',
+      items: [
+        {
+          path: '/admin/orders',
+          label: 'Pedidos',
+          icon: ShoppingCart,
+          color: 'purple',
+          description: 'Gerenciar pedidos'
+        },
+        {
+          path: '/admin/deliveries',
+          label: 'Entregas',
+          icon: Truck,
+          color: 'indigo',
+          description: 'Acompanhar entregas'
+        }
+      ]
+    },
+    {
+      group: 'Análises',
+      items: [
+        {
+          path: '/admin/reports',
+          label: 'Relatórios',
+          icon: BarChart,
+          color: 'pink',
+          description: 'Relatórios e métricas'
+        }
+      ]
+    },
+    {
+      group: 'Sistema',
+      items: [
+        {
+          path: '/admin/settings',
+          label: 'Configurações',
+          icon: Settings,
+          color: 'gray',
+          description: 'Configurações da loja'
+        }
+      ]
+    }
+  ];
+
+  const getColorClasses = (color: string, isActive: boolean) => {
+    const colors = {
+      blue: isActive ? 'bg-blue-500 text-white' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-100 group-hover:text-blue-700',
+      green: isActive ? 'bg-green-500 text-white' : 'bg-green-50 text-green-600 group-hover:bg-green-100 group-hover:text-green-700',
+      yellow: isActive ? 'bg-yellow-500 text-white' : 'bg-yellow-50 text-yellow-600 group-hover:bg-yellow-100 group-hover:text-yellow-700',
+      purple: isActive ? 'bg-purple-500 text-white' : 'bg-purple-50 text-purple-600 group-hover:bg-purple-100 group-hover:text-purple-700',
+      indigo: isActive ? 'bg-indigo-500 text-white' : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100 group-hover:text-indigo-700',
+      pink: isActive ? 'bg-pink-500 text-white' : 'bg-pink-50 text-pink-600 group-hover:bg-pink-100 group-hover:text-pink-700',
+      gray: isActive ? 'bg-gray-500 text-white' : 'bg-gray-50 text-gray-600 group-hover:bg-gray-100 group-hover:text-gray-700'
+    };
+    return colors[color as keyof typeof colors] || colors.gray;
+  };
   
   const handleLogout = () => {
     logout();
@@ -61,108 +158,98 @@ const AdminLayout: React.FC = () => {
               </div>
             </div>
           </SidebarHeader>
-          <SidebarContent className="bg-white px-4 py-4">
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-gray-700 font-medium text-sm mb-2 px-2">
-                Gerenciamento
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu className="space-y-1">
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Dashboard" className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg py-2 px-3">
-                      <a href="/admin" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <LayoutDashboard className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <span className="font-medium">Dashboard</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Produtos" className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg py-2 px-3">
-                      <a href="/admin/products" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                          <Package2 className="w-4 h-4 text-green-600" />
-                        </div>
-                        <span className="font-medium">Produtos</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Categorias" className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg py-2 px-3">
-                      <a href="/admin/categories" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
-                          <Tags className="w-4 h-4 text-yellow-600" />
-                        </div>
-                        <span className="font-medium">Categorias</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Pedidos" className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg py-2 px-3">
-                      <a href="/admin/orders" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                          <ShoppingCart className="w-4 h-4 text-purple-600" />
-                        </div>
-                        <span className="font-medium">Pedidos</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Entregas" className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg py-2 px-3">
-                      <a href="/admin/deliveries" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                          <Truck className="w-4 h-4 text-indigo-600" />
-                        </div>
-                        <span className="font-medium">Entregas</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Relatórios" className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg py-2 px-3">
-                      <a href="/admin/reports" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">
-                          <BarChart className="w-4 h-4 text-pink-600" />
-                        </div>
-                        <span className="font-medium">Relatórios</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip="Configurações" className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg py-2 px-3">
-                      <a href="/admin/settings" className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                          <Settings className="w-4 h-4 text-gray-600" />
-                        </div>
-                        <span className="font-medium">Configurações</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+          <SidebarContent className="bg-white px-3 py-6">
+            <div className="space-y-8">
+              {menuItems.map((group) => (
+                <SidebarGroup key={group.group}>
+                  <SidebarGroupLabel className="text-gray-600 font-semibold text-xs uppercase tracking-wide mb-4 px-4">
+                    {group.group}
+                  </SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu className="space-y-2">
+                      {group.items.map((item) => {
+                        const IconComponent = item.icon;
+                        const isActive = isActiveRoute(item.path);
+                        return (
+                          <SidebarMenuItem key={item.path}>
+                            <SidebarMenuButton 
+                              asChild 
+                              tooltip={item.description}
+                              className={cn(
+                                "relative w-full h-auto p-0 border border-transparent transition-all duration-200 rounded-xl overflow-hidden group",
+                                "hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100/50 hover:border-blue-200/50 hover:shadow-sm",
+                                isActive && "bg-gradient-to-r from-blue-50 to-blue-100/30 border-blue-200/60 shadow-sm"
+                              )}
+                            >
+                              <a href={item.path} className="flex items-center gap-4 relative w-full px-4 py-3">
+                                {isActive && (
+                                  <div className="absolute -left-0.5 top-1/2 transform -translate-y-1/2 w-1 h-10 bg-blue-500 rounded-r-full" />
+                                )}
+                                <div className={cn(
+                                  "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 shadow-sm",
+                                  getColorClasses(item.color, isActive)
+                                )}>
+                                  <IconComponent className="w-5 h-5" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <span className={cn(
+                                    "font-semibold text-sm block truncate transition-colors duration-200",
+                                    isActive ? "text-gray-900" : "text-gray-700 group-hover:text-gray-900"
+                                  )}>
+                                    {item.label}
+                                  </span>
+                                  <span className={cn(
+                                    "text-xs block truncate transition-colors duration-200 mt-0.5",
+                                    isActive ? "text-gray-600" : "text-gray-500 group-hover:text-gray-600"
+                                  )}>
+                                    {item.description}
+                                  </span>
+                                </div>
+                              </a>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              ))}
+            </div>
           </SidebarContent>
-          <SidebarFooter className="border-t border-gray-200 bg-white p-4 space-y-3">
+          <SidebarFooter className="border-t border-gray-200 bg-white p-4 space-y-4">
             <UserCard />
             <Button 
               variant="outline" 
-              className="w-full flex gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors duration-200 rounded-lg py-2" 
+              className="w-full flex gap-3 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors duration-200 rounded-xl py-3 px-4 font-medium" 
               onClick={handleLogout}
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-5 w-5" />
               <span>Sair</span>
             </Button>
           </SidebarFooter>
         </Sidebar>
         <SidebarInset className="bg-transparent">
-          <div className="flex items-center gap-4 p-6 bg-white border-b border-gray-200">
-            <SidebarTrigger className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg p-2" />
-            <div className="w-px h-6 bg-gray-300" />
-            <h1 className="text-lg font-semibold text-gray-900">
-              Painel Administrativo
-            </h1>
+          <div className="flex items-center justify-between gap-4 p-6 bg-white border-b border-gray-200">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg p-2" />
+              <div className="w-px h-6 bg-gray-300" />
+              <div>
+                <h1 className="text-lg font-semibold text-gray-900">
+                  Painel Administrativo
+                </h1>
+                <p className="text-sm text-gray-500">
+                  Gerencie sua loja de forma eficiente
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge className="bg-green-100 text-green-800 text-xs">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+                Online
+              </Badge>
+            </div>
           </div>
-          <div className="p-8">
+          <div className="p-8 bg-gray-50 min-h-screen">
             <Outlet />
           </div>
         </SidebarInset>

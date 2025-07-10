@@ -23,6 +23,7 @@ const Index = () => {
       </div>
       <Header />
       
+      <Marquee />
       <HeroSlider />
       
       {/* Barra de busca moderna com autocomplete */}
@@ -31,8 +32,6 @@ const Index = () => {
           <SearchBarWithAutocomplete onSearch={value => console.log('Busca avançada:', value)} onProductSelect={product => console.log('Produto selecionado:', product)} />
         </div>
       </section>
-      
-      <Marquee />
       <CategoryIcons />
       <RecentlyAddedProducts />
       <BestSellerProducts />

@@ -179,7 +179,7 @@ const categories: Category[] = [
 
 export const DynamicCategoryCarousels: React.FC = () => {
   return (
-    <div className="space-y-16">
+    <div>
       {categories.map((category, categoryIndex) => {
         const IconComponent = iconComponents[category.icon];
         const textColor = getContrastTextColor(category.color);
@@ -187,7 +187,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
         return (
           <section 
             key={category.id} 
-            className="py-16 relative overflow-hidden bg-white"
+            className="py-12 relative overflow-hidden bg-white"
           >
             {/* Background decorative elements */}
             <div 
@@ -238,7 +238,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
                     {category.products.map((product, index) => (
                       <CarouselItem key={index} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                         <div 
-                          className="group bg-card/95 backdrop-blur-sm border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                          className="group bg-card/95 backdrop-blur-sm border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-[520px] flex flex-col"
                           style={{ 
                             borderColor: category.color,
                             boxShadow: `0 4px 6px -1px ${category.color}40`,
@@ -284,7 +284,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
                             </div>
                           </div>
                           
-                            <div className="p-6 space-y-4">
+                            <div className="p-6 space-y-4 flex-1 flex flex-col">
                             <h3 
                               className="font-semibold text-sm leading-tight line-clamp-2 transition-colors"
                               style={{
@@ -300,7 +300,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
                               {product.title}
                             </h3>
                             
-                            <div className="space-y-2">
+                            <div className="space-y-2 flex-1">
                               <div className="flex items-baseline gap-2">
                                 {product.originalPrice && (
                                   <span className="text-sm text-muted-foreground line-through">
@@ -317,7 +317,7 @@ export const DynamicCategoryCarousels: React.FC = () => {
                             </div>
                             
                             <button 
-                              className="w-full text-white py-3 rounded-xl font-medium text-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98]"
+                              className="w-full text-white py-3 rounded-xl font-medium text-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] mt-auto"
                               style={{
                                 background: `linear-gradient(135deg, ${category.color}dd, ${category.color}cc)`,
                                 boxShadow: `0 4px 14px 0 ${category.color}40`

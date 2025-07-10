@@ -152,7 +152,7 @@ export const defaultCategories: Category[] = [
     slug: "eletronicos",
     icon: "Smartphone",
     description: "Smartphones, tablets, laptops e outros dispositivos eletrônicos",
-    color: "#D3E4FD",
+    color: "#3B82F6",
     isDefault: true
   },
   {
@@ -161,7 +161,7 @@ export const defaultCategories: Category[] = [
     slug: "moda",
     icon: "Shirt",
     description: "Roupas, calçados e acessórios de moda",
-    color: "#FFDEE2",
+    color: "#EC4899",
     isDefault: true
   },
   {
@@ -170,7 +170,7 @@ export const defaultCategories: Category[] = [
     slug: "casa-decoracao",
     icon: "Home",
     description: "Móveis, decoração e itens para o lar",
-    color: "#F2FCE2",
+    color: "#10B981",
     isDefault: true
   },
   {
@@ -179,7 +179,7 @@ export const defaultCategories: Category[] = [
     slug: "livros",
     icon: "BookOpen",
     description: "Livros físicos, e-books e audiolivros",
-    color: "#FDE1D3",
+    color: "#F59E0B",
     isDefault: true
   },
   {
@@ -188,7 +188,7 @@ export const defaultCategories: Category[] = [
     slug: "beleza-saude",
     icon: "Sparkles",
     description: "Produtos de beleza, saúde e bem-estar",
-    color: "#E5DEFF",
+    color: "#8B5CF6",
     isDefault: true
   },
   {
@@ -197,7 +197,7 @@ export const defaultCategories: Category[] = [
     slug: "esportes",
     icon: "Dumbbell",
     description: "Artigos esportivos e equipamentos de fitness",
-    color: "#FFCDD2",
+    color: "#EF4444",
     isDefault: true
   },
   {
@@ -206,7 +206,7 @@ export const defaultCategories: Category[] = [
     slug: "infantil",
     icon: "Baby",
     description: "Produtos para bebês e crianças",
-    color: "#FEF7CD",
+    color: "#F97316",
     isDefault: true
   },
   {
@@ -215,7 +215,7 @@ export const defaultCategories: Category[] = [
     slug: "acessorios",
     icon: "Watch",
     description: "Relógios, joias e acessórios pessoais",
-    color: "#E5DEFF",
+    color: "#6366F1",
     isDefault: true
   },
   {
@@ -224,7 +224,7 @@ export const defaultCategories: Category[] = [
     slug: "alimentos",
     icon: "UtensilsCrossed",
     description: "Alimentos, bebidas e artigos de culinária",
-    color: "#F2FCE2",
+    color: "#059669",
     isDefault: true
   },
   {
@@ -233,7 +233,7 @@ export const defaultCategories: Category[] = [
     slug: "automotivo",
     icon: "Car",
     description: "Peças, acessórios e produtos para automóveis",
-    color: "#D3E4FD",
+    color: "#0EA5E9",
     isDefault: true
   },
   {
@@ -242,7 +242,7 @@ export const defaultCategories: Category[] = [
     slug: "pets",
     icon: "Cat",
     description: "Produtos para animais de estimação",
-    color: "#FDE1D3",
+    color: "#DC2626",
     isDefault: true
   },
   {
@@ -251,7 +251,7 @@ export const defaultCategories: Category[] = [
     slug: "ferramentas",
     icon: "Hammer",
     description: "Ferramentas e equipamentos",
-    color: "#F1F0FB",
+    color: "#6B7280",
     isDefault: true
   },
   {
@@ -260,7 +260,7 @@ export const defaultCategories: Category[] = [
     slug: "jardinagem",
     icon: "Flower",
     description: "Plantas, sementes e artigos para jardim",
-    color: "#F2FCE2",
+    color: "#16A34A",
     isDefault: true
   },
   {
@@ -269,7 +269,7 @@ export const defaultCategories: Category[] = [
     slug: "audio-video",
     icon: "Speaker",
     description: "Equipamentos de áudio e vídeo",
-    color: "#FFCDD2",
+    color: "#DB2777",
     isDefault: true
   },
   {
@@ -278,7 +278,7 @@ export const defaultCategories: Category[] = [
     slug: "jogos",
     icon: "Gamepad",
     description: "Jogos, consoles e acessórios para games",
-    color: "#D3E4FD",
+    color: "#7C3AED",
     isDefault: true
   }
 ];

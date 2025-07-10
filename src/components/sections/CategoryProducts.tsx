@@ -23,7 +23,7 @@ const categories: Category[] = [{
   id: "electronics",
   name: "Eletrônicos",
   icon: "Smartphone",
-  color: "#D3E4FD",
+  color: "#3B82F6",
   products: [{
     title: "Smartphone Ultra Plus 512GB",
     price: 4999.99,
@@ -50,7 +50,7 @@ const categories: Category[] = [{
   id: "fashion",
   name: "Moda",
   icon: "Shirt",
-  color: "#FFDEE2",
+  color: "#EC4899",
   products: [{
     title: "Tênis Esportivo",
     price: 199.99,
@@ -75,7 +75,7 @@ const categories: Category[] = [{
   id: "home",
   name: "Casa & Decoração",
   icon: "Home",
-  color: "#F2FCE2",
+  color: "#10B981",
   products: [{
     title: "Cafeteira Espresso",
     price: 399.99,

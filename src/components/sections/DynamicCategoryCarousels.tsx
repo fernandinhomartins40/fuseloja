@@ -27,7 +27,7 @@ const categories: Category[] = [
     id: "electronics",
     name: "Eletrônicos",
     icon: "Smartphone",
-    color: "#D3E4FD",
+    color: "#3B82F6",
     products: [
       {
         title: "Smartphone Ultra Plus 512GB",
@@ -67,7 +67,7 @@ const categories: Category[] = [
     id: "fashion",
     name: "Moda",
     icon: "Shirt",
-    color: "#FFDEE2",
+    color: "#EC4899",
     products: [
       {
         title: "Tênis Esportivo Premium",
@@ -105,7 +105,7 @@ const categories: Category[] = [
     id: "home",
     name: "Casa & Decoração",
     icon: "Home",
-    color: "#F2FCE2",
+    color: "#10B981",
     products: [
       {
         title: "Cafeteira Espresso Automática",
@@ -145,7 +145,7 @@ const categories: Category[] = [
     id: "sports",
     name: "Esportes",
     icon: "Dumbbell",
-    color: "#FFCDD2",
+    color: "#F59E0B",
     products: [
       {
         title: "Halteres Ajustáveis 20kg",

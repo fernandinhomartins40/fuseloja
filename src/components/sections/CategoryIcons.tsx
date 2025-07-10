@@ -21,14 +21,14 @@ interface Category {
 export const CategoryIcons: React.FC = () => {
   // Define categories with their respective icons and colors
   const categories: Category[] = [
-    { name: 'Eletrônicos', icon: <Smartphone size={32} />, color: '#9b87f5' },
-    { name: 'Acessórios', icon: <Headphones size={32} />, color: '#F97316' },
-    { name: 'Moda', icon: <Shirt size={32} />, color: '#0EA5E9' },
-    { name: 'Cozinha', icon: <Utensils size={32} />, color: '#D946EF' },
-    { name: 'Casa', icon: <Home size={32} />, color: '#7E69AB' },
-    { name: 'Livros', icon: <Book size={32} />, color: '#8B5CF6' },
-    { name: 'Calçados', icon: <ShoppingBag size={32} />, color: '#F97316' },
-    { name: 'Presentes', icon: <Gift size={32} />, color: '#D90429' }
+    { name: 'Eletrônicos', icon: <Smartphone size={32} />, color: '#3B82F6' },
+    { name: 'Acessórios', icon: <Headphones size={32} />, color: '#F59E0B' },
+    { name: 'Moda', icon: <Shirt size={32} />, color: '#EC4899' },
+    { name: 'Cozinha', icon: <Utensils size={32} />, color: '#8B5CF6' },
+    { name: 'Casa', icon: <Home size={32} />, color: '#10B981' },
+    { name: 'Livros', icon: <Book size={32} />, color: '#6366F1' },
+    { name: 'Calçados', icon: <ShoppingBag size={32} />, color: '#EF4444' },
+    { name: 'Presentes', icon: <Gift size={32} />, color: '#DC2626' }
   ];
 
   return (

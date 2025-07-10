@@ -103,90 +103,108 @@ const Dashboard: React.FC = () => {
     >
       
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {stats.map((stat, index) => (
-          <StatsCard key={index} {...stat} />
-        ))}
-      </div>
+      <section className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Métricas Principais</h2>
+          <p className="text-sm text-gray-600">Acompanhe os principais indicadores do seu negócio</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {stats.map((stat, index) => (
+            <StatsCard key={index} {...stat} />
+          ))}
+        </div>
+      </section>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <ChartCard 
-            title="Vendas nos Últimos 6 Meses" 
-            data={[
-              { name: 'Jan', value: 4000 },
-              { name: 'Fev', value: 3000 },
-              { name: 'Mar', value: 6000 },
-              { name: 'Abr', value: 8000 },
-              { name: 'Mai', value: 5000 },
-              { name: 'Jun', value: 7000 },
-            ]}
-            height={350}
-            type="area"
-          />
+      <section className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Análise de Vendas</h2>
+          <p className="text-sm text-gray-600">Visualize o desempenho das vendas e pedidos</p>
         </div>
-        <div className="lg:col-span-1">
-          <ChartCard 
-            title="Pedidos por Dia" 
-            data={[
-              { name: 'Seg', value: 12 },
-              { name: 'Ter', value: 19 },
-              { name: 'Qua', value: 15 },
-              { name: 'Qui', value: 22 },
-              { name: 'Sex', value: 18 },
-              { name: 'Sáb', value: 8 },
-              { name: 'Dom', value: 5 },
-            ]}
-            height={350}
-            type="line"
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="lg:col-span-2">
+            <ChartCard 
+              title="Vendas nos Últimos 6 Meses" 
+              data={[
+                { name: 'Jan', value: 4000 },
+                { name: 'Fev', value: 3000 },
+                { name: 'Mar', value: 6000 },
+                { name: 'Abr', value: 8000 },
+                { name: 'Mai', value: 5000 },
+                { name: 'Jun', value: 7000 },
+              ]}
+              height={300}
+              type="area"
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <ChartCard 
+              title="Pedidos por Dia" 
+              data={[
+                { name: 'Seg', value: 12 },
+                { name: 'Ter', value: 19 },
+                { name: 'Qua', value: 15 },
+                { name: 'Qui', value: 22 },
+                { name: 'Sex', value: 18 },
+                { name: 'Sáb', value: 8 },
+                { name: 'Dom', value: 5 },
+              ]}
+              height={300}
+              type="line"
+            />
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Tables Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        <ModernTable
-          title="Pedidos Recentes"
-          columns={[
-            { key: 'id', label: 'ID', width: '80px' },
-            { key: 'customer', label: 'Cliente' },
-            { key: 'date', label: 'Data', width: '120px' },
-            { key: 'status', label: 'Status', width: '140px', align: 'center' as const },
-            { key: 'total', label: 'Total', width: '100px', align: 'right' as const },
-          ]}
-          data={[
-            { id: "#4832", customer: "Ana Silva", date: "12/05/2025", status: "Entregue", total: "R$ 256,00" },
-            { id: "#4831", customer: "Carlos Mendes", date: "12/05/2025", status: "Em processamento", total: "R$ 129,90" },
-            { id: "#4830", customer: "Beatriz Lima", date: "11/05/2025", status: "Enviado", total: "R$ 345,50" },
-            { id: "#4829", customer: "Diego Santos", date: "11/05/2025", status: "Aguardando pagamento", total: "R$ 78,90" },
-            { id: "#4828", customer: "Juliana Costa", date: "10/05/2025", status: "Entregue", total: "R$ 199,00" },
-          ]}
-        />
-        
-        <ModernTable
-          title="Produtos com Estoque Baixo"
-          columns={[
-            { key: 'id', label: 'ID', width: '80px' },
-            { key: 'name', label: 'Produto' },
-            { key: 'stock', label: 'Atual', width: '80px', align: 'center' as const },
-            { key: 'minStock', label: 'Mínimo', width: '80px', align: 'center' as const },
-            { 
-              key: 'status', 
-              label: 'Status', 
-              width: '120px', 
-              align: 'center' as const,
-              render: (value: string) => (
-                <StatusBadge 
-                  status={value as 'error' | 'warning'} 
-                  text={value === 'error' ? 'Crítico' : 'Baixo'}
-                />
-              )
-            },
-          ]}
-          data={lowStockProducts}
-        />
-      </div>
+      <section className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-100">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Atividades Recentes</h2>
+          <p className="text-sm text-gray-600">Pedidos recentes e produtos com estoque baixo</p>
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
+          <ModernTable
+            title="Pedidos Recentes"
+            columns={[
+              { key: 'id', label: 'ID', width: '80px' },
+              { key: 'customer', label: 'Cliente' },
+              { key: 'date', label: 'Data', width: '120px' },
+              { key: 'status', label: 'Status', width: '140px', align: 'center' as const },
+              { key: 'total', label: 'Total', width: '100px', align: 'right' as const },
+            ]}
+            data={[
+              { id: "#4832", customer: "Ana Silva", date: "12/05/2025", status: "Entregue", total: "R$ 256,00" },
+              { id: "#4831", customer: "Carlos Mendes", date: "12/05/2025", status: "Em processamento", total: "R$ 129,90" },
+              { id: "#4830", customer: "Beatriz Lima", date: "11/05/2025", status: "Enviado", total: "R$ 345,50" },
+              { id: "#4829", customer: "Diego Santos", date: "11/05/2025", status: "Aguardando pagamento", total: "R$ 78,90" },
+              { id: "#4828", customer: "Juliana Costa", date: "10/05/2025", status: "Entregue", total: "R$ 199,00" },
+            ]}
+          />
+          
+          <ModernTable
+            title="Produtos com Estoque Baixo"
+            columns={[
+              { key: 'id', label: 'ID', width: '80px' },
+              { key: 'name', label: 'Produto' },
+              { key: 'stock', label: 'Atual', width: '80px', align: 'center' as const },
+              { key: 'minStock', label: 'Mínimo', width: '80px', align: 'center' as const },
+              { 
+                key: 'status', 
+                label: 'Status', 
+                width: '120px', 
+                align: 'center' as const,
+                render: (value: string) => (
+                  <StatusBadge 
+                    status={value as 'error' | 'warning'} 
+                    text={value === 'error' ? 'Crítico' : 'Baixo'}
+                  />
+                )
+              },
+            ]}
+            data={lowStockProducts}
+          />
+        </div>
+      </section>
     </AdminPageLayout>
   );
 };

@@ -106,27 +106,27 @@ const Categories: React.FC = () => {
         }
       }}
     >
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center gap-4">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar categorias..."
-              className="pl-10"
+              className="pl-10 w-full"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 Nova Categoria
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[550px]">
+            <DialogContent className="w-[95vw] max-w-[550px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className="text-lg sm:text-xl">
                   {editingCategory ? 'Editar Categoria' : 'Adicionar Nova Categoria'}
                 </DialogTitle>
               </DialogHeader>
@@ -142,7 +142,7 @@ const Categories: React.FC = () => {
           </Dialog>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
           {filteredCategories.length > 0 ? (
             filteredCategories.map((category) => (
               <CategoryCard 
@@ -153,8 +153,8 @@ const Categories: React.FC = () => {
               />
             ))
           ) : (
-            <div className="col-span-full flex items-center justify-center h-40 bg-muted/20 rounded-lg">
-              <p className="text-muted-foreground">Nenhuma categoria encontrada</p>
+            <div className="col-span-full flex items-center justify-center h-32 sm:h-40 bg-muted/20 rounded-lg">
+              <p className="text-muted-foreground text-sm sm:text-base">Nenhuma categoria encontrada</p>
             </div>
           )}
         </div>

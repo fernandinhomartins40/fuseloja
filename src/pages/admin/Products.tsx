@@ -43,7 +43,7 @@ const Products: React.FC = () => {
         onClick: handleNewProductClick
       }}
     >
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         <ProductsSearchBar 
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -51,9 +51,9 @@ const Products: React.FC = () => {
         />
         
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="w-[95vw] max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>
+              <DialogTitle className="text-lg sm:text-xl">
                 {editingProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}
               </DialogTitle>
             </DialogHeader>

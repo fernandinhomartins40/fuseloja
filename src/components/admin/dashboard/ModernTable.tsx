@@ -8,6 +8,7 @@ interface TableColumn {
   label: string;
   width?: string;
   align?: 'left' | 'center' | 'right';
+  render?: (value: any) => React.ReactNode;
 }
 
 interface TableData {
@@ -52,8 +53,11 @@ export const ModernTable: React.FC<ModernTableProps> = ({
     );
   };
 
-  const renderCellContent = (value: any, key: string) => {
-    if (key === 'status') {
+  const renderCellContent = (value: any, column: TableColumn) => {
+    if (column.render) {
+      return column.render(value);
+    }
+    if (column.key === 'status') {
       return getStatusBadge(value);
     }
     return value;
@@ -104,7 +108,7 @@ export const ModernTable: React.FC<ModernTableProps> = ({
                           column.align === 'right' ? 'text-right' : ''
                         }`}
                       >
-                        {renderCellContent(row[column.key], column.key)}
+                        {renderCellContent(row[column.key], column)}
                       </td>
                     ))}
                   </tr>

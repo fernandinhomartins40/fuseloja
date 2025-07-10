@@ -229,27 +229,28 @@ const AdminLayout: React.FC = () => {
           </SidebarFooter>
         </Sidebar>
         <SidebarInset className="bg-transparent">
-          <div className="flex items-center justify-between gap-4 p-6 bg-white border-b border-gray-200">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg p-2" />
-              <div className="w-px h-6 bg-gray-300" />
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900">
+          <div className="flex items-center justify-between gap-2 sm:gap-4 p-3 sm:p-4 lg:p-6 bg-white border-b border-gray-200">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              <SidebarTrigger className="hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors duration-200 rounded-lg p-2 flex-shrink-0" />
+              <div className="w-px h-4 sm:h-6 bg-gray-300 hidden sm:block" />
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                   Painel Administrativo
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500 truncate hidden sm:block">
                   Gerencie sua loja de forma eficiente
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge className="bg-green-100 text-green-800 text-xs">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Badge className="bg-green-100 text-green-800 text-xs hidden sm:flex">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2" />
                 Online
               </Badge>
+              <div className="w-2 h-2 bg-green-500 rounded-full sm:hidden" />
             </div>
           </div>
-          <div className="p-8 bg-gray-50 min-h-screen">
+          <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gray-50 min-h-screen">
             <Outlet />
           </div>
         </SidebarInset>

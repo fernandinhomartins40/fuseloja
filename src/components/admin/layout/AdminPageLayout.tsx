@@ -36,50 +36,52 @@ export const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   children
 }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header Section */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {/* Breadcrumbs */}
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <Breadcrumb>
-            <BreadcrumbList>
-              {breadcrumbs.map((item, index) => (
-                <React.Fragment key={index}>
-                  <BreadcrumbItem>
-                    {item.href ? (
-                      <BreadcrumbLink href={item.href} className="text-gray-600 hover:text-gray-900">
-                        {item.label}
-                      </BreadcrumbLink>
-                    ) : (
-                      <BreadcrumbPage className="text-gray-900 font-medium">
-                        {item.label}
-                      </BreadcrumbPage>
+          <div className="overflow-x-auto">
+            <Breadcrumb>
+              <BreadcrumbList>
+                {breadcrumbs.map((item, index) => (
+                  <React.Fragment key={index}>
+                    <BreadcrumbItem>
+                      {item.href ? (
+                        <BreadcrumbLink href={item.href} className="text-gray-600 hover:text-gray-900 text-sm whitespace-nowrap">
+                          {item.label}
+                        </BreadcrumbLink>
+                      ) : (
+                        <BreadcrumbPage className="text-gray-900 font-medium text-sm whitespace-nowrap">
+                          {item.label}
+                        </BreadcrumbPage>
+                      )}
+                    </BreadcrumbItem>
+                    {index < breadcrumbs.length - 1 && (
+                      <BreadcrumbSeparator>
+                        <ChevronRight className="h-4 w-4" />
+                      </BreadcrumbSeparator>
                     )}
-                  </BreadcrumbItem>
-                  {index < breadcrumbs.length - 1 && (
-                    <BreadcrumbSeparator>
-                      <ChevronRight className="h-4 w-4" />
-                    </BreadcrumbSeparator>
-                  )}
-                </React.Fragment>
-              ))}
-            </BreadcrumbList>
-          </Breadcrumb>
+                  </React.Fragment>
+                ))}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
         )}
 
         {/* Title Section */}
-        <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+          <div className="space-y-1 sm:space-y-2 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{title}</h1>
               {badge && (
-                <Badge variant={badge.variant || 'default'} className="text-xs">
+                <Badge variant={badge.variant || 'default'} className="text-xs self-start sm:self-auto">
                   {badge.text}
                 </Badge>
               )}
             </div>
             {description && (
-              <p className="text-gray-600 text-sm max-w-2xl">
+              <p className="text-gray-600 text-sm sm:text-base max-w-full sm:max-w-2xl">
                 {description}
               </p>
             )}
@@ -90,21 +92,20 @@ export const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
             <Button
               onClick={action.onClick}
               variant={action.variant || 'default'}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start flex-shrink-0"
+              size="sm"
             >
               {action.icon || <Plus className="h-4 w-4" />}
-              {action.label}
+              <span className="truncate">{action.label}</span>
             </Button>
           )}
         </div>
       </div>
 
       {/* Content */}
-      <Card className="border-0 shadow-sm bg-white">
-        <div className="p-6">
-          {children}
-        </div>
-      </Card>
+      <div className="space-y-6 sm:space-y-8 lg:space-y-10">
+        {children}
+      </div>
     </div>
   );
 };

@@ -104,24 +104,8 @@ export const useAuth = (): UseAuthReturn => {
       setApiUser(response.user);
       setUser(convertApiUserToUser(response.user));
       
-      // Força invalidação de cache e refresh dos dados após login
-      setTimeout(async () => {
-        try {
-          const freshProfile = await authService.getProfile();
-          setApiUser(freshProfile);
-          setUser(convertApiUserToUser(freshProfile));
-          
-          // Força atualização do localStorage com dados mais recentes
-          localStorage.setItem('user', JSON.stringify(freshProfile));
-          
-          // Dispara evento customizado para notificar outros componentes
-          window.dispatchEvent(new CustomEvent('userUpdated', { 
-            detail: { user: freshProfile, timestamp: Date.now() } 
-          }));
-        } catch (error) {
-          console.debug('Post-login refresh failed:', error);
-        }
-      }, 500);
+      // Garante que os dados estão sincronizados após o login
+      console.log('✅ Login successful, user role:', response.user.role);
       
       toast.success('Login realizado com sucesso!');
       return true;

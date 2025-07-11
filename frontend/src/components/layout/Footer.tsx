@@ -21,32 +21,15 @@ export const Footer: React.FC = () => {
   const email = settings.general.email;
   const address = settings.general.address;
 
-  // Força atualização do perfil a cada 30 segundos para evitar problemas de cache
+  // Log estado atual para debug
   useEffect(() => {
-    const interval = setInterval(async () => {
-      if (isAuthenticated) {
-        try {
-          await refreshProfile();
-        } catch (error) {
-          console.debug('Profile refresh failed:', error);
-        }
-      }
-    }, 30000); // 30 segundos
-
-    return () => clearInterval(interval);
-  }, [isAuthenticated, refreshProfile]);
-
-  // Escuta eventos de atualização de usuário
-  useEffect(() => {
-    const handleUserUpdate = (event: CustomEvent) => {
-      console.log('User updated event received:', event.detail);
-      // Força re-render do componente
-      setIsNavigating(false);
-    };
-
-    window.addEventListener('userUpdated', handleUserUpdate as EventListener);
-    return () => window.removeEventListener('userUpdated', handleUserUpdate as EventListener);
-  }, []);
+    console.log('Footer - Estado atual:', {
+      isAuthenticated,
+      userRole: user?.role,
+      apiUserRole: apiUser?.role,
+      localStorage: localStorage.getItem('user') ? 'exists' : 'null'
+    });
+  }, [isAuthenticated, user, apiUser]);
 
   const handleAdminAccess = async () => {
     // Prevenir múltiplos cliques
@@ -55,87 +38,45 @@ export const Footer: React.FC = () => {
     setIsNavigating(true);
     
     try {
-      // FORÇA atualização imediata dos dados antes da verificação
-      let currentUserRole = null;
-      
-      // 1. Tenta refresh do perfil se autenticado
-      if (isAuthenticated) {
-        try {
-          await refreshProfile();
-          // Aguarda um pouco para o estado atualizar
-          await new Promise(resolve => setTimeout(resolve, 100));
-        } catch (error) {
-          console.debug('Profile refresh failed, using cached data');
-        }
-      }
-      
-      // 2. Verifica múltiplas fontes de dados (prioridade: apiUser > localStorage > user)
+      // MÉTODO SIMPLES E DIRETO: Verifica localStorage primeiro
       const storedUser = localStorage.getItem('user');
-      if (apiUser?.role) {
-        currentUserRole = apiUser.role;
-      } else if (storedUser) {
+      let userRole = null;
+      
+      if (storedUser) {
         try {
-          const parsedUser = JSON.parse(storedUser);
-          currentUserRole = parsedUser.role;
+          const userData = JSON.parse(storedUser);
+          userRole = userData.role;
+          console.log('Role encontrado no localStorage:', userRole);
         } catch (error) {
-          console.warn('Error parsing stored user:', error);
+          console.warn('Erro ao parsear localStorage:', error);
         }
-      } else if (user?.role) {
-        currentUserRole = user.role;
       }
       
-      // 3. Força reload da página se for admin mas os dados estão inconsistentes
+      // Se não achou no localStorage, verifica contexts
+      if (!userRole) {
+        userRole = apiUser?.role || user?.role;
+        console.log('Role encontrado no context:', userRole);
+      }
+      
       const isLoggedIn = isAuthenticated || storedUser;
-      if (isLoggedIn && !currentUserRole) {
-        console.log('Forçando reload devido a dados inconsistentes...');
-        window.location.reload();
-        return;
+      
+      if (isLoggedIn && userRole === 'admin') {
+        console.log('✅ Admin identificado - redirecionando para /admin');
+        navigate('/admin');
+      } else if (isLoggedIn && userRole !== 'admin') {
+        console.log('❌ Usuário não é admin - redirecionando para login');
+        navigate('/login');
+      } else {
+        console.log('❌ Usuário não logado - redirecionando para login');
+        navigate('/login');
       }
       
-      // 4. Navegação baseada no role
-      if (isLoggedIn) {
-        if (currentUserRole === 'admin') {
-          // Para admin, força limpeza de cache antes da navegação
-          if (typeof window.clearAppCache === 'function') {
-            window.clearAppCache();
-          }
-          
-          // Limpa cache do localStorage se necessário
-          if (!apiUser || apiUser.role !== 'admin') {
-            const stored = localStorage.getItem('user');
-            if (stored) {
-              try {
-                const userData = JSON.parse(stored);
-                if (userData.role === 'admin') {
-                  // Força atualização do contexto
-                  window.dispatchEvent(new CustomEvent('forceAuthRefresh'));
-                }
-              } catch (e) {}
-            }
-          }
-          
-          navigate('/admin', { replace: true });
-          
-          // Força reload da página se necessário (como último recurso)
-          setTimeout(() => {
-            if (window.location.pathname !== '/admin') {
-              console.log('Forcing hard redirect to admin panel...');
-              window.location.href = '/admin';
-            }
-          }, 200);
-        } else {
-          navigate('/login', { replace: true });
-        }
-      } else {
-        navigate('/login', { replace: true });
-      }
     } catch (error) {
       console.error('Erro ao acessar painel:', error);
-      // Em caso de erro, força login
-      navigate('/login', { replace: true });
+      navigate('/login');
     } finally {
-      // Liberar o botão após um pequeno delay
-      setTimeout(() => setIsNavigating(false), 1500);
+      // Liberar botão após 1 segundo
+      setTimeout(() => setIsNavigating(false), 1000);
     }
   };
 

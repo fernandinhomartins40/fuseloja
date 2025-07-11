@@ -29,19 +29,37 @@ const Login: React.FC = () => {
     try {
       const success = await login(email, password);
       if (success) {
-        // Redirecionamento imediato após login bem-sucedido
-        // Se o usuário veio de uma página específica, redirecionar para lá
+        // AGUARDA 1 segundo para garantir sincronização completa do estado
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Verifica múltiplas fontes para garantir dados atualizados
+        let userRole = null;
+        
+        // 1. Tenta localStorage primeiro (mais confiável após login)
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          try {
+            const userData = JSON.parse(storedUser);
+            userRole = userData.role;
+          } catch (e) {
+            console.warn('Erro ao parsear dados do localStorage:', e);
+          }
+        }
+        
+        // 2. Fallback para context se localStorage falhou
+        if (!userRole && (apiUser || user)) {
+          userRole = apiUser?.role || user?.role;
+        }
+        
+        // Redirecionamento baseado na origem ou role
         if (from) {
           navigate(from, { replace: true });
         } else {
-          // Redirecionamento inteligente baseado no papel do usuário
-          // Usar dados mais recentes do localStorage que foram atualizados pelo authService
-          const storedUser = localStorage.getItem('user');
-          const userRole = storedUser ? JSON.parse(storedUser).role : null;
-          
           if (userRole === 'admin') {
+            console.log('Redirecionando admin para /admin');
             navigate('/admin', { replace: true });
           } else {
+            console.log('Redirecionando usuário para /');
             navigate('/', { replace: true });
           }
         }

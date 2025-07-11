@@ -36,22 +36,22 @@ export const Navigation: React.FC = () => {
       </Link>
       
       <nav className="flex gap-[15px] max-sm:hidden" aria-label="Navegação Principal">
-        <Link to="/" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
+        <Link to="/" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
           Início
         </Link>
-        <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
+        <a href="#" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
           Ofertas
         </a>
-        <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
+        <a href="#" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
           Novidades
         </a>
-        <a href="#" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
+        <a href="#" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
           Categorias
         </a>
-        <Link to="/sobre" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
+        <Link to="/sobre" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
           Sobre Nós
         </Link>
-        <Link to="/contato" className="text-[#54595F] no-underline text-base hover:text-[#D90429] transition-colors">
+        <Link to="/contato" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
           Contato
         </Link>
       </nav>
@@ -59,7 +59,7 @@ export const Navigation: React.FC = () => {
       <div className="flex items-center gap-4">
         {isAuthenticated ? <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors flex items-center" aria-label="Perfil do usuário">
+              <button className="relative text-white hover:text-[#D90429] transition-colors flex items-center" aria-label="Perfil do usuário">
                 {user?.avatar ? <Avatar className="h-8 w-8">
                     <AvatarImage src={user.avatar} alt={user.name} />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -86,7 +86,7 @@ export const Navigation: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu> : <Sheet open={loginSheetOpen} onOpenChange={setLoginSheetOpen}>
             <SheetTrigger asChild>
-              <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors" aria-label="Entrar">
+              <button className="relative text-white hover:text-[#D90429] transition-colors" aria-label="Entrar">
                 <UserRound size={24} />
               </button>
             </SheetTrigger>
@@ -103,7 +103,7 @@ export const Navigation: React.FC = () => {
           </Sheet>}
         
         {/* Cart button that opens the cart drawer */}
-        <button className="relative text-[#54595F] hover:text-[#D90429] transition-colors" aria-label="Carrinho de compras" onClick={() => setCartOpen(true)}>
+        <button className="relative text-white hover:text-[#D90429] transition-colors" aria-label="Carrinho de compras" onClick={() => setCartOpen(true)}>
           <ShoppingCart size={24} />
           <div className="absolute -top-2 -right-2 w-5 h-5 text-white text-[10px] bg-[#D90429] rounded-full flex items-center justify-center">
             {totalItems}

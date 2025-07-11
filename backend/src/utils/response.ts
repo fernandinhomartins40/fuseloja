@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ApiResponse, PaginatedResponse } from '../types/index.js';
+import { ApiResponse, PaginatedResponse } from '../types/index';
 
 // Types for validation errors
 export interface ValidationError {

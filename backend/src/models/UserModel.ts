@@ -1,5 +1,5 @@
 import { DatabaseManager } from './database';
-import { User, UserRole, PaginationQuery } from '../types/index.js';
+import { User, UserRole, PaginationQuery } from '../types/index';
 import { TokenHelper } from '../utils/crypto';
 import logger from '../utils/logger';
 

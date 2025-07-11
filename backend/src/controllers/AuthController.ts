@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/AuthService';
-import { AuthRequest } from '../types/index.js';
+import { AuthRequest } from '../types/index';
 import ResponseHelper from '../utils/response';
 import { asyncHandler } from '../middleware/errorHandler';
 import { validate, authSchemas } from '../utils/validation';
@@ -43,11 +43,14 @@ export class AuthController {
 
   // POST /api/v1/auth/logout-all
   logoutAll = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const userId = req.user!.id;
+    if (!req.user) {
+      return ResponseHelper.error(res, 'User not authenticated', 401);
+    }
+    const userId = req.user.id;
     
     await this.authService.logoutAll(userId);
     
-    ResponseHelper.success(res, null, 'Logged out from all devices');
+    return ResponseHelper.success(res, null, 'Logged out from all devices');
   });
 
   // POST /api/v1/auth/refresh
@@ -65,12 +68,15 @@ export class AuthController {
 
   // POST /api/v1/auth/change-password
   changePassword = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const userId = req.user!.id;
+    if (!req.user) {
+      return ResponseHelper.error(res, 'User not authenticated', 401);
+    }
+    const userId = req.user.id;
     const passwordData = req.body;
     
     await this.authService.changePassword(userId, passwordData);
     
-    ResponseHelper.success(res, null, 'Password changed successfully');
+    return ResponseHelper.success(res, null, 'Password changed successfully');
   });
 
   // POST /api/v1/auth/forgot-password
@@ -128,21 +134,27 @@ export class AuthController {
 
   // GET /api/v1/auth/me
   getProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const user = req.user!;
+    if (!req.user) {
+      return ResponseHelper.error(res, 'User not authenticated', 401);
+    }
+    const user = req.user;
     
     // Remove password from response
     const { password, ...userProfile } = user;
     
-    ResponseHelper.success(res, { user: userProfile }, 'Profile retrieved successfully');
+    return ResponseHelper.success(res, { user: userProfile }, 'Profile retrieved successfully');
   });
 
   // GET /api/v1/auth/sessions
   getSessions = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const userId = req.user!.id;
+    if (!req.user) {
+      return ResponseHelper.error(res, 'User not authenticated', 401);
+    }
+    const userId = req.user.id;
     
     const sessions = await this.authService.getUserSessions(userId);
     
-    ResponseHelper.success(res, { sessions }, 'Sessions retrieved successfully');
+    return ResponseHelper.success(res, { sessions }, 'Sessions retrieved successfully');
   });
 
   // POST /api/v1/auth/validate-token

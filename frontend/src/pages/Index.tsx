@@ -3,7 +3,7 @@ import { HeroSlider } from '../components/sections/HeroSlider';
 import { Marquee } from '../components/sections/Marquee';
 import { CategoryIcons } from '../components/sections/CategoryIcons';
 import { Footer } from '../components/layout/Footer';
-import { DynamicCategoryCarousels } from '../components/sections/DynamicCategoryCarousels';
+import DynamicCategoryCarousels from '../components/sections/DynamicCategoryCarousels';
 import { PromotionProducts } from '../components/sections/PromotionProducts';
 import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocomplete';

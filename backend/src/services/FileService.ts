@@ -5,7 +5,7 @@ import fs from 'fs';
 import { promisify } from 'util';
 import config from '../utils/config';
 import { TokenHelper, HashHelper } from '../utils/crypto';
-import { FileUpload } from '@/types';
+import { FileUpload } from '../types/index.js';
 import { ValidationError, NotFoundError } from '../middleware/errorHandler';
 import logger from '../utils/logger';
 

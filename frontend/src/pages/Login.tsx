@@ -15,11 +15,11 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { login } = useAuth();
+  const { login, apiUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = location.state?.from?.pathname;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +29,22 @@ const Login: React.FC = () => {
     try {
       const success = await login(email, password);
       if (success) {
-        navigate(from, { replace: true });
+        // Aguardar um momento para o apiUser ser atualizado
+        setTimeout(() => {
+          // Se o usuário veio de uma página específica, redirecionar para lá
+          if (from) {
+            navigate(from, { replace: true });
+          } else {
+            // Redirecionamento inteligente baseado no papel do usuário
+            // Verificar se existe apiUser após login
+            const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+            if (currentUser.role === 'admin') {
+              navigate('/admin', { replace: true });
+            } else {
+              navigate('/', { replace: true });
+            }
+          }
+        }, 100); // Pequeno delay para garantir que o estado seja atualizado
       }
     } catch (error: any) {
       setError(error.message || 'Erro ao fazer login');

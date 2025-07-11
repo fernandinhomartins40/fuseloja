@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import config from './config';
-import { User, JWTPayload, AuthTokens } from '@/types';
+import { User, JWTPayload, AuthTokens } from '../types';
 
 // Password hashing utilities
 export class PasswordHelper {

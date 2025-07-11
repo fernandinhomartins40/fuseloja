@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/AuthService';
-import { AuthRequest } from '@/types';
+import { AuthRequest } from '../types';
 import ResponseHelper from '../utils/response';
 import { asyncHandler } from '../middleware/errorHandler';
 import { validate, authSchemas } from '../utils/validation';

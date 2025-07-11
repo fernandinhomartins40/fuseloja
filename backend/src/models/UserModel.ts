@@ -1,5 +1,5 @@
 import { DatabaseManager } from './database';
-import { User, UserRole, PaginationQuery } from '@/types';
+import { User, UserRole, PaginationQuery } from '../types';
 import { TokenHelper } from '../utils/crypto';
 import logger from '../utils/logger';
 
@@ -208,7 +208,7 @@ export class UserModel {
 
       activeUsers.forEach(user => {
         const userRole = (user as unknown as User).role;
-        if (userRole in byRole) {
+        if (userRole && userRole in byRole) {
           byRole[userRole as UserRole]++;
         }
       });

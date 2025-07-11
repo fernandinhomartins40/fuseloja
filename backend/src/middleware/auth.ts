@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AuthRequest, UserRole, JWTPayload } from '@/types';
+import { AuthRequest, UserRole, JWTPayload } from '../types';
 import { JWTHelper } from '../utils/crypto';
 import { UserModel } from '../models/UserModel';
 import ResponseHelper from '../utils/response';

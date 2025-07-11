@@ -21,6 +21,7 @@ import Unauthorized from '@/pages/Unauthorized';
 
 // Import admin pages
 import AdminDashboard from '@/pages/AdminDashboard';
+import AdminDashboardSimple from '@/pages/AdminDashboardSimple';
 import AdminTest from '@/pages/AdminTest';
 
 // Import user pages (optional - for user profiles)
@@ -50,7 +51,7 @@ const AdminDashboardRouter: React.FC = () => {
   }
   
   console.log('AdminDashboardRouter - Loading AdminDashboard');
-  return <AdminDashboard />;
+  return <AdminDashboardSimple />;
 };
 
 export const router = createBrowserRouter([
@@ -116,6 +117,10 @@ export const router = createBrowserRouter([
   {
     path: '/admin/test',
     element: <AdminTest />,
+  },
+  {
+    path: '/admin/simple',
+    element: <AdminDashboardSimple />,
   },
   {
     path: '/admin',

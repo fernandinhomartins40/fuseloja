@@ -15,7 +15,7 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { login, apiUser } = useAuth();
+  const { login, apiUser, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -29,21 +29,21 @@ const Login: React.FC = () => {
     try {
       const success = await login(email, password);
       if (success) {
-        // Aguardar um momento para o estado ser atualizado
-        setTimeout(() => {
-          // Se o usuário veio de uma página específica, redirecionar para lá
-          if (from) {
-            navigate(from, { replace: true });
+        // Redirecionamento imediato após login bem-sucedido
+        // Se o usuário veio de uma página específica, redirecionar para lá
+        if (from) {
+          navigate(from, { replace: true });
+        } else {
+          // Redirecionamento inteligente baseado no papel do usuário
+          // Primeiro tenta usar apiUser, depois localStorage como fallback
+          const userRole = apiUser?.role || JSON.parse(localStorage.getItem('user') || '{}').role;
+          
+          if (userRole === 'admin') {
+            navigate('/admin', { replace: true });
           } else {
-            // Redirecionamento inteligente baseado no papel do usuário
-            const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-            if (currentUser.role === 'admin') {
-              navigate('/admin', { replace: true });
-            } else {
-              navigate('/', { replace: true });
-            }
+            navigate('/', { replace: true });
           }
-        }, 500); // Aumentado delay para garantir atualização completa
+        }
       }
     } catch (error: any) {
       setError(error.message || 'Erro ao fazer login');

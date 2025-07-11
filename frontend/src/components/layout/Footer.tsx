@@ -19,8 +19,17 @@ export const Footer: React.FC = () => {
   const address = settings.general.address;
 
   const handleAdminAccess = () => {
-    if (isAuthenticated && user?.role === 'admin') {
-      navigate('/admin');
+    // Verificação mais robusta do estado de autenticação
+    const storedUser = localStorage.getItem('user');
+    const isLoggedIn = isAuthenticated || storedUser;
+    
+    if (isLoggedIn) {
+      const userRole = user?.role || (storedUser ? JSON.parse(storedUser).role : null);
+      if (userRole === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/login'); // Se logado mas não admin, vai para login para trocar de conta
+      }
     } else {
       navigate('/login');
     }

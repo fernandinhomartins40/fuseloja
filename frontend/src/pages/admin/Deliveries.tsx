@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Truck, MapPin } from 'lucide-react';
+import { Truck, MapPin, Search } from 'lucide-react';
 import { 
   Dialog, 
   DialogContent, 

@@ -203,8 +203,9 @@ jobs:
           echo "⚡ Fast deployment setup..."
           cd fuseloja/backend
           
-          # Skip npm install since dependencies are already installed during build
-          echo "📦 Skipping dependency installation (already installed during build)"
+          # Install production dependencies (node_modules not included in build)
+          echo "📦 Installing production dependencies..."
+          npm ci --silent --production --prefer-offline --no-audit --no-fund
           
           # Optimize database setup - run in background with timeout
           echo "🗃️ Setting up database (optimized)..."

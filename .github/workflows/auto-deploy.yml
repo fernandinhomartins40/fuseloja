@@ -136,20 +136,39 @@ jobs:
           sudo docker image prune -af || true
           
           echo "📥 Updating application code..."
-          # Clone/update repository
-          if [ -d "app" ]; then
-            cd app
-            git fetch origin
-            git reset --hard origin/main
-            git clean -fd
-            cd ..
-          else
-            git clone https://github.com/fernandinhomartins40/fuseloja.git app
+          # Remove existing app directory to ensure clean state
+          sudo rm -rf app
+          
+          # Clone repository (public repo, no auth needed)
+          if ! git clone https://github.com/fernandinhomartins40/fuseloja.git app; then
+            echo "❌ Failed to clone repository"
+            echo "🔧 Trying alternative method..."
+            # Alternative: download as zip
+            curl -L https://github.com/fernandinhomartins40/fuseloja/archive/main.zip -o fuseloja.zip
+            unzip -q fuseloja.zip
+            mv fuseloja-main app
+            rm fuseloja.zip
           fi
+          
+          # Verify app directory exists and has content
+          if [ ! -d "app" ] || [ -z "$(ls -A app 2>/dev/null)" ]; then
+            echo "❌ Failed to download application code"
+            exit 1
+          fi
+          
+          echo "📁 Successfully downloaded $(du -sh app | cut -f1) of application code"
           
           # Copy source files
           sudo cp -r app/* . 2>/dev/null || true
           sudo cp app/.* . 2>/dev/null || true
+          
+          # Verify critical files exist
+          if [ ! -f "Dockerfile.fullstack" ]; then
+            echo "❌ Dockerfile.fullstack not found after copy!"
+            echo "📂 Available files:"
+            ls -la
+            exit 1
+          fi
           
           echo "⚙️ Creating environment configuration..."
           # Create environment file with all required variables
@@ -195,11 +214,8 @@ jobs:
           EOF
           
           echo "🏗️ Building application..."
-          # Verify Dockerfile exists
-          if [ ! -f "Dockerfile.fullstack" ]; then
-            echo "❌ Dockerfile.fullstack not found!"
-            exit 1
-          fi
+          echo "📋 Files ready for build:"
+          ls -la Dockerfile.fullstack frontend/ backend/ 2>/dev/null || echo "Some directories may not exist"
           
           # Build container with better error handling
           if ! sudo docker build -t fuseloja-app -f Dockerfile.fullstack .; then

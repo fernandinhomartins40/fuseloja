@@ -9,8 +9,13 @@ import { Product } from '@/types/product';
 interface Category {
   id: string;
   name: string;
-  icon?: IconName;
-  color?: string;
+  description?: string;
+  image_url?: string;
+  icon: IconName;
+  color: string;
+  slug?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface CategoryWithProducts extends Category {
@@ -24,25 +29,9 @@ const fetchCategories = async (): Promise<Category[]> => {
 };
 
 
-// Category configuration with icons and colors
-const categoryConfig: Record<string, { icon: IconName; color: string }> = {
-  'Eletrônicos': { icon: 'Smartphone', color: '#3B82F6' },
-  'Roupas': { icon: 'Shirt', color: '#10B981' },
-  'Moda': { icon: 'Shirt', color: '#EC4899' },
-  'Casa': { icon: 'Home', color: '#F59E0B' },
-  'Casa & Decoração': { icon: 'Home', color: '#10B981' },
-  'Esportes': { icon: 'Activity', color: '#EF4444' },
-  'Livros': { icon: 'BookOpen', color: '#8B5CF6' },
-  'Beleza': { icon: 'Sparkles', color: '#EC4899' },
-  'Jardim': { icon: 'Flower', color: '#059669' },
-  'Brinquedos': { icon: 'Gamepad2', color: '#F97316' },
-  'Saúde': { icon: 'Heart', color: '#DC2626' },
-  'Automotivo': { icon: 'Car', color: '#374151' },
-};
-
 const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ category }) => {
-  const config = categoryConfig[category.name] || { icon: 'Package', color: '#6B7280' };
-  const IconComponent = iconComponents[config.icon];
+  // Use category data directly from database
+  const IconComponent = iconComponents[category.icon] || iconComponents['Package'];
   
   if (category.products.length === 0) {
     return null; // Don't render empty categories
@@ -53,13 +42,13 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
       <div className="flex items-center gap-3 mb-6">
         <div 
           className="p-2 rounded-lg text-white"
-          style={{ backgroundColor: config.color }}
+          style={{ backgroundColor: category.color }}
         >
           <IconComponent className="w-6 h-6" />
         </div>
         <h2 
           className="text-2xl font-bold"
-          style={{ color: config.color }}
+          style={{ color: category.color }}
         >
           {category.name}
         </h2>

@@ -29,10 +29,22 @@ const createTables = async () => {
         name VARCHAR(100) NOT NULL UNIQUE,
         description TEXT,
         image_url VARCHAR(255),
+        icon VARCHAR(50) DEFAULT 'Package',
+        color VARCHAR(7) DEFAULT '#6B7280',
+        slug VARCHAR(100),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    
+    // Add new columns if they don't exist (for existing databases)
+    try {
+      await query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS icon VARCHAR(50) DEFAULT 'Package'`);
+      await query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS color VARCHAR(7) DEFAULT '#6B7280'`);
+      await query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS slug VARCHAR(100)`);
+    } catch (error) {
+      // Columns might already exist, continue
+    }
     console.log('✅ Categories table created/verified');
 
     // Create products table

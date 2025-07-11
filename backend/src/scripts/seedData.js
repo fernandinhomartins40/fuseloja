@@ -10,22 +10,22 @@ const seedData = async () => {
     if (parseInt(existingCategories.rows[0].count) > 0) {
       console.log('⏭️ Categorias já existem, pulando criação...');
     } else {
-      // Inserir categorias
+      // Inserir categorias com ícones e cores
       const categories = [
-        { name: 'Eletrônicos', description: 'Smartphones, tablets, notebooks e acessórios', image_url: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400' },
-        { name: 'Moda', description: 'Roupas, calçados e acessórios para todos os estilos', image_url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400' },
-        { name: 'Casa e Jardim', description: 'Decoração, móveis e utensílios para o lar', image_url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400' },
-        { name: 'Esportes', description: 'Equipamentos e roupas esportivas', image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400' },
-        { name: 'Livros', description: 'Livros físicos e digitais de todas as categorias', image_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400' },
-        { name: 'Beleza', description: 'Cosméticos, perfumes e produtos de cuidado pessoal', image_url: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400' },
-        { name: 'Automóveis', description: 'Peças, acessórios e equipamentos automotivos', image_url: 'https://images.unsplash.com/photo-1494976688153-ca3ce87638e4?w=400' },
-        { name: 'Brinquedos', description: 'Brinquedos e jogos para todas as idades', image_url: 'https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?w=400' }
+        { name: 'Eletrônicos', description: 'Smartphones, tablets, notebooks e acessórios', image_url: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400', icon: 'Smartphone', color: '#3B82F6', slug: 'eletronicos' },
+        { name: 'Moda', description: 'Roupas, calçados e acessórios para todos os estilos', image_url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400', icon: 'Shirt', color: '#EC4899', slug: 'moda' },
+        { name: 'Casa e Jardim', description: 'Decoração, móveis e utensílios para o lar', image_url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400', icon: 'Home', color: '#10B981', slug: 'casa-e-jardim' },
+        { name: 'Esportes', description: 'Equipamentos e roupas esportivas', image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400', icon: 'Activity', color: '#EF4444', slug: 'esportes' },
+        { name: 'Livros', description: 'Livros físicos e digitais de todas as categorias', image_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400', icon: 'BookOpen', color: '#8B5CF6', slug: 'livros' },
+        { name: 'Beleza', description: 'Cosméticos, perfumes e produtos de cuidado pessoal', image_url: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400', icon: 'Sparkles', color: '#EC4899', slug: 'beleza' },
+        { name: 'Automóveis', description: 'Peças, acessórios e equipamentos automotivos', image_url: 'https://images.unsplash.com/photo-1494976688153-ca3ce87638e4?w=400', icon: 'Car', color: '#374151', slug: 'automoveis' },
+        { name: 'Brinquedos', description: 'Brinquedos e jogos para todas as idades', image_url: 'https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?w=400', icon: 'Gamepad2', color: '#F97316', slug: 'brinquedos' }
       ];
 
       for (const category of categories) {
         await query(
-          'INSERT INTO categories (name, description, image_url) VALUES ($1, $2, $3)',
-          [category.name, category.description, category.image_url]
+          'INSERT INTO categories (name, description, image_url, icon, color, slug) VALUES ($1, $2, $3, $4, $5, $6)',
+          [category.name, category.description, category.image_url, category.icon, category.color, category.slug]
         );
       }
       console.log(`✅ ${categories.length} categorias criadas`);

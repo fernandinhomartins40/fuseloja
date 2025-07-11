@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 require('dotenv').config();
 
 // Import routes
@@ -65,8 +66,11 @@ app.get('/ready', (req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', authenticateToken, userRoutes);
 
-// Default route
-app.get('/', (req, res) => {
+// Serve static files from frontend build
+app.use(express.static(path.join(__dirname, '../public')));
+
+// API route (for checking if backend is working)
+app.get('/api', (req, res) => {
   res.json({
     message: 'Backend Minimal API',
     version: '1.0.0',
@@ -76,6 +80,11 @@ app.get('/', (req, res) => {
       users: '/api/v1/users'
     }
   });
+});
+
+// Serve frontend for all other routes (SPA support)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // Error handling

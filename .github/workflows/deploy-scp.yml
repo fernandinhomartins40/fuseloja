@@ -98,17 +98,18 @@ jobs:
         echo "TIMESTAMP=$(date +'%Y%m%d_%H%M%S')" >> $GITHUB_ENV
         echo "COMMIT_HASH=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
 
-    - name: 🔍 Debug: Check deployment package before upload
+    - name: Debug - Check deployment package before upload
       run: |
-        echo "🔍 Checking deployment package before upload..."
+        echo "Checking deployment package before upload..."
         if [ -f "deployment.tar.gz" ]; then
-          echo "✅ Found deployment package: $(ls -lh deployment.tar.gz)"
-          echo "📦 Package size: $(stat -c%s deployment.tar.gz) bytes"
-          echo "🔍 Package contents (first 10 files):"
+          echo "Found deployment package:"
+          ls -lh deployment.tar.gz
+          echo "Package size: $(stat -c%s deployment.tar.gz) bytes"
+          echo "Package contents (first 10 files):"
           tar -tzf deployment.tar.gz | head -10
         else
-          echo "❌ deployment.tar.gz not found!"
-          echo "📂 Current directory contents:"
+          echo "ERROR: deployment.tar.gz not found!"
+          echo "Current directory contents:"
           ls -la
           exit 1
         fi
@@ -164,26 +165,27 @@ jobs:
           fi
           
           # Extract deployment package
-          echo "📥 Extracting deployment package..."
-          echo "🔍 Debug: Checking /tmp directory..."
+          echo "Extracting deployment package..."
+          echo "DEBUG: Checking /tmp directory..."
           ls -la /tmp/ | grep -E "(deployment|tar|gz)" || echo "No deployment files found in /tmp"
           
           if [ -f "/tmp/deployment.tar.gz" ]; then
-            echo "✅ Found deployment package: $(ls -lh /tmp/deployment.tar.gz)"
+            echo "SUCCESS: Found deployment package:"
+            ls -lh /tmp/deployment.tar.gz
             rm -rf fuseloja
             mkdir -p fuseloja
             tar -xzf /tmp/deployment.tar.gz -C fuseloja
             rm -f /tmp/deployment.tar.gz
-            echo "✅ Package extracted successfully"
-            echo "📂 Contents of fuseloja directory:"
+            echo "SUCCESS: Package extracted successfully"
+            echo "Contents of fuseloja directory:"
             ls -la fuseloja/
           else
-            echo "❌ Deployment package not found in /tmp/"
-            echo "🔍 Contents of /tmp directory:"
+            echo "ERROR: Deployment package not found in /tmp/"
+            echo "Contents of /tmp directory:"
             ls -la /tmp/
-            echo "🔍 Looking for any .tar.gz files in /tmp:"
+            echo "Looking for any .tar.gz files in /tmp:"
             find /tmp -name "*.tar.gz" -ls 2>/dev/null || echo "No .tar.gz files found"
-            echo "🔍 Looking for deployment files anywhere:"
+            echo "Looking for deployment files anywhere:"
             find /tmp -name "*deployment*" -ls 2>/dev/null || echo "No deployment files found"
             exit 1
           fi

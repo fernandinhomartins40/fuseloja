@@ -203,11 +203,17 @@ export class DatabaseManager {
       return false;
     }
 
+    const currentRecord = this.data[tableName][index];
+    if (!currentRecord) {
+      return false;
+    }
+    
     this.data[tableName][index] = {
-      ...this.data[tableName][index],
+      ...currentRecord,
       ...updates,
+      id: currentRecord.id || '',
       updatedAt: new Date().toISOString()
-    };
+    } as DatabaseRecord;
 
     await this.saveToFile();
     return true;
@@ -245,7 +251,7 @@ export class DatabaseManager {
   }> {
     const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'desc' } = options;
     
-    let results = await this.find(tableName, criteria);
+    const results = await this.find(tableName, criteria);
     
     // Sorting
     if (sortBy) {

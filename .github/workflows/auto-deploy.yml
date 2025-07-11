@@ -21,10 +21,12 @@ jobs:
     - name: Check package-lock files
       run: |
         echo "Checking package-lock.json files..."
-        ls -la package-lock.json backend/package-lock.json || true
+        ls -la frontend/package-lock.json backend/package-lock.json || true
         
     - name: Install frontend dependencies
-      run: npm ci
+      run: |
+        cd frontend
+        npm ci
       
     - name: Install backend dependencies
       run: |
@@ -33,7 +35,7 @@ jobs:
         npm ci
       
     - name: Run frontend linter
-      run: npm run lint
+      run: cd frontend && npm run lint
       continue-on-error: true
       
     - name: Run backend linter
@@ -41,7 +43,7 @@ jobs:
       continue-on-error: true
       
     - name: Build frontend
-      run: npm run build
+      run: cd frontend && npm run build
       
     - name: Build backend
       run: cd backend && npm run build

@@ -34,19 +34,23 @@ jobs:
           frontend/package-lock.json
           backend/package-lock.json
 
-    - name: 🔧 Install Frontend Dependencies
-      working-directory: ./frontend
-      run: npm ci --silent
-
-    - name: 🔧 Install Backend Dependencies
-      working-directory: ./backend
-      run: npm ci --silent
-
-    - name: 🏗️ Build Frontend
-      working-directory: ./frontend
+    - name: 🚀 Install Dependencies & Build (Optimized)
       run: |
-        npm run build
-        echo "✅ Frontend build completed"
+        echo "⚡ Starting optimized build process..."
+        
+        # Use npm ci with optimized flags for speed
+        (cd frontend && npm ci --silent --prefer-offline --no-audit --no-fund && npm run build && echo "✅ Frontend build completed") &
+        FRONTEND_PID=$!
+        
+        # Backend deps with production flag and speed optimizations
+        (cd backend && npm ci --silent --production --prefer-offline --no-audit --no-fund && echo "✅ Backend deps installed") &
+        BACKEND_PID=$!
+        
+        # Wait for both to complete
+        wait $FRONTEND_PID
+        wait $BACKEND_PID
+        
+        echo "⚡ Optimized operations completed"
 
     - name: 📂 Copy Frontend Build to Backend
       run: |
@@ -136,16 +140,21 @@ jobs:
         script: |
           echo "🚀 Starting SCP deployment..."
           
-          # Install system dependencies
-          echo "📦 Installing system dependencies..."
-          apt update -y
-          apt install -y curl
-          
-          # Install Node.js 18 if not exists
-          if ! command -v node &> /dev/null; then
-            echo "📦 Installing Node.js 18..."
-            curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-            apt install -y nodejs
+          # Install system dependencies (optimized)
+          echo "📦 Checking system dependencies..."
+          if ! command -v node &> /dev/null || ! command -v curl &> /dev/null; then
+            echo "📦 Installing required packages..."
+            apt update -qq
+            apt install -y curl > /dev/null 2>&1
+            
+            # Install Node.js 18 if not exists
+            if ! command -v node &> /dev/null; then
+              echo "📦 Installing Node.js 18..."
+              curl -fsSL https://deb.nodesource.com/setup_18.x | bash - > /dev/null 2>&1
+              apt install -y nodejs > /dev/null 2>&1
+            fi
+          else
+            echo "✅ System dependencies already installed"
           fi
           
           # Verify Node.js installation
@@ -190,18 +199,17 @@ jobs:
             exit 1
           fi
           
-          # Install production dependencies
-          echo "📦 Installing production dependencies..."
+          # Fast deployment setup
+          echo "⚡ Fast deployment setup..."
           cd fuseloja/backend
-          npm ci --silent --production
           
-          # Run database migrations
-          echo "🗃️ Setting up database..."
-          node src/scripts/createTables.js || echo "⚠️ Database setup completed with warnings"
+          # Skip npm install since dependencies are already installed during build
+          echo "📦 Skipping dependency installation (already installed during build)"
           
-          # Seed data if needed (only if no products exist)
-          echo "🌱 Checking if data seeding is needed..."
-          node src/scripts/seedData.js || echo "⚠️ Data seeding completed with warnings"
+          # Optimize database setup - run in background with timeout
+          echo "🗃️ Setting up database (optimized)..."
+          (timeout 60s node src/scripts/createTables.js && timeout 30s node src/scripts/seedData.js) > /tmp/db-setup.log 2>&1 &
+          DB_PID=$!
           
           # Update current symlink
           cd ${{ env.DEPLOY_PATH }}
@@ -225,33 +233,47 @@ jobs:
           EOF
           fi
           
-          # Install PM2 if not exists
+          # Install PM2 if not exists (optimized)
           if ! command -v pm2 &> /dev/null; then
             echo "📦 Installing PM2..."
-            npm install -g pm2
+            npm install -g pm2 --silent --prefer-offline --no-audit --no-fund > /dev/null 2>&1
           fi
           
-          # Start/restart application
-          echo "🔄 Starting application..."
-          pm2 delete ${{ env.APP_NAME }} 2>/dev/null || true
-          pm2 start src/index.js --name ${{ env.APP_NAME }} --env production
-          pm2 save
+          # Wait for database setup to complete
+          wait $DB_PID && echo "✅ Database setup completed" || echo "⚠️ Database setup had warnings"
+          
+          # Fast application restart
+          echo "⚡ Fast application restart..."
+          if pm2 describe ${{ env.APP_NAME }} > /dev/null 2>&1; then
+            echo "🔄 Restarting existing process..."
+            pm2 restart ${{ env.APP_NAME }} --update-env
+          else
+            echo "🚀 Starting new process..."
+            pm2 start src/index.js --name ${{ env.APP_NAME }} --env production
+          fi
+          pm2 save > /dev/null
           
           # Setup PM2 startup (if first time)
           pm2 startup systemd -u $USER --hp /home/$USER 2>/dev/null || true
           
           echo "✅ Deployment completed!"
           
-          # Health check
+          # Quick health check
           echo "🔍 Running health check..."
-          sleep 10
-          if curl -f http://localhost:3000/health > /dev/null 2>&1; then
-            echo "✅ Health check passed!"
-          else
-            echo "❌ Health check failed"
-            pm2 logs ${{ env.APP_NAME }} --lines 20
-            exit 1
-          fi
+          sleep 5
+          for i in {1..3}; do
+            if curl -f http://localhost:3000/health > /dev/null 2>&1; then
+              echo "✅ Health check passed!"
+              break
+            elif [ $i -eq 3 ]; then
+              echo "❌ Health check failed after 3 attempts"
+              pm2 logs ${{ env.APP_NAME }} --lines 10
+              exit 1
+            else
+              echo "⏳ Health check attempt $i failed, retrying..."
+              sleep 3
+            fi
+          done
 
     - name: 🔍 Verify Deployment
       uses: appleboy/ssh-action@v1.0.3

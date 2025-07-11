@@ -114,67 +114,112 @@ jobs:
         echo "✅ All required secrets are configured!"
         echo "🚀 Proceeding with deployment..."
         
-    - name: Prepare deployment package
+    - name: Debug environment
+      run: |
+        echo "🔍 Environment debug:"
+        echo "Current directory: $(pwd)"
+        echo "User: $(whoami)"
+        echo "Available space:"
+        df -h
+        echo "Tar version:"
+        tar --version
+        echo "Directory contents:"
+        ls -la
+        echo "Find command test:"
+        find . -maxdepth 1 -type f | head -5
+
+    - name: Check for problematic files
+      run: |
+        echo "🔍 Checking for problematic files..."
+        
+        # Check for files with special characters
+        echo "Files with special characters:"
+        find . -type f -name "*[\"\\']*" || echo "None found"
+        
+        # Check for very large files
+        echo "Large files (>100M):"
+        find . -type f -size +100M || echo "None found"
+        
+        # Check for broken symlinks
+        echo "Broken symlinks:"
+        find . -type l ! -exec test -e {} \; -print || echo "None found"
+        
+        # Check disk space
+        echo "Disk space:"
+        df -h .
+        
+        echo "✅ File check completed"
+
+    - name: Create deployment package
       run: |
         echo "📦 Creating deployment package..."
         
-        # Stop any running processes that might modify files
-        pkill -f "vite\|webpack\|nodemon\|ts-node\|esbuild" || true
-        sleep 3
+        # Remove any existing package
+        rm -f deployment.tar.gz
         
-        # Show what we're packaging
-        echo "📋 Contents to be packaged:"
-        find . -maxdepth 2 -type f -name "*.json" -o -name "Dockerfile*" -o -name "*.md" | head -10
+        # Show current directory structure
+        echo "📋 Current directory structure:"
+        ls -la
         
-        # Ensure no stale lock files exist
-        find . -name "*.lock" -type f -not -path "./frontend/package-lock.json" -not -path "./backend/package-lock.json" -delete || true
+        # Create a clean list of files to include
+        echo "📝 Files to be packaged:"
+        find . -type f \
+          -not -path "./node_modules/*" \
+          -not -path "./.git/*" \
+          -not -path "./*/dist/*" \
+          -not -path "./.vite/*" \
+          -not -path "./build/*" \
+          -not -path "./coverage/*" \
+          -not -path "./logs/*" \
+          -not -path "./.cache/*" \
+          -not -path "./uploads/*" \
+          -not -path "./database/*" \
+          -not -path "./backups/*" \
+          -not -name "*.log" \
+          -not -name ".DS_Store" \
+          -not -name "Thumbs.db" \
+          -not -name "*.tmp" \
+          -not -name "*.temp" \
+          | head -20
         
-        # Create deployment package with robust error handling
-        if tar --version | grep -q "GNU tar"; then
-          # GNU tar (Linux)
-          tar -czf deployment.tar.gz \
-            --exclude=node_modules \
-            --exclude=.git \
-            --exclude='*/dist' \
-            --exclude='.vite' \
-            --exclude='.next' \
-            --exclude='build' \
-            --exclude='coverage' \
-            --exclude='.nyc_output' \
-            --exclude='logs' \
-            --exclude='*.log' \
-            --exclude='.env.local' \
-            --exclude='.env.*.local' \
-            --exclude='.DS_Store' \
-            --exclude='Thumbs.db' \
-            --exclude='.cache' \
-            --exclude='.tmp' \
-            --exclude='.temp' \
-            --exclude='*.tmp' \
-            --exclude='*.temp' \
-            --exclude='.claude' \
-            --exclude='uploads' \
-            --exclude='database' \
-            --exclude='backups' \
-            --exclude='.deploy-trigger' \
-            --warning=no-file-changed \
-            --warning=no-file-removed \
-            .
-        else
-          # BSD tar (macOS) or other
-          tar -czf deployment.tar.gz \
-            --exclude=node_modules \
-            --exclude=.git \
-            --exclude=dist \
-            --exclude=.vite \
-            --exclude=logs \
-            --exclude=.cache \
-            --exclude=.claude \
-            --exclude=uploads \
-            --exclude=database \
-            --exclude=backups \
-            .
-        fi
+        # Create package with verbose output for debugging
+        echo "🔧 Creating tar package..."
+        tar -czf deployment.tar.gz \
+          --exclude='node_modules' \
+          --exclude='.git' \
+          --exclude='*/dist' \
+          --exclude='.vite' \
+          --exclude='build' \
+          --exclude='coverage' \
+          --exclude='logs' \
+          --exclude='*.log' \
+          --exclude='.DS_Store' \
+          --exclude='Thumbs.db' \
+          --exclude='.cache' \
+          --exclude='uploads' \
+          --exclude='database' \
+          --exclude='backups' \
+          --exclude='*.tmp' \
+          --exclude='*.temp' \
+          . 2>&1 || {
+            echo "❌ Tar command failed with exit code $?"
+            echo "📋 Trying alternative approach..."
+            
+            # Alternative: create package without problematic options
+            tar -czf deployment.tar.gz \
+              --exclude='node_modules' \
+              --exclude='.git' \
+              --exclude='dist' \
+              --exclude='build' \
+              --exclude='logs' \
+              --exclude='.cache' \
+              . || {
+                echo "❌ Alternative tar also failed!"
+                echo "📋 Directory contents:"
+                ls -la
+                exit 1
+              }
+          }
         
         # Verify package was created
         if [ ! -f "deployment.tar.gz" ]; then
@@ -187,8 +232,35 @@ jobs:
         
         # Test package integrity
         echo "🔍 Testing package integrity..."
-        tar -tzf deployment.tar.gz | head -5
-        echo "📦 Package contains $(tar -tzf deployment.tar.gz | wc -l) files"
+        if tar -tzf deployment.tar.gz >/dev/null 2>&1; then
+          echo "✅ Package integrity verified"
+          echo "📦 Package contains $(tar -tzf deployment.tar.gz | wc -l) files"
+          echo "📋 Sample contents:"
+          tar -tzf deployment.tar.gz | head -10
+        else
+          echo "❌ Package integrity check failed!"
+          exit 1
+        fi
+
+    - name: Create deployment package (Ultra-Simple Fallback)
+      if: failure()
+      run: |
+        echo "🚨 Using ultra-simple fallback packaging..."
+        
+        # Remove problematic directories first
+        rm -rf node_modules .git dist build coverage logs .cache uploads database backups || true
+        
+        # Create simple package
+        tar -czf deployment.tar.gz . || {
+          echo "❌ Simple tar failed, trying zip..."
+          apt-get update && apt-get install -y zip
+          zip -r deployment.zip . -x "node_modules/*" ".git/*" "dist/*" "build/*" "logs/*"
+          mv deployment.zip deployment.tar.gz
+        }
+        
+        # Verify
+        ls -lh deployment.tar.gz
+        echo "✅ Ultra-simple package created successfully"
         
     - name: Copy deployment package to VPS
       uses: appleboy/scp-action@v0.1.7

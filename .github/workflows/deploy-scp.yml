@@ -1,8 +1,6 @@
-name: 🚀 Deploy Fuseloja Minimal
+name: 🚀 Deploy via SCP (Backup Method)
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
     inputs:
       force_deploy:
@@ -48,42 +46,67 @@ jobs:
         npm run build
         echo "✅ Frontend build completed"
 
-    - name: 🧪 Test Backend Startup
-      working-directory: ./backend
-      env:
-        NODE_ENV: test
-        JWT_SECRET: test-secret-for-build
-        DB_HOST: localhost
-        DB_USER: test
-        DB_PASSWORD: test
-        DB_NAME: test
+    - name: 📂 Copy Frontend Build to Backend
       run: |
-        echo "Testing backend startup..."
-        timeout 10s npm start || echo "✅ Backend startup test completed"
+        rm -rf backend/public
+        cp -r frontend/dist backend/public
+        echo "✅ Frontend copied to backend/public"
 
-    - name: 📊 Build Summary
+    - name: 📦 Create Deployment Package
       run: |
-        echo "## 📊 Build Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- ✅ Frontend build: $(du -sh frontend/dist | cut -f1)" >> $GITHUB_STEP_SUMMARY
-        echo "- ✅ Backend size: $(du -sh backend/src | cut -f1)" >> $GITHUB_STEP_SUMMARY
-        echo "- 📦 Dependencies: $(ls backend/node_modules | wc -l) packages" >> $GITHUB_STEP_SUMMARY
+        echo "📦 Creating deployment package..."
+        
+        # Create a clean deployment directory
+        mkdir -p deployment/backend
+        
+        # Copy backend files
+        cp -r backend/src deployment/backend/
+        cp -r backend/public deployment/backend/
+        cp backend/package.json deployment/backend/
+        cp backend/package-lock.json deployment/backend/
+        cp backend/ecosystem.config.js deployment/backend/
+        
+        # Create deployment archive
+        cd deployment
+        tar -czf ../deployment.tar.gz .
+        cd ..
+        
+        echo "✅ Deployment package created: $(ls -lh deployment.tar.gz)"
+
+    - name: 📤 Upload Deployment Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: deployment-package
+        path: deployment.tar.gz
+        retention-days: 7
 
   deploy:
     name: 🚀 Deploy to VPS
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
+    
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
+    - name: 📥 Download Deployment Package
+      uses: actions/download-artifact@v4
+      with:
+        name: deployment-package
 
     - name: 🔧 Setup deployment variables
       run: |
         echo "TIMESTAMP=$(date +'%Y%m%d_%H%M%S')" >> $GITHUB_ENV
         echo "COMMIT_HASH=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
 
-    - name: 🚀 Deploy to VPS
+    - name: 📤 Copy Files to VPS
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
+        source: "deployment.tar.gz"
+        target: "/tmp/"
+
+    - name: 🚀 Deploy Application
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.VPS_HOST }}
@@ -92,7 +115,7 @@ jobs:
         port: 22
         timeout: 600s
         script: |
-          echo "🚀 Starting deployment..."
+          echo "🚀 Starting SCP deployment..."
           
           # Install system dependencies
           echo "📦 Installing system dependencies..."
@@ -122,51 +145,23 @@ jobs:
             ls -dt backup_* | tail -n +4 | xargs rm -rf 2>/dev/null || true
           fi
           
-          # Clone repository (using HTTPS without authentication for public repo)
-          echo "📥 Cloning repository..."
-          rm -rf fuseloja
-          git clone https://github.com/fernandinhomartins40/fuseloja.git
-          
-          if [ ! -d "fuseloja" ]; then
-            echo "❌ Failed to clone repository"
+          # Extract deployment package
+          echo "📥 Extracting deployment package..."
+          if [ -f "/tmp/deployment.tar.gz" ]; then
+            rm -rf fuseloja
+            mkdir -p fuseloja
+            tar -xzf /tmp/deployment.tar.gz -C fuseloja
+            rm -f /tmp/deployment.tar.gz
+            echo "✅ Package extracted successfully"
+          else
+            echo "❌ Deployment package not found"
             exit 1
           fi
           
-          cd fuseloja
-          echo "✅ Repository cloned successfully"
-          
-          # Install dependencies and build
-          echo "📦 Installing dependencies..."
-          
-          # Backend
-          cd backend
-          if [ ! -f "package.json" ]; then
-            echo "❌ Backend package.json not found"
-            exit 1
-          fi
+          # Install production dependencies
+          echo "📦 Installing production dependencies..."
+          cd fuseloja/backend
           npm ci --silent --production
-          
-          # Frontend
-          cd ../frontend
-          if [ ! -f "package.json" ]; then
-            echo "❌ Frontend package.json not found"
-            exit 1
-          fi
-          npm ci --silent
-          npm run build
-          
-          # Verify frontend build
-          if [ ! -d "dist" ]; then
-            echo "❌ Frontend build failed - dist directory not found"
-            exit 1
-          fi
-          
-          # Copy frontend build to backend public
-          echo "📂 Copying frontend build..."
-          rm -rf ../backend/public
-          cp -r dist ../backend/public
-          
-          cd ..
           
           # Update current symlink
           cd ${{ env.DEPLOY_PATH }}
@@ -237,7 +232,7 @@ jobs:
           
           # Test endpoints
           echo "🌐 Testing endpoints..."
-          curl -s http://localhost:3000/health | jq '.' || echo "Health endpoint OK"
+          curl -s http://localhost:3000/health | head -5 || echo "Health endpoint OK"
           curl -s http://localhost:3000/ | head -5 || echo "Root endpoint OK"
           
           echo "✅ Verification completed!"
@@ -245,8 +240,8 @@ jobs:
     - name: 📊 Deployment Summary
       if: always()
       run: |
-        echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- **Environment:** Production" >> $GITHUB_STEP_SUMMARY
+        echo "## 🚀 SCP Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Method:** SCP File Transfer" >> $GITHUB_STEP_SUMMARY
         echo "- **Server:** ${{ secrets.VPS_HOST }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Timestamp:** $(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
         echo "- **Commit:** ${{ env.COMMIT_HASH }}" >> $GITHUB_STEP_SUMMARY
@@ -267,12 +262,12 @@ jobs:
     - name: 📢 Success Notification
       if: needs.deploy.result == 'success'
       run: |
-        echo "🎉 Deployment successful!"
+        echo "🎉 SCP Deployment successful!"
         echo "✅ Application is live at https://www.fuseloja.com.br"
         
     - name: 🚨 Failure Notification
       if: needs.deploy.result == 'failure'
       run: |
-        echo "❌ Deployment failed!"
+        echo "❌ SCP Deployment failed!"
         echo "Check the logs above for details."
         exit 1

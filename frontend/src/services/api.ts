@@ -11,22 +11,23 @@ interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
 
 // Dynamic API base URL based on environment
 const getApiBaseUrl = (): string => {
-  // Check if we're in development mode
-  if (import.meta.env.DEV) {
-    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-  }
-  
-  // In production, determine API URL based on current hostname
   const hostname = window.location.hostname;
   const protocol = window.location.protocol;
   
+  // Force detection based on hostname, not DEV flag
   if (hostname.includes('fuseloja.com.br')) {
-    // Production - use same origin but port 3000
-    return `${protocol}//${hostname.replace('www.', '')}:3000`;
+    // Production - use same domain but port 3000
+    const baseHost = hostname.replace('www.', '');
+    return `${protocol}//${baseHost}:3000`;
   }
   
-  // Fallback to localhost for unknown environments
-  return 'http://localhost:3000';
+  // Local development
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+  }
+  
+  // Fallback to same origin with port 3000
+  return `${protocol}//${hostname}:3000`;
 };
 
 class ApiClient {

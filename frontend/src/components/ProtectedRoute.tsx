@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
@@ -51,6 +51,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
 // Component for admin-only routes
 export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { login, isAuthenticated } = useAuth();
+  
+  // DO NOT auto-login in production - this was causing the CORS error
+  // Remove any development auto-login code
+  
   return (
     <ProtectedRoute requiredRole="admin">
       {children}

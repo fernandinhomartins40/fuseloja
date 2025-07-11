@@ -97,7 +97,7 @@ jobs:
           # Install system dependencies
           echo "📦 Installing system dependencies..."
           apt update -y
-          apt install -y curl git
+          apt install -y curl git wget unzip
           
           # Install Node.js 18 if not exists
           if ! command -v node &> /dev/null; then
@@ -122,13 +122,36 @@ jobs:
             ls -dt backup_* | tail -n +4 | xargs rm -rf 2>/dev/null || true
           fi
           
-          # Clone repository (using HTTPS without authentication for public repo)
+          # Clone repository (configure Git first for public repo)
           echo "📥 Cloning repository..."
           rm -rf fuseloja
-          git clone https://github.com/fernandinhomartins40/fuseloja.git
+          
+          # Configure Git for non-interactive clone
+          git config --global user.email "deploy@fuseloja.com"
+          git config --global user.name "Deploy Bot"
+          git config --global init.defaultBranch main
+          
+          # Try multiple clone methods
+          if git clone https://github.com/fernandinhomartins40/fuseloja.git; then
+            echo "✅ HTTPS clone successful"
+          elif git clone git://github.com/fernandinhomartins40/fuseloja.git; then
+            echo "✅ Git protocol clone successful"
+          else
+            echo "❌ Git clone failed, trying wget fallback..."
+            wget -O main.zip "https://github.com/fernandinhomartins40/fuseloja/archive/refs/heads/main.zip"
+            if [ -f "main.zip" ]; then
+              unzip -q main.zip
+              mv fuseloja-main fuseloja
+              rm main.zip
+              echo "✅ Wget fallback successful"
+            else
+              echo "❌ All clone methods failed"
+              exit 1
+            fi
+          fi
           
           if [ ! -d "fuseloja" ]; then
-            echo "❌ Failed to clone repository"
+            echo "❌ Repository directory not found after clone"
             exit 1
           fi
           

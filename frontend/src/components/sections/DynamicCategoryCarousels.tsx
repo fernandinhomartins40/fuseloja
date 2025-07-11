@@ -24,10 +24,6 @@ const fetchCategories = async (): Promise<Category[]> => {
   return response.data.categories;
 };
 
-const fetchProductsByCategory = async (categoryName: string): Promise<Product[]> => {
-  const response = await apiClient.get(`/products?category=${encodeURIComponent(categoryName)}&limit=6`);
-  return response.data.products;
-};
 
 // Category configuration with icons and colors
 const categoryConfig: Record<string, { icon: IconName; color: string }> = {
@@ -104,16 +100,16 @@ const DynamicCategoryCarousels: React.FC = () => {
     queryFn: fetchCategories,
   });
 
-  // Fetch products for each category
-  const categoryQueries = categories.map(category =>
-    useQuery({
-      queryKey: ['products-by-category', category.name],
-      queryFn: () => fetchProductsByCategory(category.name),
-      enabled: !!category.name,
-    })
-  );
+  // Fetch all products and group by category instead of using dynamic hooks
+  const { data: allProducts = [], isLoading: productsLoading } = useQuery({
+    queryKey: ['all-products-for-categories'],
+    queryFn: async () => {
+      const response = await apiClient.get('/products?limit=100');
+      return response.data.products;
+    },
+  });
 
-  if (categoriesLoading) {
+  if (categoriesLoading || productsLoading) {
     return (
       <div className="py-16">
         <div className="container mx-auto px-4">
@@ -126,11 +122,21 @@ const DynamicCategoryCarousels: React.FC = () => {
     );
   }
 
+  // Group products by category
+  const productsByCategory = allProducts.reduce((acc, product) => {
+    const categoryName = product.category || 'Sem categoria';
+    if (!acc[categoryName]) {
+      acc[categoryName] = [];
+    }
+    acc[categoryName].push(product);
+    return acc;
+  }, {} as Record<string, Product[]>);
+
   // Combine categories with their products
   const categoriesWithProducts: CategoryWithProducts[] = categories
-    .map((category, index) => ({
+    .map(category => ({
       ...category,
-      products: categoryQueries[index]?.data || [],
+      products: (productsByCategory[category.name] || []).slice(0, 6), // Limit to 6 products per category
     }))
     .filter(category => category.products.length > 0); // Only show categories with products
 

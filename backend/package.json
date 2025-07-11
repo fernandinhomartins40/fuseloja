@@ -9,26 +9,31 @@
     "test": "echo \"Sem testes ainda\" && exit 0",
     "build": "echo \"No build needed for JavaScript\" && exit 0",
     "lint": "echo \"Lint skipped\" && exit 0",
-    "deploy:setup": "npm ci --production && pm2 start src/index.js --name fuseloja-minimal",
-    "deploy:restart": "pm2 restart fuseloja-minimal",
-    "deploy:stop": "pm2 stop fuseloja-minimal",
-    "deploy:logs": "pm2 logs fuseloja-minimal"
+    "deploy:setup": "npm ci --production && npx pm2 start src/index.js --name fuseloja-minimal",
+    "deploy:restart": "npx pm2 restart fuseloja-minimal",
+    "deploy:stop": "npx pm2 stop fuseloja-minimal",
+    "deploy:logs": "npx pm2 logs fuseloja-minimal"
   },
-  "keywords": ["express", "jwt", "minimal"],
+  "keywords": [
+    "express",
+    "jwt",
+    "minimal"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "pg": "^8.11.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
-    "express-rate-limit": "^7.1.5"
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "pm2": "^6.0.8"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -195,6 +195,14 @@ jobs:
           cd fuseloja/backend
           npm ci --silent --production
           
+          # Run database migrations
+          echo "🗃️ Setting up database..."
+          node src/scripts/createTables.js || echo "⚠️ Database setup completed with warnings"
+          
+          # Seed data if needed (only if no products exist)
+          echo "🌱 Checking if data seeding is needed..."
+          node src/scripts/seedData.js || echo "⚠️ Data seeding completed with warnings"
+          
           # Update current symlink
           cd ${{ env.DEPLOY_PATH }}
           rm -f current

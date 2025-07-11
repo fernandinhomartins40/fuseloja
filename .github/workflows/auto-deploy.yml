@@ -47,10 +47,18 @@ jobs:
       continue-on-error: true
       
     - name: Build frontend
-      run: cd frontend && npm run build
+      run: |
+        cd frontend
+        npm run build
+        echo "✅ Frontend build completed"
+        ls -la dist/ || echo "No dist folder found"
       
     - name: Build backend
-      run: cd backend && npm run build
+      run: |
+        cd backend
+        npm run build
+        echo "✅ Backend build completed"
+        ls -la dist/ || echo "No dist folder found"
       
     - name: Verify Secrets
       run: |
@@ -109,8 +117,78 @@ jobs:
     - name: Prepare deployment package
       run: |
         echo "📦 Creating deployment package..."
-        tar -czf deployment.tar.gz --exclude=node_modules --exclude=.git --exclude=dist .
+        
+        # Stop any running processes that might modify files
+        pkill -f "vite\|webpack\|nodemon\|ts-node\|esbuild" || true
+        sleep 3
+        
+        # Show what we're packaging
+        echo "📋 Contents to be packaged:"
+        find . -maxdepth 2 -type f -name "*.json" -o -name "Dockerfile*" -o -name "*.md" | head -10
+        
+        # Ensure no stale lock files exist
+        find . -name "*.lock" -type f -not -path "./frontend/package-lock.json" -not -path "./backend/package-lock.json" -delete || true
+        
+        # Create deployment package with robust error handling
+        if tar --version | grep -q "GNU tar"; then
+          # GNU tar (Linux)
+          tar -czf deployment.tar.gz \
+            --exclude=node_modules \
+            --exclude=.git \
+            --exclude='*/dist' \
+            --exclude='.vite' \
+            --exclude='.next' \
+            --exclude='build' \
+            --exclude='coverage' \
+            --exclude='.nyc_output' \
+            --exclude='logs' \
+            --exclude='*.log' \
+            --exclude='.env.local' \
+            --exclude='.env.*.local' \
+            --exclude='.DS_Store' \
+            --exclude='Thumbs.db' \
+            --exclude='.cache' \
+            --exclude='.tmp' \
+            --exclude='.temp' \
+            --exclude='*.tmp' \
+            --exclude='*.temp' \
+            --exclude='.claude' \
+            --exclude='uploads' \
+            --exclude='database' \
+            --exclude='backups' \
+            --exclude='.deploy-trigger' \
+            --warning=no-file-changed \
+            --warning=no-file-removed \
+            .
+        else
+          # BSD tar (macOS) or other
+          tar -czf deployment.tar.gz \
+            --exclude=node_modules \
+            --exclude=.git \
+            --exclude=dist \
+            --exclude=.vite \
+            --exclude=logs \
+            --exclude=.cache \
+            --exclude=.claude \
+            --exclude=uploads \
+            --exclude=database \
+            --exclude=backups \
+            .
+        fi
+        
+        # Verify package was created
+        if [ ! -f "deployment.tar.gz" ]; then
+          echo "❌ Failed to create deployment package!"
+          exit 1
+        fi
+        
+        echo "✅ Package created successfully:"
         ls -lh deployment.tar.gz
+        
+        # Test package integrity
+        echo "🔍 Testing package integrity..."
+        tar -tzf deployment.tar.gz | head -5
+        echo "📦 Package contains $(tar -tzf deployment.tar.gz | wc -l) files"
         
     - name: Copy deployment package to VPS
       uses: appleboy/scp-action@v0.1.7

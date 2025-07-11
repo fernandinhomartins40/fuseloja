@@ -26,6 +26,25 @@ router.post('/register', async (req, res) => {
       return response.badRequest(res, 'Password must be at least 6 characters');
     }
 
+    // Verificar se a tabela users existe
+    try {
+      const tableCheck = await query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_name = 'users'
+        );
+      `);
+      
+      if (!tableCheck.rows[0].exists) {
+        console.log('⚠️ Users table does not exist during registration');
+        return response.error(res, 'Database not properly configured');
+      }
+    } catch (dbError) {
+      console.log('⚠️ Database check failed during registration:', dbError.message);
+      return response.error(res, 'Database connection failed');
+    }
+
     // Check if user already exists
     const existingUser = await query(
       'SELECT id FROM users WHERE email = $1',
@@ -86,6 +105,25 @@ router.post('/login', async (req, res) => {
     if (!email || !password) {
       console.log('❌ Missing email or password');
       return response.badRequest(res, 'Email and password are required');
+    }
+
+    // Verificar se a tabela users existe
+    try {
+      const tableCheck = await query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_name = 'users'
+        );
+      `);
+      
+      if (!tableCheck.rows[0].exists) {
+        console.log('⚠️ Users table does not exist');
+        return response.error(res, 'Database not properly configured');
+      }
+    } catch (dbError) {
+      console.log('⚠️ Database check failed:', dbError.message);
+      return response.error(res, 'Database connection failed');
     }
 
     // Find user

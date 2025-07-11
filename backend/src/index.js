@@ -58,9 +58,39 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
+  const { query } = require('./database/connection');
+  
+  let dbStatus = 'disconnected';
+  let tablesStatus = {};
+  
+  try {
+    // Test basic connectivity
+    await query('SELECT 1');
+    dbStatus = 'connected';
+    
+    // Check if main tables exist
+    const tables = ['users', 'products', 'categories', 'orders'];
+    for (const table of tables) {
+      try {
+        const result = await query(`
+          SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = $1
+          );
+        `, [table]);
+        tablesStatus[table] = result.rows[0].exists ? 'exists' : 'missing';
+      } catch (error) {
+        tablesStatus[table] = 'error';
+      }
+    }
+  } catch (error) {
+    dbStatus = 'error: ' + error.message;
+  }
+  
   const health = {
-    status: 'healthy',
+    status: dbStatus === 'connected' ? 'healthy' : 'degraded',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     memory: process.memoryUsage(),
@@ -69,18 +99,22 @@ app.get('/health', (req, res) => {
     platform: process.platform,
     node_version: process.version,
     pid: process.pid,
-    database: 'connected',
+    database: dbStatus,
+    tables: tablesStatus,
     endpoints: {
       auth: '/api/v1/auth',
       users: '/api/v1/users',
       admin: '/api/v1/admin',
       orders: '/api/v1/orders',
       customers: '/api/v1/customers',
+      products: '/api/v1/products',
+      categories: '/api/v1/categories',
       health: '/health'
     }
   };
   
-  res.status(200).json(health);
+  const statusCode = dbStatus === 'connected' ? 200 : 503;
+  res.status(statusCode).json(health);
 });
 
 // Readiness probe for Kubernetes/Docker

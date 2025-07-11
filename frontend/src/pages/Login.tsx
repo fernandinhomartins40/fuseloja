@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -15,11 +15,20 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { login, apiUser, user } = useAuth();
+  const { login, user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
   const from = location.state?.from?.pathname;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const userRole = user?.role;
+      const destination = from || (userRole === 'admin' ? '/admin' : '/');
+      console.log(`Redirecting to ${destination}`);
+      navigate(destination, { replace: true });
+    }
+  }, [isAuthenticated, user, navigate, from]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,43 +36,7 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const success = await login(email, password);
-      if (success) {
-        // AGUARDA 1 segundo para garantir sincronização completa do estado
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Verifica múltiplas fontes para garantir dados atualizados
-        let userRole = null;
-        
-        // 1. Tenta localStorage primeiro (mais confiável após login)
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          try {
-            const userData = JSON.parse(storedUser);
-            userRole = userData.role;
-          } catch (e) {
-            console.warn('Erro ao parsear dados do localStorage:', e);
-          }
-        }
-        
-        // 2. Fallback para context se localStorage falhou
-        if (!userRole && (apiUser || user)) {
-          userRole = apiUser?.role || user?.role;
-        }
-        
-        // Redirecionamento baseado na origem ou role
-        if (from) {
-          navigate(from, { replace: true });
-        } else {
-          if (userRole === 'admin') {
-            console.log('Redirecionando admin para /admin');
-            navigate('/admin', { replace: true });
-          } else {
-            console.log('Redirecionando usuário para /');
-            navigate('/', { replace: true });
-          }
-        }
-      }
+      await login(email, password);
     } catch (error: any) {
       setError(error.message || 'Erro ao fazer login');
     } finally {

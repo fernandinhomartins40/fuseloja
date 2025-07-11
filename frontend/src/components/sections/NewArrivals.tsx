@@ -1,58 +1,28 @@
 import React from 'react';
-import { ProductCard } from '../ui/ProductCard';
-import { SectionHeader } from '../ui/SectionHeader';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useQuery } from '@tanstack/react-query';
+import apiClient from '@/services/api';
+import { Product } from '@/types/product';
+import { Link } from 'react-router-dom';
+import { useCart } from '@/contexts/CartContext';
 
-// Mock data for new arrivals
-const newArrivals = [
-  {
-    id: "n001",
-    title: "iPhone 15 Pro Max 256GB",
-    price: 8999.99,
-    originalPrice: 9999.99,
-    image: "https://images.unsplash.com/photo-1592910147797-0b8c482cf989?q=80&auto=format&fit=crop",
-    tag: 'novidade' as const
-  },
-  {
-    id: "n002", 
-    title: "MacBook Air M3 13\" 512GB",
-    price: 12999.99,
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&auto=format&fit=crop",
-    tag: 'novidade' as const
-  },
-  {
-    id: "n003",
-    title: "AirPods Pro 3ª Geração",
-    price: 1899.99,
-    originalPrice: 2199.99,
-    image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?q=80&auto=format&fit=crop",
-    tag: 'novidade' as const
-  },
-  {
-    id: "n004",
-    title: "Samsung Galaxy S24 Ultra",
-    price: 7499.99,
-    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&auto=format&fit=crop",
-    tag: 'novidade' as const
-  },
-  {
-    id: "n005",
-    title: "PlayStation 5 Slim Digital",
-    price: 3999.99,
-    originalPrice: 4499.99,
-    image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?q=80&auto=format&fit=crop",
-    tag: 'novidade' as const
-  },
-  {
-    id: "n006",
-    title: "Nintendo Switch OLED",
-    price: 2799.99,
-    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&auto=format&fit=crop",
-    tag: 'novidade' as const
-  }
-];
+const fetchNewArrivals = async (): Promise<Product[]> => {
+  const response = await apiClient.get<{ products: Product[] }>(`/products?tag=novo&limit=6`);
+  return response.data.products;
+};
 
 export const NewArrivals: React.FC = () => {
+  const { data: products, isLoading, isError } = useQuery<Product[], Error>({
+    queryKey: ['newArrivals'],
+    queryFn: fetchNewArrivals,
+    staleTime: 1000 * 60 * 10, // Cache de 10 minutos
+  });
+  
+  const { addItem } = useCart();
+
+  if (isLoading || isError || !products || products.length === 0) {
+    return null; // ou um skeleton/spinner
+  }
+
   return (
     <section className="py-16 bg-gradient-to-br from-slate-50 via-white to-slate-50 relative overflow-hidden">
       {/* Background decorative elements */}
@@ -76,53 +46,55 @@ export const NewArrivals: React.FC = () => {
         
         {/* Modern grid layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {newArrivals.map((product, index) => (
+          {products.map((product, index) => (
             <div 
               key={product.id} 
               className="group bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-2"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="relative overflow-hidden">
-                <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-50 relative">
-                  <img 
-                    src={product.image} 
-                    alt={product.title}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  {/* Modern tag */}
-                  <div className="absolute top-4 left-4">
-                    <span className="inline-flex items-center gap-1 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
-                      <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
-                      NOVO
-                    </span>
-                  </div>
-                  
-                  {/* Price badge */}
-                  {product.originalPrice && (
-                    <div className="absolute top-4 right-4">
-                      <span className="bg-red-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
-                        -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+              <Link to={`/produto/${product.id}`} className="block">
+                <div className="relative overflow-hidden">
+                  <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-50 relative">
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.title}
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {/* Modern tag */}
+                    <div className="absolute top-4 left-4">
+                      <span className="inline-flex items-center gap-1 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                        <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
+                        NOVO
                       </span>
                     </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="p-6 space-y-4">
-                <h3 className="font-semibold text-slate-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-                  {product.title}
-                </h3>
-                
-                <div className="space-y-2">
-                  <div className="flex items-baseline gap-2">
+                    
+                    {/* Price badge */}
                     {product.originalPrice && (
-                      <span className="text-sm text-slate-400 line-through">
-                        R$ {product.originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </span>
+                      <div className="absolute top-4 right-4">
+                        <span className="bg-red-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
+                          -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                        </span>
+                      </div>
                     )}
                   </div>
+                </div>
+              </Link>
+              
+              <div className="p-6 space-y-4">
+                <Link to={`/produto/${product.id}`} className="block">
+                  <h3 className="font-semibold text-slate-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                    {product.title}
+                  </h3>
+                </Link>
+                
+                <div className="space-y-2">
+                  {product.originalPrice && (
+                    <span className="text-sm text-slate-400 line-through">
+                      R$ {product.originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </span>
+                  )}
                   <div className="text-xl font-bold text-slate-900">
                     R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </div>
@@ -131,7 +103,9 @@ export const NewArrivals: React.FC = () => {
                   </div>
                 </div>
                 
-                <button className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground py-3 rounded-xl font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]">
+                <button 
+                  onClick={() => addItem(product)}
+                  className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground py-3 rounded-xl font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]">
                   Adicionar ao Carrinho
                 </button>
               </div>

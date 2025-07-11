@@ -11,6 +11,8 @@ const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const orderRoutes = require('./routes/orders');
 const customerRoutes = require('./routes/customers');
+const productRoutes = require('./routes/products');
+const categoryRoutes = require('./routes/categories');
 
 // Import middleware
 const { authenticateToken } = require('./middleware/auth');
@@ -96,6 +98,8 @@ app.use('/api/v1/admin', adminRoutes); // Admin routes have their own authentica
 // E-commerce routes
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/customers', customerRoutes);
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/categories', categoryRoutes);
 
 // API route (for checking if backend is working)
 app.get('/api', (req, res) => {
@@ -108,7 +112,9 @@ app.get('/api', (req, res) => {
       users: '/api/v1/users',
       admin: '/api/v1/admin',
       orders: '/api/v1/orders',
-      customers: '/api/v1/customers'
+      customers: '/api/v1/customers',
+      products: '/api/v1/products',
+      categories: '/api/v1/categories'
     }
   });
 });

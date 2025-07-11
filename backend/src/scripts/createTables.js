@@ -1,8 +1,60 @@
+require('dotenv').config();
 const { query } = require('../database/connection');
+const { createAdminUser } = require('./createAdmin');
 
 const createTables = async () => {
   try {
-    console.log('🚀 Creating database tables...');
+    console.log('🚀 Running database migrations...');
+
+    // Create users table
+    await query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        first_name VARCHAR(100) NOT NULL,
+        last_name VARCHAR(100) NOT NULL,
+        role VARCHAR(20) DEFAULT 'user',
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('✅ Users table created/verified');
+
+    // Create categories table
+    await query(`
+      CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        image_url VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('✅ Categories table created/verified');
+
+    // Create products table
+    await query(`
+      CREATE TABLE IF NOT EXISTS products (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        short_description TEXT,
+        description TEXT,
+        price DECIMAL(10, 2) NOT NULL,
+        original_price DECIMAL(10, 2),
+        sku VARCHAR(100) UNIQUE,
+        stock INT NOT NULL DEFAULT 0,
+        image_url VARCHAR(255),
+        category_id INT REFERENCES categories(id),
+        tag VARCHAR(50),
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('✅ Products table created/verified');
 
     // Create customers table
     await query(`
@@ -39,13 +91,6 @@ const createTables = async () => {
     `);
     console.log('✅ Orders table created/verified');
 
-    // Add is_provisional column to users table if it doesn't exist
-    await query(`
-      ALTER TABLE users 
-      ADD COLUMN IF NOT EXISTS is_provisional BOOLEAN DEFAULT false
-    `);
-    console.log('✅ Users table updated with is_provisional column');
-
     // Create indexes for better performance
     await query(`
       CREATE INDEX IF NOT EXISTS idx_customers_phone ON customers(phone)
@@ -67,7 +112,44 @@ const createTables = async () => {
     `);
     console.log('✅ Index created for orders created_at');
 
-    console.log('🎉 All tables created successfully!');
+    await query(`
+      CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id)
+    `);
+    console.log('✅ Index created for products category_id');
+    
+    await query(`
+      CREATE INDEX IF NOT EXISTS idx_products_is_active ON products(is_active)
+    `);
+    console.log('✅ Index created for products is_active');
+
+    // Add is_provisional column to users table if it doesn't exist
+    await query(`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS is_provisional BOOLEAN DEFAULT false
+    `);
+    console.log('✅ Users table updated with is_provisional column');
+    
+    // Create trigger for updated_at on users table
+    await query(`
+      CREATE OR REPLACE FUNCTION update_updated_at_column()
+      RETURNS TRIGGER AS $$
+      BEGIN
+        NEW.updated_at = CURRENT_TIMESTAMP;
+        RETURN NEW;
+      END;
+      $$ language 'plpgsql';
+    `);
+
+    await query(`
+      DROP TRIGGER IF EXISTS update_users_updated_at ON users;
+      CREATE TRIGGER update_users_updated_at
+        BEFORE UPDATE ON users
+        FOR EACH ROW
+        EXECUTE FUNCTION update_updated_at_column();
+    `);
+    console.log('✅ Trigger for users updated_at created/verified');
+
+    console.log('🎉 All tables and extensions created successfully!');
     
   } catch (error) {
     console.error('❌ Error creating tables:', error);
@@ -79,7 +161,11 @@ const createTables = async () => {
 if (require.main === module) {
   createTables()
     .then(() => {
-      console.log('✨ Database migration completed successfully!');
+      // Create admin user after tables are created
+      return createAdminUser();
+    })
+    .then(() => {
+      console.log('✨ Database migration and admin creation completed successfully!');
       process.exit(0);
     })
     .catch((error) => {

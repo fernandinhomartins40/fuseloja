@@ -1,6 +1,33 @@
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'sonner';
 import { ApiResponse, ApiErrorResponse, JwtPayload } from '@/types/api';
+
+// Extend AxiosRequestConfig to include metadata
+interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
+  metadata?: {
+    startTime: Date;
+  };
+}
+
+// Dynamic API base URL based on environment
+const getApiBaseUrl = (): string => {
+  // Check if we're in development mode
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+  }
+  
+  // In production, determine API URL based on current hostname
+  const hostname = window.location.hostname;
+  const protocol = window.location.protocol;
+  
+  if (hostname.includes('fuseloja.com.br')) {
+    // Production - use same origin but port 3000
+    return `${protocol}//${hostname.replace('www.', '')}:3000`;
+  }
+  
+  // Fallback to localhost for unknown environments
+  return 'http://localhost:3000';
+};
 
 class ApiClient {
   private client: AxiosInstance;
@@ -8,18 +35,24 @@ class ApiClient {
   private refreshToken: string | null = null;
   private isRefreshing: boolean = false;
   private failedQueue: any[] = [];
+  private baseURL: string;
 
   constructor() {
+    this.baseURL = getApiBaseUrl();
+    const apiPrefix = import.meta.env.VITE_API_PREFIX || '/api/v1';
+    
+    console.log('🔗 API Base URL:', this.baseURL + apiPrefix);
+    
     this.client = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL + import.meta.env.VITE_API_PREFIX,
+      baseURL: this.baseURL + apiPrefix,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    this.setupInterceptors();
     this.loadTokensFromStorage();
+    this.setupInterceptors();
   }
 
   private setupInterceptors() {
@@ -27,12 +60,9 @@ class ApiClient {
     this.client.interceptors.request.use(
       (config) => {
         // Add auth token to requests
-        if (this.accessToken) {
+        if (this.accessToken && config.headers) {
           config.headers.Authorization = `Bearer ${this.accessToken}`;
         }
-
-        // Add request timestamp for debugging
-        config.metadata = { startTime: new Date() };
 
         return config;
       },
@@ -44,13 +74,6 @@ class ApiClient {
     // Response interceptor
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
-        // Log response time in development
-        if (import.meta.env.DEV && response.config.metadata) {
-          const endTime = new Date();
-          const duration = endTime.getTime() - response.config.metadata.startTime.getTime();
-          console.log(`API Request: ${response.config.method?.toUpperCase()} ${response.config.url} - ${duration}ms`);
-        }
-
         return response;
       },
       async (error: AxiosError) => {
@@ -110,7 +133,7 @@ class ApiClient {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_API_PREFIX}/auth/refresh`, {
+      const response = await axios.post(`${this.baseURL}/api/v1/auth/refresh`, {
         refreshToken: this.refreshToken
       });
 
@@ -125,7 +148,6 @@ class ApiClient {
 
   private handleApiError(error: AxiosError<ApiErrorResponse>) {
     const message = error.response?.data?.message || 
-                   error.response?.data?.error || 
                    error.message || 
                    'Erro de conexão com o servidor';
 

@@ -14,23 +14,23 @@ const getApiBaseUrl = (): string => {
   const hostname = window.location.hostname;
   const protocol = window.location.protocol;
   
-  // In development mode, always use localhost
-  if (import.meta.env.DEV || import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-  }
-  
-  // Production - use same domain with same protocol (no explicit port)
+  // Production - fuseloja.com.br should use the backend on the same server
   if (hostname.includes('fuseloja.com.br')) {
-    // Use the current domain and protocol
-    return `${protocol}//${hostname}`;
+    // Use HTTP for production API (backend running on port 3000)
+    return 'http://www.fuseloja.com.br:3000';
   }
   
-  // Local development fallback
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+  // Custom API URL from environment
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  
+  // Local development
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || import.meta.env.DEV) {
     return 'http://localhost:3000';
   }
   
-  // Fallback to same origin with port 3000
+  // Default fallback
   return `${protocol}//${hostname}:3000`;
 };
 

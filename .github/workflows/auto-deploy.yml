@@ -106,6 +106,23 @@ jobs:
         echo "✅ All required secrets are configured!"
         echo "🚀 Proceeding with deployment..."
         
+    - name: Prepare deployment package
+      run: |
+        echo "📦 Creating deployment package..."
+        tar -czf deployment.tar.gz --exclude=node_modules --exclude=.git --exclude=dist .
+        ls -lh deployment.tar.gz
+        
+    - name: Copy deployment package to VPS
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        port: ${{ secrets.VPS_PORT || 22 }}
+        source: "deployment.tar.gz"
+        target: "/tmp/"
+        
     - name: Deploy to VPS
       if: github.ref == 'refs/heads/main'
       uses: appleboy/ssh-action@v1.0.3
@@ -135,40 +152,32 @@ jobs:
           # Clean up old images to save space
           sudo docker image prune -af || true
           
-          echo "📥 Updating application code..."
-          # Remove existing app directory to ensure clean state
-          sudo rm -rf app
+          echo "📥 Extracting application code from uploaded package..."
           
-          # Clone repository (public repo, no auth needed)
-          if ! git clone https://github.com/fernandinhomartins40/fuseloja.git app; then
-            echo "❌ Failed to clone repository"
-            echo "🔧 Trying alternative method..."
-            # Alternative: download as zip
-            curl -L https://github.com/fernandinhomartins40/fuseloja/archive/main.zip -o fuseloja.zip
-            unzip -q fuseloja.zip
-            mv fuseloja-main app
-            rm fuseloja.zip
-          fi
-          
-          # Verify app directory exists and has content
-          if [ ! -d "app" ] || [ -z "$(ls -A app 2>/dev/null)" ]; then
-            echo "❌ Failed to download application code"
+          # Verify deployment package exists
+          if [ ! -f "/tmp/deployment.tar.gz" ]; then
+            echo "❌ Deployment package not found!"
+            echo "📂 Available files in /tmp:"
+            ls -la /tmp/
             exit 1
           fi
           
-          echo "📁 Successfully downloaded $(du -sh app | cut -f1) of application code"
+          # Extract the deployment package
+          echo "✅ Found deployment package: $(ls -lh /tmp/deployment.tar.gz)"
+          sudo tar -xzf /tmp/deployment.tar.gz -C /opt/fuseloja-fullstack/
           
-          # Copy source files
-          sudo cp -r app/* . 2>/dev/null || true
-          sudo cp app/.* . 2>/dev/null || true
+          # Clean up the deployment package
+          sudo rm -f /tmp/deployment.tar.gz
           
           # Verify critical files exist
           if [ ! -f "Dockerfile.fullstack" ]; then
-            echo "❌ Dockerfile.fullstack not found after copy!"
+            echo "❌ Dockerfile.fullstack not found!"
             echo "📂 Available files:"
             ls -la
             exit 1
           fi
+          
+          echo "✅ Successfully extracted application code"
           
           echo "⚙️ Creating environment configuration..."
           # Create environment file with all required variables

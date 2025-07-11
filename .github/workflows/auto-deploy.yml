@@ -54,16 +54,57 @@ jobs:
       
     - name: Verify Secrets
       run: |
-        echo "Checking required secrets..."
+        echo "🔍 Checking required secrets..."
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        
+        MISSING_SECRETS=""
+        
         if [ -z "${{ secrets.VPS_HOST }}" ]; then
           echo "❌ VPS_HOST secret is missing"
-          exit 1
+          MISSING_SECRETS="$MISSING_SECRETS VPS_HOST"
+        else
+          echo "✅ VPS_HOST is configured"
         fi
+        
         if [ -z "${{ secrets.VPS_USERNAME }}" ]; then
-          echo "❌ VPS_USERNAME secret is missing"
+          echo "❌ VPS_USERNAME secret is missing" 
+          MISSING_SECRETS="$MISSING_SECRETS VPS_USERNAME"
+        else
+          echo "✅ VPS_USERNAME is configured"
+        fi
+        
+        if [ -z "${{ secrets.VPS_PASSWORD }}" ] && [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
+          echo "❌ Either VPS_PASSWORD or VPS_SSH_KEY must be configured"
+          MISSING_SECRETS="$MISSING_SECRETS VPS_PASSWORD_OR_SSH_KEY"
+        else
+          if [ -n "${{ secrets.VPS_PASSWORD }}" ]; then
+            echo "✅ VPS_PASSWORD is configured"
+          fi
+          if [ -n "${{ secrets.VPS_SSH_KEY }}" ]; then
+            echo "✅ VPS_SSH_KEY is configured"
+          fi
+        fi
+        
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        
+        if [ -n "$MISSING_SECRETS" ]; then
+          echo ""
+          echo "🚨 MISSING SECRETS DETECTED:"
+          echo "   $MISSING_SECRETS"
+          echo ""
+          echo "📝 HOW TO FIX:"
+          echo "   1. Go to GitHub Repository Settings"
+          echo "   2. Navigate to: Secrets and variables → Actions"
+          echo "   3. Click 'New repository secret'"
+          echo "   4. Add the missing secrets listed above"
+          echo ""
+          echo "📖 Full documentation: .github/DEPLOY_SECRETS.md"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           exit 1
         fi
-        echo "✅ Required secrets are configured"
+        
+        echo "✅ All required secrets are configured!"
+        echo "🚀 Proceeding with deployment..."
         
     - name: Deploy to VPS
       if: github.ref == 'refs/heads/main'

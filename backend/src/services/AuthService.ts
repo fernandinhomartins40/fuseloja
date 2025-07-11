@@ -1,6 +1,6 @@
 import { UserModel } from '../models/UserModel';
 import { PasswordHelper, JWTHelper, TokenHelper } from '../utils/crypto';
-import { User, AuthTokens, LoginRequest, RegisterRequest, ChangePasswordRequest, UserRole } from '../types';
+import { User, AuthTokens, LoginRequest, RegisterRequest, ChangePasswordRequest, UserRole } from '../types/index';
 import { ConflictError, UnauthorizedError, NotFoundError, ValidationError } from '../middleware/errorHandler';
 import { logAuth } from '../utils/logger';
 import { EmailService } from './EmailService';

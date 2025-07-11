@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { Request, Response, NextFunction } from 'express';
-import { LoginRequest, RegisterRequest, UpdateUserRequest, ChangePasswordRequest } from '../types';
+import { LoginRequest, RegisterRequest, UpdateUserRequest, ChangePasswordRequest } from '../types/index';
 
 // Common validation schemas
 export const commonSchemas = {

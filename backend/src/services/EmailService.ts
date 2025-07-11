@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import config from '../utils/config';
 import logger from '../utils/logger';
-import { EmailTemplate } from '../types';
+import { EmailTemplate } from '../types/index';
 
 export class EmailService {
   private transporter: nodemailer.Transporter | null = null;

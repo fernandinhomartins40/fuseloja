@@ -41,7 +41,8 @@ const convertApiUserToUser = (apiUser: ApiUser): User => {
     createdAt: new Date(apiUser.createdAt),
     updatedAt: new Date(apiUser.updatedAt),
     isProvisional: false,
-    cpf: undefined
+    cpf: undefined,
+    role: apiUser.role // Add role field
   };
 };
 

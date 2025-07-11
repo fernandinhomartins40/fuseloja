@@ -78,6 +78,16 @@ export const Navigation: React.FC = () => {
               <DropdownMenuItem asChild>
                 <Link to="/perfil?tab=orders" className="cursor-pointer">Meus Pedidos</Link>
               </DropdownMenuItem>
+              {user?.role === 'admin' && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin" className="cursor-pointer font-medium text-blue-600">
+                      Painel Administrativo
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
                 <LogOut className="w-4 h-4 mr-2" />

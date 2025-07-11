@@ -54,6 +54,7 @@ export type User = {
   createdAt: Date;
   updatedAt: Date;
   isProvisional: boolean;
+  role?: 'admin' | 'user'; // Add role field
 };
 
 // Provisional user creation type

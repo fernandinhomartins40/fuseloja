@@ -165,7 +165,9 @@ build/Release/
 
 # TypeScript compiled output
 lib/
-types/
+dist/types/
+# Allow source types but ignore compiled types
+!src/types/
 
 # Serverless directories
 .serverless/

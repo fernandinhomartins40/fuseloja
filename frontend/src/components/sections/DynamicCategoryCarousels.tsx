@@ -38,20 +38,26 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
   }
 
   return (
-    <div className="mb-12">
-      <div className="flex items-center gap-3 mb-6">
+    <div className="mb-16">
+      <div className="flex items-center gap-4 mb-8">
         <div 
-          className="p-2 rounded-lg text-white"
-          style={{ backgroundColor: category.color }}
+          className="relative p-3 rounded-2xl text-white shadow-lg"
+          style={{ 
+            backgroundColor: category.color,
+            boxShadow: `0 8px 25px ${category.color}30`
+          }}
         >
-          <IconComponent className="w-6 h-6" />
+          <IconComponent className="w-8 h-8 drop-shadow-sm" />
         </div>
-        <h2 
-          className="text-2xl font-bold"
-          style={{ color: category.color }}
-        >
-          {category.name}
-        </h2>
+        <div>
+          <h2 
+            className="text-3xl font-bold mb-1"
+            style={{ color: category.color }}
+          >
+            {category.name}
+          </h2>
+          <p className="text-gray-600">{category.description || 'Produtos selecionados'}</p>
+        </div>
       </div>
       
       <Carousel
@@ -133,18 +139,20 @@ const DynamicCategoryCarousels: React.FC = () => {
   }
 
   return (
-    <section className="py-16 bg-muted/30">
+    <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Explore por Categoria</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Encontre exatamente o que você procura navegando por nossas categorias
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Explore por Categoria</h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Encontre exatamente o que você procura navegando por nossas categorias especializadas
           </p>
         </div>
         
-        {categoriesWithProducts.map((category) => (
-          <CategoryCarousel key={category.id} category={category} />
-        ))}
+        <div className="space-y-16">
+          {categoriesWithProducts.map((category) => (
+            <CategoryCarousel key={category.id} category={category} />
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -1,15 +1,17 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Loader2 } from 'lucide-react';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useUser } from '@/contexts/UserContext';
+import { useAuth } from '@/hooks/useAuth';
 
 export const Footer: React.FC = () => {
   const navigate = useNavigate();
   const { settings } = useSettings();
   const { user, isAuthenticated } = useUser();
+  const { refreshProfile, apiUser } = useAuth();
   const [isNavigating, setIsNavigating] = useState(false);
   
   // Use footer logo if available, otherwise use the main logo
@@ -19,6 +21,33 @@ export const Footer: React.FC = () => {
   const email = settings.general.email;
   const address = settings.general.address;
 
+  // Força atualização do perfil a cada 30 segundos para evitar problemas de cache
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (isAuthenticated) {
+        try {
+          await refreshProfile();
+        } catch (error) {
+          console.debug('Profile refresh failed:', error);
+        }
+      }
+    }, 30000); // 30 segundos
+
+    return () => clearInterval(interval);
+  }, [isAuthenticated, refreshProfile]);
+
+  // Escuta eventos de atualização de usuário
+  useEffect(() => {
+    const handleUserUpdate = (event: CustomEvent) => {
+      console.log('User updated event received:', event.detail);
+      // Força re-render do componente
+      setIsNavigating(false);
+    };
+
+    window.addEventListener('userUpdated', handleUserUpdate as EventListener);
+    return () => window.removeEventListener('userUpdated', handleUserUpdate as EventListener);
+  }, []);
+
   const handleAdminAccess = async () => {
     // Prevenir múltiplos cliques
     if (isNavigating) return;
@@ -26,28 +55,87 @@ export const Footer: React.FC = () => {
     setIsNavigating(true);
     
     try {
-      // Verificação mais robusta do estado de autenticação
-      const storedUser = localStorage.getItem('user');
-      const isLoggedIn = isAuthenticated || storedUser;
+      // FORÇA atualização imediata dos dados antes da verificação
+      let currentUserRole = null;
       
+      // 1. Tenta refresh do perfil se autenticado
+      if (isAuthenticated) {
+        try {
+          await refreshProfile();
+          // Aguarda um pouco para o estado atualizar
+          await new Promise(resolve => setTimeout(resolve, 100));
+        } catch (error) {
+          console.debug('Profile refresh failed, using cached data');
+        }
+      }
+      
+      // 2. Verifica múltiplas fontes de dados (prioridade: apiUser > localStorage > user)
+      const storedUser = localStorage.getItem('user');
+      if (apiUser?.role) {
+        currentUserRole = apiUser.role;
+      } else if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          currentUserRole = parsedUser.role;
+        } catch (error) {
+          console.warn('Error parsing stored user:', error);
+        }
+      } else if (user?.role) {
+        currentUserRole = user.role;
+      }
+      
+      // 3. Força reload da página se for admin mas os dados estão inconsistentes
+      const isLoggedIn = isAuthenticated || storedUser;
+      if (isLoggedIn && !currentUserRole) {
+        console.log('Forçando reload devido a dados inconsistentes...');
+        window.location.reload();
+        return;
+      }
+      
+      // 4. Navegação baseada no role
       if (isLoggedIn) {
-        // Priorizar dados do localStorage que são mais atualizados
-        const userRole = storedUser ? JSON.parse(storedUser).role : user?.role;
-        
-        if (userRole === 'admin') {
-          navigate('/admin');
+        if (currentUserRole === 'admin') {
+          // Para admin, força limpeza de cache antes da navegação
+          if (typeof window.clearAppCache === 'function') {
+            window.clearAppCache();
+          }
+          
+          // Limpa cache do localStorage se necessário
+          if (!apiUser || apiUser.role !== 'admin') {
+            const stored = localStorage.getItem('user');
+            if (stored) {
+              try {
+                const userData = JSON.parse(stored);
+                if (userData.role === 'admin') {
+                  // Força atualização do contexto
+                  window.dispatchEvent(new CustomEvent('forceAuthRefresh'));
+                }
+              } catch (e) {}
+            }
+          }
+          
+          navigate('/admin', { replace: true });
+          
+          // Força reload da página se necessário (como último recurso)
+          setTimeout(() => {
+            if (window.location.pathname !== '/admin') {
+              console.log('Forcing hard redirect to admin panel...');
+              window.location.href = '/admin';
+            }
+          }, 200);
         } else {
-          navigate('/login'); // Se logado mas não admin, vai para login para trocar de conta
+          navigate('/login', { replace: true });
         }
       } else {
-        navigate('/login');
+        navigate('/login', { replace: true });
       }
     } catch (error) {
       console.error('Erro ao acessar painel:', error);
-      navigate('/login');
+      // Em caso de erro, força login
+      navigate('/login', { replace: true });
     } finally {
-      // Liberar o botão após um pequeno delay para evitar cliques rápidos consecutivos
-      setTimeout(() => setIsNavigating(false), 1000);
+      // Liberar o botão após um pequeno delay
+      setTimeout(() => setIsNavigating(false), 1500);
     }
   };
 

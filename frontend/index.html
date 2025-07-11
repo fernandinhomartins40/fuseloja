@@ -5,6 +5,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Cache Control Meta Tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
     <title>SmartNinja Store</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.30.0/tabler-icons.min.css" />
   </head>
@@ -12,5 +18,46 @@
     <div id="root"></div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('SW registered with scope: ', registration.scope);
+              
+              // Escuta atualizações do Service Worker
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // Novo conteúdo disponível, força ativação
+                    newWorker.postMessage({type: 'SKIP_WAITING'});
+                    setTimeout(() => window.location.reload(), 1000);
+                  }
+                });
+              });
+            })
+            .catch(function(registrationError) {
+              console.log('SW registration failed: ', registrationError);
+            });
+            
+          // Escuta mensagens do Service Worker
+          navigator.serviceWorker.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'CACHE_CLEARED') {
+              console.log('Cache cleared by Service Worker');
+            }
+          });
+        });
+        
+        // Função global para limpar cache quando necessário
+        window.clearAppCache = function() {
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({type: 'CLEAR_CACHE'});
+          }
+        };
+      }
+    </script>
   </body>
 </html>

@@ -82,6 +82,10 @@ const initializeTables = async () => {
 };
 
 // Initialize tables on startup
-initializeTables();
+initializeTables().then(() => {
+  // Create admin user after tables are initialized
+  const { createAdminUser } = require('../scripts/createAdmin');
+  createAdminUser();
+});
 
 module.exports = { pool, query };

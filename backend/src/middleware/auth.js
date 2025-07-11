@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { query } = require('../database/connection');
+const response = require('../utils/response');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
@@ -9,7 +10,7 @@ const authenticateToken = async (req, res, next) => {
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
   if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
+    return response.unauthorized(res, 'Access token required');
   }
 
   try {
@@ -22,26 +23,64 @@ const authenticateToken = async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'User not found or inactive' });
+      return response.unauthorized(res, 'User not found or inactive');
     }
 
     req.user = result.rows[0];
     next();
   } catch (error) {
     console.error('Token verification error:', error);
-    return res.status(403).json({ error: 'Invalid or expired token' });
+    return response.unauthorized(res, 'Invalid or expired token');
   }
 };
 
 // Middleware to check for admin role
 const requireAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Admin access required' });
+    return response.forbidden(res, 'Admin access required');
   }
   next();
 };
 
+// Middleware to check for user role (customer)
+const requireUser = (req, res, next) => {
+  if (!req.user || !['user', 'admin'].includes(req.user.role)) {
+    return response.forbidden(res, 'User access required');
+  }
+  next();
+};
+
+// Middleware to ensure user can only access their own data
+const requireOwnershipOrAdmin = (req, res, next) => {
+  const resourceUserId = parseInt(req.params.id || req.params.userId);
+  
+  // Admin can access any resource
+  if (req.user.role === 'admin') {
+    return next();
+  }
+  
+  // User can only access their own data
+  if (req.user.id !== resourceUserId) {
+    return response.forbidden(res, 'You can only access your own data');
+  }
+  
+  next();
+};
+
+// Middleware to check specific roles
+const requireRoles = (roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return response.forbidden(res, `Access denied. Required roles: ${roles.join(', ')}`);
+    }
+    next();
+  };
+};
+
 module.exports = {
   authenticateToken,
-  requireAdmin
+  requireAdmin,
+  requireUser,
+  requireOwnershipOrAdmin,
+  requireRoles
 };

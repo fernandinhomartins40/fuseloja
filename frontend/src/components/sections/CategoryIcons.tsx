@@ -29,13 +29,18 @@ export const CategoryIcons: React.FC = () => {
 
   if (isLoading) {
     return (
-      <section className="py-8 bg-white">
+      <section className="py-12 bg-muted/50">
         <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold mb-2">Categorias</h2>
+            <p className="text-muted-foreground">Explore nossas categorias</p>
+          </div>
+          
           <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
             {Array.from({ length: 8 }).map((_, index) => (
               <div key={index} className="flex flex-col items-center gap-2 animate-pulse">
-                <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-200 rounded-lg"></div>
-                <div className="h-3 bg-gray-200 rounded w-12"></div>
+                <div className="w-16 h-16 bg-muted rounded-2xl"></div>
+                <div className="h-4 bg-muted rounded w-16"></div>
               </div>
             ))}
           </div>
@@ -49,30 +54,37 @@ export const CategoryIcons: React.FC = () => {
   }
 
   return (
-    <section className="py-8 bg-white">
+    <section className="py-12 bg-muted/50">
       <div className="container mx-auto px-4">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold mb-2">Categorias</h2>
+          <p className="text-muted-foreground">Explore nossas categorias</p>
+        </div>
+        
         <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
-          {categories.slice(0, 8).map((category) => {
+          {categories.map((category) => {
             const IconComponent = iconComponents[category.icon] || iconComponents['Package'];
             
             return (
               <div
                 key={category.id}
-                className="group cursor-pointer"
+                className="flex flex-col items-center gap-2 p-3 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg group"
+                style={{
+                  background: `linear-gradient(135deg, ${category.color}15, ${category.color}25)`
+                }}
               >
-                <div className="flex flex-col items-center space-y-2">
-                  <div
-                    className="relative w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center text-white transition-all duration-200 group-hover:scale-105"
-                    style={{ 
-                      backgroundColor: category.color,
-                    }}
-                  >
-                    <IconComponent size={24} className="md:w-6 md:h-6" />
-                  </div>
-                  <h3 className="text-xs md:text-sm text-center text-gray-700 group-hover:text-gray-900 transition-colors">
-                    {category.name}
-                  </h3>
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-white transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
+                  style={{ backgroundColor: category.color }}
+                >
+                  <IconComponent size={32} />
                 </div>
+                <span 
+                  className="text-sm font-medium text-center leading-tight"
+                  style={{ color: category.color }}
+                >
+                  {category.name}
+                </span>
               </div>
             );
           })}

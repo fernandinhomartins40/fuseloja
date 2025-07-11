@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Card, CardContent } from '@/components/ui/card';
-import { ShoppingCart, Share, Star, ChevronLeft, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, Share, Star, ChevronLeft, Plus, Minus, MessageSquare } from 'lucide-react';
 import { ProductTag } from '@/components/ui/ProductTag';
 import { useCart } from '@/contexts/CartContext';
 import { RecommendedProducts } from '@/components/sections/RecommendedProducts';
@@ -16,7 +16,7 @@ import { RecommendedProducts } from '@/components/sections/RecommendedProducts';
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { product, isLoading, error } = useProduct(id);
-  const { addItem } = useCart();
+  const { addItem, openCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   
   // Calculate installment price
@@ -26,6 +26,13 @@ const ProductDetail: React.FC = () => {
   const handleAddToCart = () => {
     if (product) {
       addItem(product, quantity);
+    }
+  };
+
+  const handleOrderNow = () => {
+    if (product) {
+      addItem(product, quantity);
+      openCart();
     }
   };
 
@@ -188,135 +195,124 @@ const ProductDetail: React.FC = () => {
               )}
               {product.sku && <div className="text-xs text-muted-foreground mt-1">SKU: {product.sku}</div>}
             </div>
+
+            {/* Actions: Add to Cart and WhatsApp Order */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button 
+                size="lg" 
+                className="flex-1" 
+                onClick={handleAddToCart} 
+                disabled={product.stock <= 0}
+              >
+                <ShoppingCart className="h-5 w-5 mr-2" />
+                Adicionar ao Carrinho
+              </Button>
+              <Button 
+                size="lg" 
+                variant="success" 
+                className="flex-1" 
+                onClick={handleOrderNow}
+                disabled={product.stock <= 0}
+              >
+                <MessageSquare className="h-5 w-5 mr-2" />
+                Fazer Pedido
+              </Button>
+            </div>
             
             {/* Quantity selector */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 pt-4">
               <div className="font-medium">Quantidade:</div>
               <div className="flex items-center border rounded-md">
                 <Button 
                   variant="ghost" 
                   size="icon" 
                   onClick={decrementQuantity} 
+                  className="h-8 w-8 p-0"
                   disabled={quantity <= 1}
-                  className="h-10 w-10"
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
-                <span className="w-10 text-center">{quantity}</span>
+                <span className="w-10 text-center text-lg font-semibold">{quantity}</span>
                 <Button 
                   variant="ghost" 
                   size="icon" 
                   onClick={incrementQuantity} 
-                  disabled={product.stock <= quantity}
-                  className="h-10 w-10"
+                  className="h-8 w-8 p-0"
+                  disabled={quantity >= product.stock}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
             </div>
+
+            <Separator />
             
-            {/* Add to cart */}
-            <div className="pt-4">
-              <Button 
-                className="w-full h-12 text-base flex items-center gap-2" 
-                disabled={product.stock <= 0}
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="h-5 w-5" />
-                Adicionar ao Carrinho
-              </Button>
-            </div>
-            
-            {/* Quick info */}
-            <div className="grid grid-cols-3 gap-4 py-4">
-              <Card>
-                <CardContent className="p-3 text-center">
-                  <div className="text-xs text-muted-foreground">Entrega rápida</div>
-                  <div className="text-sm font-medium">2-5 dias úteis</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-3 text-center">
-                  <div className="text-xs text-muted-foreground">Garantia</div>
-                  <div className="text-sm font-medium">12 meses</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-3 text-center">
-                  <div className="text-xs text-muted-foreground">Devolução</div>
-                  <div className="text-sm font-medium">7 dias</div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-        
-        {/* Product details tabs */}
-        <div className="mt-12">
-          <Tabs defaultValue="description" className="w-full">
-            <TabsList className="w-full grid grid-cols-3 mb-6">
-              <TabsTrigger value="description">Descrição</TabsTrigger>
-              <TabsTrigger value="specifications">Especificações</TabsTrigger>
-              <TabsTrigger value="reviews">Avaliações</TabsTrigger>
-            </TabsList>
-            <TabsContent value="description" className="p-4">
-              {product.description ? (
-                <div className="prose max-w-none">
-                  {product.description}
-                </div>
-              ) : (
-                <div className="text-muted-foreground">
-                  Nenhuma descrição detalhada disponível para este produto.
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="specifications" className="p-4">
-              {product.specifications && product.specifications.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-                  {product.specifications.map((spec, index) => (
-                    <div key={index} className="py-2">
-                      <div className="text-sm font-medium">{spec.name}</div>
-                      <div className="text-muted-foreground">{spec.value}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-muted-foreground">
-                  Nenhuma especificação disponível para este produto.
-                </div>
-              )}
-              
-              {/* Dimensions and weight */}
-              {(product.dimensions || product.weight) && (
-                <>
-                  <Separator className="my-4" />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-                    {product.dimensions && (
-                      <div className="py-2">
-                        <div className="text-sm font-medium">Dimensões</div>
-                        <div className="text-muted-foreground">
-                          {product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} cm
-                        </div>
-                      </div>
-                    )}
-                    {product.weight && (
-                      <div className="py-2">
-                        <div className="text-sm font-medium">Peso</div>
-                        <div className="text-muted-foreground">{product.weight} kg</div>
-                      </div>
-                    )}
+            {/* Tabs for Description, Specs, Reviews */}
+            <Tabs defaultValue="description" className="w-full">
+              <TabsList className="w-full grid grid-cols-3 mb-6">
+                <TabsTrigger value="description">Descrição</TabsTrigger>
+                <TabsTrigger value="specifications">Especificações</TabsTrigger>
+                <TabsTrigger value="reviews">Avaliações</TabsTrigger>
+              </TabsList>
+              <TabsContent value="description" className="p-4">
+                {product.description ? (
+                  <div className="prose max-w-none">
+                    {product.description}
                   </div>
-                </>
-              )}
-            </TabsContent>
-            <TabsContent value="reviews" className="p-4">
-              <div className="text-center py-8">
-                <h3 className="text-lg font-medium mb-2">Ainda não há avaliações</h3>
-                <p className="text-muted-foreground mb-4">Seja o primeiro a avaliar "{product.title}"</p>
-                <Button>Escrever uma avaliação</Button>
-              </div>
-            </TabsContent>
-          </Tabs>
+                ) : (
+                  <div className="text-muted-foreground">
+                    Nenhuma descrição detalhada disponível para este produto.
+                  </div>
+                )}
+              </TabsContent>
+              <TabsContent value="specifications" className="p-4">
+                {product.specifications && product.specifications.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                    {product.specifications.map((spec, index) => (
+                      <div key={index} className="py-2">
+                        <div className="text-sm font-medium">{spec.name}</div>
+                        <div className="text-muted-foreground">{spec.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-muted-foreground">
+                    Nenhuma especificação disponível para este produto.
+                  </div>
+                )}
+                
+                {/* Dimensions and weight */}
+                {(product.dimensions || product.weight) && (
+                  <>
+                    <Separator className="my-4" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                      {product.dimensions && (
+                        <div className="py-2">
+                          <div className="text-sm font-medium">Dimensões</div>
+                          <div className="text-muted-foreground">
+                            {product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} cm
+                          </div>
+                        </div>
+                      )}
+                      {product.weight && (
+                        <div className="py-2">
+                          <div className="text-sm font-medium">Peso</div>
+                          <div className="text-muted-foreground">{product.weight} kg</div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </TabsContent>
+              <TabsContent value="reviews" className="p-4">
+                <div className="text-center py-8">
+                  <h3 className="text-lg font-medium mb-2">Ainda não há avaliações</h3>
+                  <p className="text-muted-foreground mb-4">Seja o primeiro a avaliar "{product.title}"</p>
+                  <Button>Escrever uma avaliação</Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
         
         {/* Products recommendations */}

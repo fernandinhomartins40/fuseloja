@@ -9,6 +9,8 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
+const orderRoutes = require('./routes/orders');
+const customerRoutes = require('./routes/customers');
 
 // Import middleware
 const { authenticateToken } = require('./middleware/auth');
@@ -70,6 +72,8 @@ app.get('/health', (req, res) => {
       auth: '/api/v1/auth',
       users: '/api/v1/users',
       admin: '/api/v1/admin',
+      orders: '/api/v1/orders',
+      customers: '/api/v1/customers',
       health: '/health'
     }
   };
@@ -89,6 +93,10 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', authenticateToken, userRoutes);
 app.use('/api/v1/admin', adminRoutes); // Admin routes have their own authentication middleware
 
+// E-commerce routes
+app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/customers', customerRoutes);
+
 // API route (for checking if backend is working)
 app.get('/api', (req, res) => {
   res.json({
@@ -98,7 +106,9 @@ app.get('/api', (req, res) => {
       health: '/health',
       auth: '/api/v1/auth',
       users: '/api/v1/users',
-      admin: '/api/v1/admin'
+      admin: '/api/v1/admin',
+      orders: '/api/v1/orders',
+      customers: '/api/v1/customers'
     }
   });
 });

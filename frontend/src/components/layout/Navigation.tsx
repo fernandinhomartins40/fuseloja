@@ -17,13 +17,15 @@ export const Navigation: React.FC = () => {
     logout
   } = useUser();
   const {
-    totalItems
+    totalItems,
+    isCartOpen,
+    openCart,
+    closeCart
   } = useCart();
   const {
     settings
   } = useSettings();
   const [loginSheetOpen, setLoginSheetOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const handleLogout = () => {
     logout();
   };
@@ -113,7 +115,11 @@ export const Navigation: React.FC = () => {
           </Sheet>}
         
         {/* Cart button that opens the cart drawer */}
-        <button className="relative text-white hover:text-[#D90429] transition-colors" aria-label="Carrinho de compras" onClick={() => setCartOpen(true)}>
+        <button
+          className="relative text-white hover:text-[#D90429] transition-colors"
+          aria-label="Carrinho de compras"
+          onClick={openCart}
+        >
           <ShoppingCart size={24} />
           <div className="absolute -top-2 -right-2 w-5 h-5 text-white text-[10px] bg-[#D90429] rounded-full flex items-center justify-center">
             {totalItems}
@@ -121,7 +127,7 @@ export const Navigation: React.FC = () => {
         </button>
         
         {/* Cart Drawer */}
-        <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
+        <CartDrawer open={isCartOpen} onOpenChange={(isOpen) => !isOpen && closeCart()} />
       </div>
     </div>;
 };

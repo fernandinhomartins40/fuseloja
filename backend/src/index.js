@@ -15,10 +15,13 @@ const { authenticateToken } = require('./middleware/auth');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Basic security middleware
-app.use(helmet());
+// Basic security middleware - relaxed for serving static files
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: ['https://www.fuseloja.com.br', 'https://fuseloja.com.br', 'http://localhost:5173'],
   credentials: true
 }));
 
@@ -66,9 +69,6 @@ app.get('/ready', (req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', authenticateToken, userRoutes);
 
-// Serve static files from frontend build
-app.use(express.static(path.join(__dirname, '../public')));
-
 // API route (for checking if backend is working)
 app.get('/api', (req, res) => {
   res.json({
@@ -82,9 +82,54 @@ app.get('/api', (req, res) => {
   });
 });
 
+// Serve static files from frontend build with proper options
+app.use(express.static(path.join(__dirname, '../public'), {
+  maxAge: '1d',
+  etag: false,
+  lastModified: false
+}));
+
 // Serve frontend for all other routes (SPA support)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+  const indexPath = path.join(__dirname, '../public/index.html');
+  
+  // Check if index.html exists
+  if (require('fs').existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    // Fallback HTML if frontend build missing
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>FuseLoja - Loading...</title>
+          <style>
+            body { 
+              font-family: Arial, sans-serif; 
+              text-align: center; 
+              padding: 50px; 
+              background: #f5f5f5; 
+            }
+            .container { 
+              max-width: 500px; 
+              margin: 0 auto; 
+              background: white; 
+              padding: 40px; 
+              border-radius: 10px; 
+              box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>🏪 FuseLoja</h1>
+            <p>Frontend em configuração...</p>
+            <p><a href="/api">Ver API</a> | <a href="/health">Health Check</a></p>
+          </div>
+        </body>
+      </html>
+    `);
+  }
 });
 
 // Error handling

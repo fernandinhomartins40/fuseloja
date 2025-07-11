@@ -29,18 +29,13 @@ export const CategoryIcons: React.FC = () => {
 
   if (isLoading) {
     return (
-      <section className="py-12 bg-muted/50">
+      <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2">Categorias</h2>
-            <p className="text-muted-foreground">Explore nossas categorias</p>
-          </div>
-          
           <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
             {Array.from({ length: 8 }).map((_, index) => (
               <div key={index} className="flex flex-col items-center gap-2 animate-pulse">
-                <div className="w-16 h-16 bg-muted rounded-2xl"></div>
-                <div className="h-4 bg-muted rounded w-16"></div>
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-200 rounded-lg"></div>
+                <div className="h-3 bg-gray-200 rounded w-12"></div>
               </div>
             ))}
           </div>
@@ -54,15 +49,10 @@ export const CategoryIcons: React.FC = () => {
   }
 
   return (
-    <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
+    <section className="py-8 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">Categorias</h2>
-          <p className="text-gray-600 text-lg">Explore nossas categorias de produtos</p>
-        </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-6">
-          {categories.map((category) => {
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
+          {categories.slice(0, 8).map((category) => {
             const IconComponent = iconComponents[category.icon] || iconComponents['Package'];
             
             return (
@@ -70,24 +60,16 @@ export const CategoryIcons: React.FC = () => {
                 key={category.id}
                 className="group cursor-pointer"
               >
-                <div className="flex flex-col items-center space-y-3">
+                <div className="flex flex-col items-center space-y-2">
                   <div
-                    className="relative w-20 h-20 rounded-3xl flex items-center justify-center text-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl"
+                    className="relative w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center text-white transition-all duration-200 group-hover:scale-105"
                     style={{ 
                       backgroundColor: category.color,
-                      boxShadow: `0 10px 25px ${category.color}40`
                     }}
                   >
-                    <IconComponent size={36} className="drop-shadow-sm" />
-                    <div 
-                      className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"
-                      style={{ backgroundColor: 'white' }}
-                    />
+                    <IconComponent size={24} className="md:w-6 md:h-6" />
                   </div>
-                  <h3 
-                    className="text-sm font-semibold text-center leading-tight transition-colors duration-200"
-                    style={{ color: category.color }}
-                  >
+                  <h3 className="text-xs md:text-sm text-center text-gray-700 group-hover:text-gray-900 transition-colors">
                     {category.name}
                   </h3>
                 </div>

@@ -19,10 +19,10 @@ const getApiBaseUrl = (): string => {
     return import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
   }
   
-  // Production - use same domain but port 3000
+  // Production - use same domain with same protocol (no explicit port)
   if (hostname.includes('fuseloja.com.br')) {
-    const baseHost = hostname.replace('www.', '');
-    return `${protocol}//${baseHost}:3000`;
+    // Use the current domain and protocol
+    return `${protocol}//${hostname}`;
   }
   
   // Local development fallback

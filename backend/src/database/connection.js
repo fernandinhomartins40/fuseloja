@@ -1,15 +1,16 @@
 const { Pool } = require('pg');
 
-// Database configuration
+// Database configuration with production defaults
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
+  port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME || 'fuseloja',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'password',
+  password: process.env.DB_PASSWORD || 'postgres',
   max: 20, // maximum number of clients in the pool
   idleTimeoutMillis: 30000, // close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // return an error after 2 seconds if connection could not be established
+  connectionTimeoutMillis: 5000, // increased timeout for production
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 };
 
 // Create connection pool
@@ -26,13 +27,19 @@ pool.connect((err, client, release) => {
   }
 });
 
-// Query function
+// Query function with better error handling
 const query = async (text, params) => {
   try {
     const result = await pool.query(text, params);
     return result;
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error('Database query error:', {
+      message: error.message,
+      code: error.code,
+      query: text,
+      params: params,
+      stack: error.stack
+    });
     throw error;
   }
 };

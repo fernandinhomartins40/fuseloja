@@ -79,21 +79,28 @@ router.post('/register', async (req, res) => {
 // Login endpoint
 router.post('/login', async (req, res) => {
   try {
+    console.log('🔐 Login attempt received:', { email: req.body.email, hasPassword: !!req.body.password });
+    
     const { email, password } = req.body;
 
     if (!email || !password) {
+      console.log('❌ Missing email or password');
       return response.badRequest(res, 'Email and password are required');
     }
 
     // Find user
+    console.log('🔍 Searching for user:', email.toLowerCase());
     const result = await query(
       'SELECT id, email, password, first_name, last_name, role, is_active FROM users WHERE email = $1',
       [email.toLowerCase()]
     );
 
     if (result.rows.length === 0) {
+      console.log('❌ User not found:', email.toLowerCase());
       return response.unauthorized(res, 'Invalid credentials');
     }
+
+    console.log('✅ User found:', { id: result.rows[0].id, email: result.rows[0].email, role: result.rows[0].role });
 
     const user = result.rows[0];
 
@@ -131,7 +138,12 @@ router.post('/login', async (req, res) => {
       }
     }, 'Login successful');
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('💥 Login error details:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+      email: req.body.email
+    });
     return response.error(res, 'Login failed');
   }
 });

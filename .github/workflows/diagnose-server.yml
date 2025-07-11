@@ -1,0 +1,76 @@
+name: 🔍 Diagnose Server Performance
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    name: 🔍 Server Diagnostics
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🔍 Diagnose Server Issues
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
+        timeout: 300s
+        script: |
+          echo "🔍 SERVIDOR DIAGNOSTICS"
+          echo "======================"
+          
+          echo "📊 SYSTEM RESOURCES:"
+          echo "CPU Usage:"
+          top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4"%"}'
+          
+          echo "Memory Usage:"
+          free -h
+          
+          echo "Disk Usage:"
+          df -h /
+          
+          echo "Load Average:"
+          uptime
+          
+          echo ""
+          echo "📱 APPLICATION STATUS:"
+          echo "PM2 Status:"
+          pm2 status fuseloja-minimal || echo "PM2 app not found"
+          
+          echo "PM2 Logs (last 20 lines):"
+          pm2 logs fuseloja-minimal --lines 20 --nostream || echo "No logs available"
+          
+          echo "Application Port:"
+          netstat -tlnp | grep 3000 || echo "Port 3000 not listening"
+          
+          echo ""
+          echo "🌐 NETWORK TESTS:"
+          echo "Local health check:"
+          curl -w "Time: %{time_total}s\n" -o /dev/null -s http://localhost:3000/health || echo "Health check failed"
+          
+          echo "Local API check:"
+          curl -w "Time: %{time_total}s\n" -o /dev/null -s http://localhost:3000/api || echo "API check failed"
+          
+          echo "External connectivity:"
+          curl -w "Time: %{time_total}s\n" -o /dev/null -s https://google.com || echo "External connectivity failed"
+          
+          echo ""
+          echo "🔧 NODE.JS PROCESS:"
+          echo "Node processes:"
+          ps aux | grep node | grep -v grep
+          
+          echo "Process tree:"
+          pstree -p $(pgrep -f "fuseloja-minimal") 2>/dev/null || echo "No process tree found"
+          
+          echo ""
+          echo "📁 APPLICATION FILES:"
+          echo "Application directory:"
+          ls -la /opt/fuseloja/current/backend/ 2>/dev/null || echo "App directory not found"
+          
+          echo "Public directory (frontend):"
+          ls -la /opt/fuseloja/current/backend/public/ | head -10 2>/dev/null || echo "Public directory not found"
+          
+          echo "Environment file:"
+          ls -la /opt/fuseloja/current/backend/.env 2>/dev/null || echo ".env not found"

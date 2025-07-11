@@ -1,364 +1,264 @@
-# Reusable Backend API
+# Backend Minimal - Fuseloja
 
-![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue.svg)
-![Express](https://img.shields.io/badge/Express-4+-lightgrey.svg)
-![SQLite](https://img.shields.io/badge/SQLite-3+-blue.svg)
-![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)
+## 🚀 Visão Geral
 
-A comprehensive, production-ready, and reusable backend API built with Node.js, Express, and TypeScript. This backend is designed to be plug-and-play for any project, providing a solid foundation with authentication, file management, real-time features, and more.
+Backend minimalista criado para resolver problemas de build/deploy complexos. 
 
-## 🚀 Features
+**Objetivo:** Deploy em produção em menos de 30 minutos.
 
-### Core Features
-- **Authentication & Authorization**: Complete JWT-based auth system with refresh tokens
-- **User Management**: Full CRUD operations with role-based access control
-- **File Management**: Upload, processing, and storage with image optimization
-- **Real-time Communication**: WebSocket support for live updates
-- **Email System**: Template-based email service with development simulation
-- **Audit Logging**: Complete activity tracking and security monitoring
-- **Rate Limiting**: Advanced rate limiting with progressive penalties
-- **API Documentation**: Auto-generated Swagger documentation
-- **Health Monitoring**: Built-in health checks and monitoring endpoints
+## 📦 Stack Simplificada
 
-### Security Features
-- **JWT with Refresh Tokens**: Secure authentication flow
-- **Role-based Access Control**: Admin, User, Moderator roles
-- **Rate Limiting**: Multiple strategies for different endpoints
-- **Security Headers**: Helmet.js integration
-- **Input Validation**: Joi-based validation
-- **Password Security**: Bcrypt hashing with configurable rounds
-- **CORS Protection**: Configurable origins
+- **Node.js** com JavaScript puro (sem TypeScript)
+- **Express.js** para API REST
+- **PostgreSQL** com cliente `pg` (sem ORM)
+- **JWT** para autenticação
+- **8 dependências** apenas
 
-### Developer Experience
-- **TypeScript**: Full type safety and IntelliSense
-- **Hot Reload**: Development with live reloading
-- **Docker Support**: Ready for containerization
-- **GitHub Actions**: CI/CD pipeline included
-- **Comprehensive Logging**: Structured logging with Winston
-- **Error Handling**: Global error handling with custom error types
-- **Code Quality**: ESLint configuration
-
-## 📋 Prerequisites
-
-- Node.js 18+ 
-- npm 8+
-- Docker (optional, for containerized development)
-
-## 🛠️ Installation
-
-### Quick Start
-
-1. **Clone or copy the backend directory**
-   ```bash
-   cp -r backend/ your-project-backend/
-   cd your-project-backend/
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-4. **Start development server**
-   ```bash
-   npm run dev:ts
-   ```
-
-The API will be available at `http://localhost:3000` with documentation at `http://localhost:3000/api-docs`.
-
-### Docker Development
-
-```bash
-# Start with Docker Compose
-docker-compose up -d
-
-# With monitoring (optional)
-docker-compose --profile monitoring up -d
-
-# With Redis caching (optional)
-docker-compose --profile redis up -d
-```
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-```bash
-# Server Configuration
-PORT=3000
-NODE_ENV=development
-API_PREFIX=/api/v1
-
-# Database Configuration
-DATABASE_URL=./database/app.db
-DATABASE_BACKUP_PATH=./database/backups
-
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-here
-JWT_EXPIRES_IN=1h
-JWT_REFRESH_SECRET=your-super-secret-refresh-key-here
-JWT_REFRESH_EXPIRES_IN=7d
-
-# File Upload Configuration
-UPLOAD_PATH=./uploads
-MAX_FILE_SIZE=10485760
-ALLOWED_FILE_TYPES=jpg,jpeg,png,gif,pdf,doc,docx,txt
-
-# CORS Configuration
-CORS_ORIGINS=http://localhost:3000,http://localhost:5173
-
-# Email Configuration
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASSWORD=your-app-password
-EMAIL_FROM=noreply@yourapp.com
-
-# Security Configuration
-BCRYPT_ROUNDS=12
-RATE_LIMIT_WINDOW=15
-RATE_LIMIT_MAX=100
-
-# WebSocket Configuration
-SOCKET_CORS_ORIGINS=http://localhost:3000,http://localhost:5173
-```
-
-## 📚 API Documentation
-
-### Authentication Endpoints
-
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/v1/auth/register` | Register new user | No |
-| POST | `/api/v1/auth/login` | User login | No |
-| POST | `/api/v1/auth/logout` | User logout | No |
-| POST | `/api/v1/auth/refresh` | Refresh access token | No |
-| GET | `/api/v1/auth/me` | Get user profile | Yes |
-| POST | `/api/v1/auth/change-password` | Change password | Yes |
-| POST | `/api/v1/auth/forgot-password` | Request password reset | No |
-| POST | `/api/v1/auth/verify-email` | Verify email address | No |
-
-### User Management
-
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/v1/users` | List users | Admin |
-| GET | `/api/v1/users/:id` | Get user by ID | Owner/Admin |
-| PUT | `/api/v1/users/:id` | Update user | Owner/Admin |
-| DELETE | `/api/v1/users/:id` | Delete user | Admin |
-
-### File Management
-
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/v1/files/upload` | Upload file | Yes |
-| POST | `/api/v1/files/avatar` | Upload avatar | Yes |
-| GET | `/api/v1/files/:id` | Get file | Public/Owner |
-| DELETE | `/api/v1/files/:id` | Delete file | Owner/Admin |
-
-### Health & Monitoring
-
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/health` | Health check | No |
-| GET | `/api-docs` | API documentation | No |
-| GET | `/swagger.json` | Swagger specification | No |
-
-## 🏗️ Architecture
-
-### Project Structure
+## 🏗️ Estrutura
 
 ```
-backend/
+backend-minimal/
 ├── src/
-│   ├── controllers/        # Request handlers
-│   ├── middleware/         # Custom middleware
-│   ├── models/            # Data models and database
-│   ├── routes/            # Route definitions
-│   ├── services/          # Business logic
-│   ├── types/             # TypeScript types
-│   ├── utils/             # Utility functions
-│   └── app.ts             # Application entry point
-├── uploads/               # File uploads
-├── database/              # SQLite database
-├── logs/                  # Application logs
-├── .env.example           # Environment template
-├── Dockerfile             # Docker configuration
-├── docker-compose.yml     # Development compose
-└── README.md              # This file
+│   ├── index.js              # Servidor principal
+│   ├── routes/
+│   │   ├── auth.js          # Autenticação (register/login)
+│   │   └── users.js         # CRUD usuários
+│   ├── middleware/
+│   │   └── auth.js          # Middleware JWT
+│   ├── database/
+│   │   └── connection.js    # Conexão PostgreSQL
+│   └── utils/
+│       └── validation.js    # Validações básicas
+├── package.json             # 8 dependências
+├── .env.example
+└── README.md
 ```
 
-### Core Components
+## 🔧 Setup Local
 
-#### Authentication Flow
-1. User registers/logs in
-2. Server generates JWT access token + refresh token
-3. Client stores tokens securely
-4. Access token used for API requests
-5. Refresh token used to get new access tokens
-6. Rate limiting prevents abuse
+### 1. Instalar dependências
+```bash
+cd backend-minimal
+npm install
+```
 
-#### Database Layer
-- SQLite for simplicity and portability
-- Automatic migrations on startup
-- Better-sqlite3 for performance
-- Connection pooling and optimization
+### 2. Configurar ambiente
+```bash
+cp .env.example .env
+# Editar .env com suas configurações
+```
 
-#### File Management
-- Local file storage with organized folders
-- Image processing with Sharp
-- Automatic thumbnail generation
-- File type validation and size limits
+### 3. Configurar PostgreSQL
+```bash
+# Criar banco de dados
+createdb fuseloja
 
-#### WebSocket Integration
-- Socket.io for real-time communication
-- JWT authentication for sockets
-- User-specific room management
-- Automatic reconnection handling
+# Ou via psql
+psql -U postgres -c "CREATE DATABASE fuseloja;"
+```
 
-## 🚀 Deployment
+### 4. Rodar aplicação
+```bash
+# Desenvolvimento
+npm run dev
 
-### Manual Deployment
+# Produção
+npm start
+```
 
-1. **Build the application**
-   ```bash
-   npm run build
-   ```
+## 🌐 Endpoints
 
-2. **Set production environment**
-   ```bash
-   NODE_ENV=production
-   ```
+### Autenticação
+- `POST /api/auth/register` - Registrar usuário
+- `POST /api/auth/login` - Login
+- `POST /api/auth/validate` - Validar token
 
-3. **Start the server**
-   ```bash
-   npm start
-   ```
+### Usuários (requer autenticação)
+- `GET /api/users/me` - Perfil do usuário
+- `PUT /api/users/me` - Atualizar perfil
 
-### Docker Deployment
+### Admin (requer role admin)
+- `GET /api/users` - Listar usuários
+- `DELETE /api/users/:id` - Desativar usuário
 
-1. **Build Docker image**
-   ```bash
-   docker build -t reusable-backend .
-   ```
+### Utilitários
+- `GET /health` - Health check
+- `GET /` - Info da API
 
-2. **Run container**
-   ```bash
-   docker run -p 3000:3000 \
-     -e NODE_ENV=production \
-     -e JWT_SECRET=your-production-secret \
-     reusable-backend
-   ```
+## 📱 Teste Rápido
 
-### VPS Deployment with GitHub Actions
+### 1. Registrar usuário
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "password": "123456",
+    "firstName": "Test",
+    "lastName": "User"
+  }'
+```
 
-1. **Set up secrets in GitHub repository:**
-   - `VPS_HOST`: Your VPS IP address
-   - `VPS_USERNAME`: SSH username
-   - `VPS_SSH_KEY`: Private SSH key
-   - `VPS_PORT`: SSH port (default: 22)
+### 2. Login
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "password": "123456"
+  }'
+```
 
-2. **Push to main branch:**
-   ```bash
-   git push origin main
-   ```
+### 3. Acessar perfil
+```bash
+curl -X GET http://localhost:3000/api/users/me \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
 
-The GitHub Actions workflow will automatically:
-- Run tests and security scans
-- Build Docker image
-- Deploy to your VPS
-- Verify deployment health
-- Send notifications
+## 🚀 Deploy VPS Hostinger
 
-## 🧪 Testing
+### 1. Preparar VPS
+```bash
+# Conectar via SSH
+ssh root@your-vps-ip
+
+# Instalar Node.js
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Instalar PM2 (gerenciador de processos)
+npm install -g pm2
+
+# Instalar PostgreSQL
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+```
+
+### 2. Configurar PostgreSQL
+```bash
+# Acessar PostgreSQL
+sudo -u postgres psql
+
+# Criar usuário e banco
+CREATE USER fuseloja WITH PASSWORD 'sua_senha_aqui';
+CREATE DATABASE fuseloja OWNER fuseloja;
+GRANT ALL PRIVILEGES ON DATABASE fuseloja TO fuseloja;
+\q
+```
+
+### 3. Deploy da aplicação
+```bash
+# Clonar repositório
+git clone https://github.com/seu-usuario/seu-repo.git
+cd seu-repo/backend-minimal
+
+# Instalar dependências
+npm install --production
+
+# Configurar variáveis de ambiente
+cp .env.example .env
+nano .env  # Editar com configurações de produção
+
+# Iniciar com PM2
+pm2 start src/index.js --name "backend-minimal"
+pm2 startup
+pm2 save
+```
+
+### 4. Configurar Nginx (opcional)
+```bash
+# Instalar Nginx
+sudo apt install nginx
+
+# Configurar proxy reverso
+sudo nano /etc/nginx/sites-available/backend-minimal
+```
+
+Conteúdo do arquivo Nginx:
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
 
 ```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run with coverage
-npm run test:coverage
+# Ativar site
+sudo ln -s /etc/nginx/sites-available/backend-minimal /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
 ```
 
-## 📊 Monitoring
+## 📊 Monitoramento
 
-### Health Check
+### PM2 Commands
 ```bash
-curl http://localhost:3000/health
+# Ver status
+pm2 status
+
+# Ver logs
+pm2 logs backend-minimal
+
+# Restart
+pm2 restart backend-minimal
+
+# Stop
+pm2 stop backend-minimal
 ```
 
-### Logs
+## 🔍 Troubleshooting
+
+### Problema: Erro de conexão com banco
 ```bash
-# View real-time logs
-tail -f logs/app.log
+# Verificar se PostgreSQL está rodando
+sudo systemctl status postgresql
 
-# View error logs
-tail -f logs/error.log
+# Verificar logs
+sudo journalctl -u postgresql
 ```
 
-### Database Stats
-Access via admin endpoints or directly check database size and table statistics.
+### Problema: Porta em uso
+```bash
+# Verificar processos na porta 3000
+sudo lsof -i :3000
 
-## 🔧 Customization
+# Matar processo
+sudo kill -9 PID
+```
 
-### Adding New Endpoints
+### Problema: PM2 não encontrado
+```bash
+# Reinstalar PM2
+npm install -g pm2
 
-1. **Create controller in `src/controllers/`**
-2. **Add routes in `src/routes/`**
-3. **Register routes in `src/app.ts`**
-4. **Add validation schemas if needed**
+# Verificar PATH
+echo $PATH
+```
 
-### Adding New Middleware
+## 📈 Próximos Passos
 
-1. **Create middleware in `src/middleware/`**
-2. **Apply globally in `src/app.ts` or per route**
+Ver arquivo `ROADMAP.md` para plano de expansão.
 
-### Database Schema Changes
+## 🤝 Contribuição
 
-1. **Add migration in `src/models/database.ts`**
-2. **Update TypeScript types in `src/types/`**
-3. **Restart application to apply migrations**
+1. Fork o projeto
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Push para a branch
+5. Abra um Pull Request
 
-## 🤝 Contributing
+## 📄 Licença
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Run linting and tests
-6. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- **Documentation**: Available at `/api-docs` when running
-- **Issues**: Create an issue for bug reports
-- **Email**: Configure `EMAIL_FROM` for support emails
-
-## 🔮 Roadmap
-
-- [ ] GraphQL support
-- [ ] Redis caching integration
-- [ ] Advanced monitoring with Prometheus/Grafana
-- [ ] Multi-tenant support
-- [ ] Advanced file processing (video, documents)
-- [ ] Background job processing
-- [ ] API versioning
-- [ ] Microservices architecture support
-
----
-
-**Made with ❤️ for developers who want to focus on building features, not infrastructure.** 
+MIT License

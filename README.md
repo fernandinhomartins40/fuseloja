@@ -1,73 +1,208 @@
-# Welcome to your Lovable project
+# 🏪 FuseLoja - E-commerce Completo
 
-## Project info
+## 🚀 **Arquitetura Minimalista e Otimizada**
 
-**URL**: https://lovable.dev/projects/95def4a1-d65f-48f1-ad47-6477e39f0862
+Sistema de e-commerce com frontend React e backend Node.js simplificado para **deploy rápido e fácil manutenção**.
 
-## How can I edit this code?
+### 📁 **Estrutura do Projeto**
 
-There are several ways of editing your application.
+```
+fuseloja/
+├── backend/                 # Backend minimalista
+│   ├── src/
+│   │   ├── index.js        # Servidor principal
+│   │   ├── routes/         # Rotas da API
+│   │   ├── middleware/     # Middlewares de auth/cors
+│   │   ├── database/       # Conexão PostgreSQL
+│   │   └── utils/          # Utilitários e validações
+│   ├── package.json        # 8 dependências apenas
+│   └── README.md           # Documentação do backend
+├── frontend/               # React + TypeScript + Tailwind
+│   ├── src/
+│   │   ├── components/     # Componentes UI
+│   │   ├── pages/          # Páginas da aplicação
+│   │   ├── services/       # API e auth services
+│   │   ├── hooks/          # Custom hooks
+│   │   └── types/          # Tipos TypeScript
+│   └── package.json        # Dependências do frontend
+└── README.md              # Este arquivo
+```
 
-**Use Lovable**
+### 🎯 **Stack Tecnológica**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/95def4a1-d65f-48f1-ad47-6477e39f0862) and start prompting.
+| Componente | Tecnologia | Justificativa |
+|------------|------------|---------------|
+| **Backend** | Node.js + Express | Simplicidade e performance |
+| **Linguagem** | JavaScript ES6+ | Zero build time |
+| **Banco** | PostgreSQL | Robustez e SQL familiar |
+| **Frontend** | React + TypeScript | Moderna e type-safe |
+| **UI** | Tailwind + Radix UI | Design system consistente |
+| **Auth** | JWT simples | Stateless e escalável |
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🔧 **Setup Rápido**
 
-**Use your preferred IDE**
+#### 1. **Backend**
+```bash
+cd backend
+npm install
+cp .env.example .env
+# Editar .env com suas configurações
+npm start
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+#### 2. **Frontend**
+```bash
+cd frontend
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+#### 3. **PostgreSQL**
+```bash
+# Instalar PostgreSQL
+sudo apt install postgresql postgresql-contrib
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+# Criar banco
+sudo -u postgres createdb fuseloja
+```
 
-**Use GitHub Codespaces**
+### 🌐 **URLs de Desenvolvimento**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **Frontend:** http://localhost:5173
+- **Backend:** http://localhost:3000
+- **API Docs:** http://localhost:3000 (JSON endpoints)
+- **Health Check:** http://localhost:3000/health
 
-## What technologies are used for this project?
+### 📊 **Endpoints Principais**
 
-This project is built with:
+#### Autenticação (`/api/v1/auth`)
+- `POST /register` - Cadastro de usuário
+- `POST /login` - Login
+- `POST /validate` - Validar token
+- `GET /me` - Perfil do usuário
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+#### Usuários (`/api/v1/users`)
+- `GET /me` - Perfil atual
+- `PUT /me` - Atualizar perfil
+- `GET /` - Listar usuários (admin)
 
-## How can I deploy this project?
+### 🚀 **Deploy Automático**
 
-Simply open [Lovable](https://lovable.dev/projects/95def4a1-d65f-48f1-ad47-6477e39f0862) and click on Share -> Publish.
+#### **Configuração GitHub Secrets**
+1. Vá para: `Settings` → `Secrets and variables` → `Actions`
+2. Adicione os secrets **obrigatórios**:
+   ```
+   VPS_HOST=seu-ip-vps
+   VPS_USERNAME=root
+   VPS_PASSWORD=sua-senha-vps
+   ```
 
-## Can I connect a custom domain to my Lovable project?
+3. Secrets **opcionais** (recomendados):
+   ```
+   JWT_SECRET=seu-jwt-secret-seguro
+   DB_HOST=localhost
+   DB_USER=postgres
+   DB_PASSWORD=sua-senha-db
+   DB_NAME=fuseloja
+   ```
 
-Yes, you can!
+#### **Como Fazer Deploy**
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+**✅ Automático:** Qualquer push na branch `main`
+```bash
+git push origin main
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+**✅ Manual:** Via GitHub Actions
+1. Vá para `Actions` → `🚀 Deploy Fuseloja Minimal`
+2. Clique em `Run workflow`
+3. Aguarde 2-3 minutos
+
+#### **Monitoramento**
+- **App:** https://www.fuseloja.com.br
+- **Health:** http://seu-ip:3000/health
+- **API:** http://seu-ip:3000/api/v1/
+- **Logs:** `pm2 logs fuseloja-minimal`
+
+### 🔒 **Segurança**
+
+- ✅ **Helmet** para headers de segurança
+- ✅ **CORS** configurado
+- ✅ **Rate Limiting** por IP
+- ✅ **JWT** para autenticação
+- ✅ **bcrypt** para hash de senhas
+- ✅ **Validação** de inputs
+
+### 📈 **Performance**
+
+- ⚡ **Backend:** JavaScript puro, sem build
+- ⚡ **Frontend:** Vite para dev, build otimizado
+- ⚡ **Database:** PostgreSQL com pooling
+- ⚡ **Deploy:** < 2 minutos
+
+### 🛠️ **Desenvolvimento**
+
+#### **Comandos Úteis**
+```bash
+# Backend
+npm run dev          # Nodemon para auto-restart
+npm start           # Produção
+
+# Frontend  
+npm run dev         # Servidor de desenvolvimento
+npm run build       # Build para produção
+npm run preview     # Preview do build
+```
+
+#### **Debugging**
+```bash
+# Logs do backend
+tail -f backend/logs/app.log
+
+# Verificar processos
+pm2 list
+pm2 logs fuseloja-backend
+
+# Health checks
+curl http://localhost:3000/health
+```
+
+### 🔄 **Roadmap**
+
+#### **Fase Atual: MVP ✅**
+- Autenticação JWT
+- CRUD de usuários
+- Frontend React
+- Deploy básico
+
+#### **Próximas Fases**
+- **Fase 2:** Produtos e categorias
+- **Fase 3:** Carrinho e checkout
+- **Fase 4:** Pagamentos
+- **Fase 5:** Admin dashboard
+
+### 📝 **Contribuição**
+
+1. Fork o repositório
+2. Crie uma branch: `git checkout -b feature/nova-feature`
+3. Commit: `git commit -m 'Add nova feature'`
+4. Push: `git push origin feature/nova-feature`
+5. Abra um Pull Request
+
+### 📞 **Suporte**
+
+- 📧 **Email:** suporte@fuseloja.com
+- 📚 **Docs:** [/backend/README.md](backend/README.md)
+- 🐛 **Issues:** GitHub Issues
+
+### 📄 **Licença**
+
+MIT License - veja [LICENSE](LICENSE) para detalhes.
+
+---
+
+## 🎉 **Deploy Pronto em 30 Minutos!**
+
+Este projeto foi otimizado para **simplicidade e velocidade de deploy**, mantendo todas as funcionalidades essenciais de um e-commerce moderno.
+
+**Stack minimalista** = **Menos bugs** + **Deploy mais rápido** + **Manutenção mais fácil**

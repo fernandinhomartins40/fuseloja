@@ -35,8 +35,9 @@ const Login: React.FC = () => {
           navigate(from, { replace: true });
         } else {
           // Redirecionamento inteligente baseado no papel do usuário
-          // Primeiro tenta usar apiUser, depois localStorage como fallback
-          const userRole = apiUser?.role || JSON.parse(localStorage.getItem('user') || '{}').role;
+          // Usar dados mais recentes do localStorage que foram atualizados pelo authService
+          const storedUser = localStorage.getItem('user');
+          const userRole = storedUser ? JSON.parse(storedUser).role : null;
           
           if (userRole === 'admin') {
             navigate('/admin', { replace: true });

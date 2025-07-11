@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Loader2 } from 'lucide-react';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useUser } from '@/contexts/UserContext';
 
@@ -10,6 +10,7 @@ export const Footer: React.FC = () => {
   const navigate = useNavigate();
   const { settings } = useSettings();
   const { user, isAuthenticated } = useUser();
+  const [isNavigating, setIsNavigating] = useState(false);
   
   // Use footer logo if available, otherwise use the main logo
   const logoUrl = settings.visual.footerLogo || settings.visual.logo;
@@ -18,20 +19,35 @@ export const Footer: React.FC = () => {
   const email = settings.general.email;
   const address = settings.general.address;
 
-  const handleAdminAccess = () => {
-    // Verificação mais robusta do estado de autenticação
-    const storedUser = localStorage.getItem('user');
-    const isLoggedIn = isAuthenticated || storedUser;
+  const handleAdminAccess = async () => {
+    // Prevenir múltiplos cliques
+    if (isNavigating) return;
     
-    if (isLoggedIn) {
-      const userRole = user?.role || (storedUser ? JSON.parse(storedUser).role : null);
-      if (userRole === 'admin') {
-        navigate('/admin');
+    setIsNavigating(true);
+    
+    try {
+      // Verificação mais robusta do estado de autenticação
+      const storedUser = localStorage.getItem('user');
+      const isLoggedIn = isAuthenticated || storedUser;
+      
+      if (isLoggedIn) {
+        // Priorizar dados do localStorage que são mais atualizados
+        const userRole = storedUser ? JSON.parse(storedUser).role : user?.role;
+        
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/login'); // Se logado mas não admin, vai para login para trocar de conta
+        }
       } else {
-        navigate('/login'); // Se logado mas não admin, vai para login para trocar de conta
+        navigate('/login');
       }
-    } else {
+    } catch (error) {
+      console.error('Erro ao acessar painel:', error);
       navigate('/login');
+    } finally {
+      // Liberar o botão após um pequeno delay para evitar cliques rápidos consecutivos
+      setTimeout(() => setIsNavigating(false), 1000);
     }
   };
 
@@ -116,9 +132,14 @@ export const Footer: React.FC = () => {
             variant="outline" 
             className="mt-4 md:mt-0 border-[#D90429] text-[#D90429] hover:bg-[#D90429] hover:text-white"
             onClick={handleAdminAccess}
+            disabled={isNavigating}
           >
-            <ShoppingCart className="mr-2 h-4 w-4" />
-            Painel do Lojista
+            {isNavigating ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <ShoppingCart className="mr-2 h-4 w-4" />
+            )}
+            {isNavigating ? 'Redirecionando...' : 'Painel do Lojista'}
           </Button>
         </div>
       </div>

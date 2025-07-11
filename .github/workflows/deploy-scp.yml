@@ -136,7 +136,7 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         password: ${{ secrets.VPS_PASSWORD }}
         port: 22
-        timeout: 600s
+        timeout: 900s
         script: |
           echo "🚀 Starting SCP deployment..."
           
@@ -201,15 +201,27 @@ jobs:
           
           # Fast deployment setup
           echo "⚡ Fast deployment setup..."
+          echo "📍 Current directory: $(pwd)"
+          echo "📁 Contents: $(ls -la fuseloja/ 2>/dev/null || echo 'fuseloja directory not found')"
           cd fuseloja/backend
+          echo "📍 Now in: $(pwd)"
+          echo "📄 Backend files: $(ls -la 2>/dev/null || echo 'backend files not found')"
           
-          # Install production dependencies (node_modules not included in build)
+          # Install production dependencies with timeout
           echo "📦 Installing production dependencies..."
-          npm ci --silent --production --prefer-offline --no-audit --no-fund
+          timeout 180s npm ci --silent --production --prefer-offline --no-audit --no-fund || {
+            echo "⚠️ npm ci timed out or failed, trying npm install..."
+            timeout 120s npm install --silent --production --prefer-offline --no-audit --no-fund
+          }
           
-          # Optimize database setup - run in background with timeout
+          # Database setup with explicit timeout and logging
           echo "🗃️ Setting up database (optimized)..."
-          (timeout 60s node src/scripts/createTables.js && timeout 30s node src/scripts/seedData.js) > /tmp/db-setup.log 2>&1 &
+          (
+            echo "Starting database setup at $(date)"
+            timeout 60s node src/scripts/createTables.js 2>&1 && echo "Tables created successfully" || echo "Table creation failed/timed out"
+            timeout 30s node src/scripts/seedData.js 2>&1 && echo "Data seeded successfully" || echo "Data seeding failed/timed out"
+            echo "Database setup finished at $(date)"
+          ) > /tmp/db-setup.log 2>&1 &
           DB_PID=$!
           
           # Update current symlink
@@ -234,28 +246,46 @@ jobs:
           EOF
           fi
           
-          # Install PM2 if not exists (optimized)
+          # Install PM2 if not exists (with timeout)
           if ! command -v pm2 &> /dev/null; then
             echo "📦 Installing PM2..."
-            npm install -g pm2 --silent --prefer-offline --no-audit --no-fund > /dev/null 2>&1
+            timeout 60s npm install -g pm2 --silent --prefer-offline --no-audit --no-fund > /dev/null 2>&1 || {
+              echo "⚠️ PM2 global install failed, trying without cache..."
+              timeout 60s npm install -g pm2 --silent > /dev/null 2>&1
+            }
           fi
           
-          # Wait for database setup to complete
-          wait $DB_PID && echo "✅ Database setup completed" || echo "⚠️ Database setup had warnings"
+          # Wait for database setup with timeout
+          echo "⏳ Waiting for database setup (max 2 minutes)..."
+          if timeout 120s bash -c "wait $DB_PID"; then
+            echo "✅ Database setup completed"
+            echo "📋 Database setup log:"
+            tail -10 /tmp/db-setup.log 2>/dev/null || echo "No database log available"
+          else
+            echo "⚠️ Database setup timed out or had warnings"
+            echo "📋 Database setup log (last 20 lines):"
+            tail -20 /tmp/db-setup.log 2>/dev/null || echo "No database log available"
+          fi
           
           # Fast application restart
           echo "⚡ Fast application restart..."
-          if pm2 describe ${{ env.APP_NAME }} > /dev/null 2>&1; then
-            echo "🔄 Restarting existing process..."
-            pm2 restart ${{ env.APP_NAME }} --update-env
-          else
-            echo "🚀 Starting new process..."
-            pm2 start src/index.js --name ${{ env.APP_NAME }} --env production
-          fi
-          pm2 save > /dev/null
+          echo "📍 Current directory for PM2: $(pwd)"
+          echo "📄 Checking index.js: $(ls -la src/index.js 2>/dev/null || echo 'index.js not found')"
           
-          # Setup PM2 startup (if first time)
-          pm2 startup systemd -u $USER --hp /home/$USER 2>/dev/null || true
+          # Kill any existing process first
+          pm2 delete ${{ env.APP_NAME }} 2>/dev/null || echo "No existing process to delete"
+          
+          echo "🚀 Starting new process..."
+          timeout 30s pm2 start src/index.js --name ${{ env.APP_NAME }} --env production || {
+            echo "❌ PM2 start failed, checking logs..."
+            pm2 logs ${{ env.APP_NAME }} --lines 5 2>/dev/null || echo "No PM2 logs available"
+            exit 1
+          }
+          
+          timeout 10s pm2 save > /dev/null || echo "⚠️ PM2 save failed"
+          
+          # Setup PM2 startup (non-interactive)
+          timeout 30s pm2 startup systemd -u $USER --hp /home/$USER 2>/dev/null || echo "⚠️ PM2 startup setup skipped"
           
           echo "✅ Deployment completed!"
           

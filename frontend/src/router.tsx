@@ -18,6 +18,7 @@ import Checkout from '@/pages/Checkout';
 
 // User Pages
 import Profile from '@/pages/user/Profile';
+import Login from '@/pages/Login';
 
 // Admin Pages
 import Dashboard from '@/pages/admin/Dashboard';
@@ -73,6 +74,10 @@ export const router = createBrowserRouter([
   {
     path: '/checkout',
     element: <PublicLayout><Checkout /></PublicLayout>,
+  },
+  {
+    path: '/login',
+    element: <Login />,
   },
   
   // User Protected Routes - Requires authentication

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Header } from '../components/layout/Header';
 import { HeroSlider } from '../components/sections/HeroSlider';
 import { Marquee } from '../components/sections/Marquee';
 import { CategoryIcons } from '../components/sections/CategoryIcons';
@@ -9,12 +8,13 @@ import { PromotionProducts } from '../components/sections/PromotionProducts';
 import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocomplete';
 import { NewArrivals } from '../components/sections/NewArrivals';
+
 const Index = () => {
   return <div className="min-h-screen flex flex-col">
-      <Header />
+      {/* Header is already provided by PublicLayout in router */}
       
-      {/* Add top padding to account for fixed header */}
-      <div className="pt-20 bg-slate-950 py-[75px]">
+      {/* Main content without extra padding since PublicLayout already handles it */}
+      <div className="bg-slate-950 py-[75px]">
         <Marquee />
         <HeroSlider />
         <PromotionProducts />

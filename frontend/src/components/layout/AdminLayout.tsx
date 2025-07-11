@@ -30,13 +30,7 @@ const AdminLayout: React.FC = () => {
   const location = useLocation();
   const { logout, login, isAuthenticated } = useUser();
   
-  // Auto-login for admin access during development
-  useEffect(() => {
-    if (!isAuthenticated) {
-      console.log('Auto-logging in admin user for development...');
-      login("joao.silva@example.com", "password");
-    }
-  }, [isAuthenticated, login]);
+  // AdminLayout should not auto-login - this is handled by ProtectedRoute
 
   const isActiveRoute = (path: string) => {
     return location.pathname === path;

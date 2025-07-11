@@ -9,7 +9,6 @@ import { CartProvider } from "./contexts/CartContext";
 import { OrderProvider } from "./contexts/OrderContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
 import { router } from "./router";
-import DebugAuth from "./components/DebugAuth";
 
 // Create query client outside of component to avoid recreation
 const queryClient = new QueryClient({
@@ -30,7 +29,6 @@ const App = () => {
             <SettingsProvider>
               <TooltipProvider>
                 <RouterProvider router={router} />
-                <DebugAuth />
                 <Toaster />
                 <Sonner />
               </TooltipProvider>

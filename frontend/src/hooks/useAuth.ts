@@ -54,49 +54,31 @@ export const useAuth = (): UseAuthReturn => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        console.log('🔄 Initializing auth...');
-        console.log('📱 authService.isAuthenticated():', authService.isAuthenticated());
-        console.log('🔑 accessToken:', authService.getAccessToken()?.substring(0, 20) + '...');
-        
         if (authService.isAuthenticated()) {
-          console.log('✅ User is authenticated, getting current user...');
           const currentUser = authService.getCurrentUser();
-          console.log('👤 currentUser:', currentUser);
           
           if (currentUser) {
-            console.log('✅ Setting apiUser from localStorage');
             setApiUser(currentUser);
             
             // Try to refresh profile from server
             try {
-              console.log('🔄 Refreshing profile from server...');
               const freshProfile = await authService.getProfile();
-              console.log('✅ Fresh profile retrieved:', freshProfile);
               setApiUser(freshProfile);
               setUser(convertApiUserToUser(freshProfile));
             } catch (error) {
-              console.log('⚠️ Refresh failed, using cached user:', error);
               // If refresh fails, use cached user
               setUser(convertApiUserToUser(currentUser));
             }
-          } else {
-            console.log('❌ No current user found despite being authenticated');
           }
         } else {
-          console.log('❌ User not authenticated, checking provisional users...');
           // Check for provisional users in localStorage
           const storedUser = localStorage.getItem('user');
-          console.log('📱 storedUser:', storedUser);
           
           if (storedUser) {
             try {
               const parsedUser = JSON.parse(storedUser);
-              console.log('📱 parsedUser:', parsedUser);
               if (parsedUser.isProvisional) {
-                console.log('✅ Setting provisional user');
                 setUser(parsedUser);
-              } else {
-                console.log('⚠️ Stored user is not provisional, ignoring');
               }
             } catch (error) {
               console.warn('Error parsing stored user:', error);
@@ -106,7 +88,6 @@ export const useAuth = (): UseAuthReturn => {
       } catch (error) {
         console.warn('Error initializing auth:', error);
       } finally {
-        console.log('✅ Auth initialization complete');
         setIsLoading(false);
       }
     };
@@ -116,27 +97,16 @@ export const useAuth = (): UseAuthReturn => {
 
   const login = useCallback(async (email: string, password: string): Promise<boolean> => {
     try {
-      console.log('🔐 Starting login process...');
       setIsLoading(true);
       const response = await authService.login({ email, password });
-      
-      console.log('✅ Login response:', response);
-      console.log('👤 Setting apiUser:', response.user);
-      console.log('🔑 Tokens should be stored by authService.login()');
       
       setApiUser(response.user);
       setUser(convertApiUserToUser(response.user));
       
-      // Verify tokens are stored
-      console.log('🔍 Checking stored tokens after login:');
-      console.log('📱 accessToken:', authService.getAccessToken()?.substring(0, 20) + '...');
-      console.log('📱 isAuthenticated:', authService.isAuthenticated());
-      console.log('📱 currentUser:', authService.getCurrentUser());
-      
       toast.success('Login realizado com sucesso!');
       return true;
     } catch (error: any) {
-      console.error('❌ Login error:', error);
+      console.error('Login error:', error);
       toast.error(error.message || 'Erro ao fazer login');
       return false;
     } finally {
@@ -164,12 +134,9 @@ export const useAuth = (): UseAuthReturn => {
 
   const logout = useCallback(async (): Promise<void> => {
     try {
-      console.log('🚪 Starting logout process...');
       await authService.logout();
-      console.log('✅ Logout service completed');
       setUser(null);
       setApiUser(null);
-      console.log('✅ Local state cleared');
       toast.success('Logout realizado com sucesso');
     } catch (error: any) {
       console.warn('Error during logout:', error);

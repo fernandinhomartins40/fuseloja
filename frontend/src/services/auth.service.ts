@@ -162,7 +162,7 @@ export class AuthService {
   // Token validation
   async validateToken(token: string): Promise<ApiUser | null> {
     try {
-      const response = await apiClient.post<{ valid: boolean; user: ApiUser }>('/auth/validate-token', {
+      const response = await apiClient.post<{ valid: boolean; user: ApiUser }>('/auth/validate', {
         token
       });
       

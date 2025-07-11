@@ -119,7 +119,7 @@ const ProductDetail: React.FC = () => {
               )}
               <AspectRatio ratio={1 / 1}>
                 <img
-                  src={product.image}
+                  src={product.imageUrl}
                   alt={product.title}
                   className="w-full h-full object-cover"
                 />

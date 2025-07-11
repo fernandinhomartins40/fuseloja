@@ -8,7 +8,7 @@ const router = express.Router();
 // GET /api/v1/products - List all products (public)
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, category, search, tag, sortBy = 'created_at', order = 'desc' } = req.query;
+    const { page = 1, limit = 10, category, search, tag, sortBy = 'created_at', order = 'desc', price_min, price_max } = req.query;
     const offset = (page - 1) * limit;
 
     // Verificar se as tabelas existem primeiro
@@ -40,6 +40,14 @@ router.get('/', async (req, res) => {
     if (tag) {
       whereClauses.push(`p.tag = $${paramIndex++}`);
       queryParams.push(tag);
+    }
+    if (price_min) {
+      whereClauses.push(`p.price >= $${paramIndex++}`);
+      queryParams.push(parseFloat(price_min));
+    }
+    if (price_max) {
+      whereClauses.push(`p.price <= $${paramIndex++}`);
+      queryParams.push(parseFloat(price_max));
     }
     
     whereClauses.push('p.is_active = true');

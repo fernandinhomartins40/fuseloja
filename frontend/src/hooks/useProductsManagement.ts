@@ -100,6 +100,15 @@ export const useProductsManagement = () => {
 
   const products = productsData?.products || [];
 
+  // Funções específicas para adicionar e atualizar
+  const handleAddProduct = (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
+    createMutation.mutate(product);
+  };
+
+  const handleUpdateProduct = (product: Product) => {
+    updateMutation.mutate(product);
+  };
+
   return {
     products,
     isLoading,
@@ -114,6 +123,8 @@ export const useProductsManagement = () => {
     },
     handleEditProduct,
     handleNewProductClick,
+    handleAddProduct,
+    handleUpdateProduct,
     // A função de save agora diferencia entre criar e atualizar
     handleSaveProduct: (product: Product | Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
       if ('id' in product) {

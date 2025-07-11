@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { ProductCard } from '../ui/ProductCard';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { iconComponents, IconName } from '@/utils/categoryIcons';
-import { getContrastTextColor } from '@/types/category';
 import apiClient from '@/services/api';
 import { Product } from '@/types/product';
 
@@ -28,8 +27,8 @@ const fetchCategories = async (): Promise<Category[]> => {
 // Category configuration with icons and colors
 const categoryConfig: Record<string, { icon: IconName; color: string }> = {
   'Eletrônicos': { icon: 'Smartphone', color: '#3B82F6' },
-  'Roupas': { icon: 'ShirtIcon', color: '#10B981' },
-  'Moda': { icon: 'ShirtIcon', color: '#EC4899' },
+  'Roupas': { icon: 'Shirt', color: '#10B981' },
+  'Moda': { icon: 'Shirt', color: '#EC4899' },
   'Casa': { icon: 'Home', color: '#F59E0B' },
   'Casa & Decoração': { icon: 'Home', color: '#10B981' },
   'Esportes': { icon: 'Activity', color: '#EF4444' },

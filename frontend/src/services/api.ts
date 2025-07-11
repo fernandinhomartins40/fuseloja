@@ -175,8 +175,11 @@ class ApiClient {
 
   private loadTokensFromStorage() {
     try {
+      console.log('📂 Loading tokens from localStorage...');
       this.accessToken = localStorage.getItem('accessToken');
       this.refreshToken = localStorage.getItem('refreshToken');
+      console.log('📂 Loaded accessToken:', this.accessToken ? this.accessToken.substring(0, 20) + '...' : 'null');
+      console.log('📂 Loaded refreshToken:', this.refreshToken ? this.refreshToken.substring(0, 20) + '...' : 'null');
     } catch (error) {
       console.warn('Error loading tokens from localStorage:', error);
     }
@@ -206,15 +209,20 @@ class ApiClient {
 
   // Public methods
   public setTokens(accessToken: string, refreshToken: string) {
+    console.log('🔑 ApiClient.setTokens called');
+    console.log('📝 AccessToken (first 20 chars):', accessToken.substring(0, 20) + '...');
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.saveTokensToStorage();
+    console.log('💾 Tokens saved to storage');
   }
 
   public clearTokens() {
+    console.log('🗑️ ApiClient.clearTokens called');
     this.accessToken = null;
     this.refreshToken = null;
     this.clearTokensFromStorage();
+    console.log('🗑️ Tokens cleared from storage');
   }
 
   public getAccessToken(): string | null {

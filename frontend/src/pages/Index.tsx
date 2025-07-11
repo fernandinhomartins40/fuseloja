@@ -13,8 +13,8 @@ const Index = () => {
   return <div className="min-h-screen flex flex-col">
       {/* Header is already provided by PublicLayout in router */}
       
-      {/* Main content without extra padding since PublicLayout already handles it */}
-      <div className="bg-slate-950 py-[75px]">
+      {/* Main content with proper spacing */}
+      <div className="bg-slate-950">
         <Marquee />
         <HeroSlider />
         <PromotionProducts />

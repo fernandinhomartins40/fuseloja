@@ -19,7 +19,7 @@ import {
 import { LayoutDashboard, Package2, Truck, ShoppingCart, BarChart, LogOut, Tags, Settings, Store, TrendingUp, FileText, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
 import UserCard from '@/components/admin/UserCard';
@@ -53,14 +53,14 @@ const AdminLayout: React.FC = () => {
       group: 'Catálogo',
       items: [
         {
-          path: '/admin/products',
+          path: '/admin/produtos',
           label: 'Produtos',
           icon: Package2,
           color: 'green',
           description: 'Gerenciar produtos'
         },
         {
-          path: '/admin/categories',
+          path: '/admin/categorias',
           label: 'Categorias',
           icon: Tags,
           color: 'yellow',
@@ -72,14 +72,14 @@ const AdminLayout: React.FC = () => {
       group: 'Vendas',
       items: [
         {
-          path: '/admin/orders',
+          path: '/admin/pedidos',
           label: 'Pedidos',
           icon: ShoppingCart,
           color: 'purple',
           description: 'Gerenciar pedidos'
         },
         {
-          path: '/admin/deliveries',
+          path: '/admin/entregas',
           label: 'Entregas',
           icon: Truck,
           color: 'indigo',
@@ -91,7 +91,7 @@ const AdminLayout: React.FC = () => {
       group: 'Análises',
       items: [
         {
-          path: '/admin/reports',
+          path: '/admin/relatorios',
           label: 'Relatórios',
           icon: BarChart,
           color: 'pink',
@@ -103,7 +103,7 @@ const AdminLayout: React.FC = () => {
       group: 'Sistema',
       items: [
         {
-          path: '/admin/settings',
+          path: '/admin/configuracoes',
           label: 'Configurações',
           icon: Settings,
           color: 'gray',
@@ -175,7 +175,7 @@ const AdminLayout: React.FC = () => {
                                 isActive && "bg-gradient-to-r from-blue-50 to-blue-100/30 border-blue-200/60 shadow-sm"
                               )}
                             >
-                              <a href={item.path} className="flex items-center gap-4 relative w-full px-4 py-3">
+                              <Link to={item.path} className="flex items-center gap-4 relative w-full px-4 py-3">
                                 {isActive && (
                                   <div className="absolute -left-0.5 top-1/2 transform -translate-y-1/2 w-1 h-10 bg-blue-500 rounded-r-full" />
                                 )}
@@ -199,7 +199,7 @@ const AdminLayout: React.FC = () => {
                                     {item.description}
                                   </span>
                                 </div>
-                              </a>
+                              </Link>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                         );

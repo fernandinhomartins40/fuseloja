@@ -4,10 +4,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
 import { useSettings } from '@/contexts/SettingsContext';
+import { useUser } from '@/contexts/UserContext';
 
 export const Footer: React.FC = () => {
   const navigate = useNavigate();
   const { settings } = useSettings();
+  const { user, isAuthenticated } = useUser();
   
   // Use footer logo if available, otherwise use the main logo
   const logoUrl = settings.visual.footerLogo || settings.visual.logo;
@@ -15,6 +17,14 @@ export const Footer: React.FC = () => {
   const phone = settings.general.phone;
   const email = settings.general.email;
   const address = settings.general.address;
+
+  const handleAdminAccess = () => {
+    if (isAuthenticated && user?.role === 'admin') {
+      navigate('/admin');
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
     <footer className="bg-[#0B0909] pt-[60px] pb-0">
@@ -96,7 +106,7 @@ export const Footer: React.FC = () => {
           <Button 
             variant="outline" 
             className="mt-4 md:mt-0 border-[#D90429] text-[#D90429] hover:bg-[#D90429] hover:text-white"
-            onClick={() => navigate('/admin')}
+            onClick={handleAdminAccess}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
             Painel do Lojista

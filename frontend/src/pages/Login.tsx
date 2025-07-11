@@ -29,14 +29,13 @@ const Login: React.FC = () => {
     try {
       const success = await login(email, password);
       if (success) {
-        // Aguardar um momento para o apiUser ser atualizado
+        // Aguardar um momento para o estado ser atualizado
         setTimeout(() => {
           // Se o usuário veio de uma página específica, redirecionar para lá
           if (from) {
             navigate(from, { replace: true });
           } else {
             // Redirecionamento inteligente baseado no papel do usuário
-            // Verificar se existe apiUser após login
             const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
             if (currentUser.role === 'admin') {
               navigate('/admin', { replace: true });
@@ -44,7 +43,7 @@ const Login: React.FC = () => {
               navigate('/', { replace: true });
             }
           }
-        }, 100); // Pequeno delay para garantir que o estado seja atualizado
+        }, 500); // Aumentado delay para garantir atualização completa
       }
     } catch (error: any) {
       setError(error.message || 'Erro ao fazer login');

@@ -13,6 +13,9 @@ const adminRoutes = require('./routes/admin');
 // Import middleware
 const { authenticateToken } = require('./middleware/auth');
 
+// Import scripts
+const { createAdminUser } = require('./scripts/createAdmin');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -207,12 +210,16 @@ app.use((req, res) => {
 });
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log(`🚀 FuseLoja Backend running on port ${PORT}`);
   console.log(`📱 Health check: http://localhost:${PORT}/health`);
   console.log(`🔐 API Authentication: http://localhost:${PORT}/api/v1/auth`);
   console.log(`👥 User Management: http://localhost:${PORT}/api/v1/users`);
   console.log(`👑 Admin Panel: http://localhost:${PORT}/api/v1/admin`);
+  
+  // Create admin user on startup
+  console.log('🔧 Setting up admin user...');
+  await createAdminUser();
 });
 
 module.exports = app;

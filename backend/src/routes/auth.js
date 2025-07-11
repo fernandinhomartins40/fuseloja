@@ -218,4 +218,45 @@ router.get('/me', async (req, res) => {
   }
 });
 
+// Update current user profile endpoint (for /api/v1/auth/me)
+router.put('/me', async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+      return response.unauthorized(res, 'Access token required');
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { firstName, lastName, phone, birthDate } = req.body;
+    
+    const result = await query(
+      'UPDATE users SET first_name = $1, last_name = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 AND is_active = true RETURNING id, email, first_name, last_name, role, created_at, updated_at',
+      [firstName, lastName, decoded.userId]
+    );
+
+    if (result.rows.length === 0) {
+      return response.unauthorized(res, 'User not found or inactive');
+    }
+
+    const user = result.rows[0];
+    return response.success(res, {
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        role: user.role,
+        isEmailVerified: false,
+        createdAt: user.created_at,
+        updatedAt: user.updated_at
+      }
+    }, 'Profile updated successfully');
+  } catch (error) {
+    console.error('Update profile error:', error);
+    return response.error(res, 'Failed to update profile');
+  }
+});
+
 module.exports = router;

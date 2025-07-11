@@ -168,13 +168,30 @@ jobs:
             # Setup database and user
             echo "🗃️ Setting up PostgreSQL database..."
             sudo -u postgres psql -c "CREATE DATABASE fuseloja;" 2>/dev/null || echo "Database already exists"
-            sudo -u postgres psql -c "CREATE USER postgres WITH PASSWORD 'postgres';" 2>/dev/null || echo "User already exists"
-            sudo -u postgres psql -c "ALTER USER postgres CREATEDB;" 2>/dev/null
-            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE fuseloja TO postgres;" 2>/dev/null
+            # Set password for existing postgres user
+            sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+            sudo -u postgres psql -c "ALTER USER postgres CREATEDB;"
+            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE fuseloja TO postgres;"
+            
+            # Configure PostgreSQL for local connections
+            echo "🔧 Configuring PostgreSQL authentication..."
+            echo "local   all             postgres                                md5" > /tmp/pg_hba_local.conf
+            echo "local   all             all                                     md5" >> /tmp/pg_hba_local.conf
+            echo "host    all             all             127.0.0.1/32            md5" >> /tmp/pg_hba_local.conf
+            echo "host    all             all             ::1/128                 md5" >> /tmp/pg_hba_local.conf
+            cp /etc/postgresql/*/main/pg_hba.conf /etc/postgresql/*/main/pg_hba.conf.bak
+            cat /tmp/pg_hba_local.conf > /etc/postgresql/*/main/pg_hba.conf
+            systemctl restart postgresql
           else
             echo "✅ PostgreSQL already installed"
             # Ensure PostgreSQL is running
             systemctl start postgresql 2>/dev/null || echo "PostgreSQL already running"
+            
+            # Ensure database and user exist with correct password
+            echo "🗃️ Checking PostgreSQL configuration..."
+            sudo -u postgres psql -c "CREATE DATABASE fuseloja;" 2>/dev/null || echo "Database already exists"
+            sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE fuseloja TO postgres;"
           fi
           
           # Verify Node.js installation

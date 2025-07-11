@@ -21,18 +21,35 @@ import Unauthorized from '@/pages/Unauthorized';
 
 // Import admin pages
 import AdminDashboard from '@/pages/AdminDashboard';
+import AdminTest from '@/pages/AdminTest';
 
 // Import user pages (optional - for user profiles)
 import UserDashboard from '@/pages/UserDashboard';
 
 // Admin dashboard router that redirects to admin panel
 const AdminDashboardRouter: React.FC = () => {
-  const { apiUser } = useAuth();
+  const { apiUser, isLoading, isAuthenticated } = useAuth();
+  
+  console.log('AdminDashboardRouter - Auth state:', {
+    isAuthenticated,
+    isLoading,
+    apiUser: apiUser ? { 
+      id: apiUser.id, 
+      email: apiUser.email, 
+      role: apiUser.role 
+    } : null
+  });
+  
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
   
   if (!apiUser || apiUser.role !== 'admin') {
+    console.log('AdminDashboardRouter - Redirecting to /admin/login');
     return <Navigate to="/admin/login" replace />;
   }
   
+  console.log('AdminDashboardRouter - Loading AdminDashboard');
   return <AdminDashboard />;
 };
 
@@ -95,6 +112,10 @@ export const router = createBrowserRouter([
   {
     path: '/admin/login',
     element: <Login />,
+  },
+  {
+    path: '/admin/test',
+    element: <AdminTest />,
   },
   {
     path: '/admin',

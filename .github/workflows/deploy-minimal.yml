@@ -1,8 +1,9 @@
 name: 🚀 Deploy Fuseloja Minimal
 
 on:
-  push:
-    branches: [ main ]
+  # Disable automatic push trigger due to Git clone issues
+  # push:
+  #   branches: [ main ]
   workflow_dispatch:
     inputs:
       force_deploy:

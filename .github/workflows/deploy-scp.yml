@@ -1,6 +1,8 @@
-name: 🚀 Deploy via SCP (Backup Method)
+name: 🚀 Deploy via SCP (Primary Method)
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       force_deploy:
@@ -120,7 +122,7 @@ jobs:
           # Install system dependencies
           echo "📦 Installing system dependencies..."
           apt update -y
-          apt install -y curl git
+          apt install -y curl
           
           # Install Node.js 18 if not exists
           if ! command -v node &> /dev/null; then

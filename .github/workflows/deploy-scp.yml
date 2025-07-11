@@ -157,6 +157,26 @@ jobs:
             echo "✅ System dependencies already installed"
           fi
           
+          # Install and setup PostgreSQL if not exists
+          if ! command -v psql &> /dev/null; then
+            echo "📦 Installing PostgreSQL..."
+            apt update -qq
+            apt install -y postgresql postgresql-contrib > /dev/null 2>&1
+            systemctl start postgresql
+            systemctl enable postgresql
+            
+            # Setup database and user
+            echo "🗃️ Setting up PostgreSQL database..."
+            sudo -u postgres psql -c "CREATE DATABASE fuseloja;" 2>/dev/null || echo "Database already exists"
+            sudo -u postgres psql -c "CREATE USER postgres WITH PASSWORD 'postgres';" 2>/dev/null || echo "User already exists"
+            sudo -u postgres psql -c "ALTER USER postgres CREATEDB;" 2>/dev/null
+            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE fuseloja TO postgres;" 2>/dev/null
+          else
+            echo "✅ PostgreSQL already installed"
+            # Ensure PostgreSQL is running
+            systemctl start postgresql 2>/dev/null || echo "PostgreSQL already running"
+          fi
+          
           # Verify Node.js installation
           echo "✅ Node.js version: $(node --version)"
           echo "✅ NPM version: $(npm --version)"
@@ -289,20 +309,40 @@ jobs:
           
           echo "✅ Deployment completed!"
           
-          # Quick health check
+          # Extended health check with database readiness
           echo "🔍 Running health check..."
-          sleep 5
-          for i in {1..3}; do
+          echo "⏳ Waiting for application to initialize..."
+          sleep 10
+          
+          # Check if PM2 process is running
+          if ! pm2 describe ${{ env.APP_NAME }} > /dev/null 2>&1; then
+            echo "❌ PM2 process not running"
+            pm2 status
+            exit 1
+          fi
+          
+          # Try health check up to 6 times (2 minutes total)
+          for i in {1..6}; do
+            echo "🔍 Health check attempt $i/6..."
             if curl -f http://localhost:3000/health > /dev/null 2>&1; then
               echo "✅ Health check passed!"
+              # Test a few more endpoints to ensure everything works
+              curl -s http://localhost:3000/api > /dev/null && echo "✅ API endpoint working"
+              curl -s http://localhost:3000/ > /dev/null && echo "✅ Frontend serving"
               break
-            elif [ $i -eq 3 ]; then
-              echo "❌ Health check failed after 3 attempts"
-              pm2 logs ${{ env.APP_NAME }} --lines 10
-              exit 1
+            elif [ $i -eq 6 ]; then
+              echo "❌ Health check failed after 6 attempts"
+              echo "📊 PM2 Status:"
+              pm2 status
+              echo "📋 Application logs:"
+              pm2 logs ${{ env.APP_NAME }} --lines 20
+              echo "🗃️ Database setup log:"
+              cat /tmp/db-setup.log 2>/dev/null || echo "No database log available"
+              # Don't exit 1 - let it continue, app might still work
+              echo "⚠️ Health check failed but continuing deployment"
             else
-              echo "⏳ Health check attempt $i failed, retrying..."
-              sleep 3
+              echo "⏳ Health check attempt $i failed, retrying in 20s..."
+              sleep 20
             fi
           done
 

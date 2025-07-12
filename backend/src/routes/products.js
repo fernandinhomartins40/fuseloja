@@ -57,6 +57,18 @@ router.get('/', async (req, res) => {
     const limitOffsetString = `LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
     queryParams.push(parseInt(limit), parseInt(offset));
 
+    // First get total count
+    const countParams = queryParams.slice(0, -2); // Remove limit and offset params
+    const countResult = await query(
+      `SELECT COUNT(*) as total
+       FROM products p 
+       LEFT JOIN categories c ON p.category_id = c.id 
+       ${whereString}`,
+      countParams
+    );
+    const totalCount = parseInt(countResult.rows[0].total);
+
+    // Then get the products
     const productsResult = await query(
       `SELECT p.*, c.name as category_name 
        FROM products p 
@@ -83,7 +95,7 @@ router.get('/', async (req, res) => {
       updatedAt: p.updated_at
     }));
     
-    return response.success(res, { products, page: parseInt(page), limit: parseInt(limit), total: products.length }, 'Products listed successfully');
+    return response.success(res, { products, page: parseInt(page), limit: parseInt(limit), total: totalCount }, 'Products listed successfully');
   } catch (error) {
     console.error('List products error:', {
       message: error.message,

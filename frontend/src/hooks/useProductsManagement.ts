@@ -19,9 +19,9 @@ interface SingleProductApiResponse {
 
 // Funções de fetch da API
 const fetchProducts = async (): Promise<ProductsApiResponse> => {
-  const response = await apiClient.get<ProductsApiResponse>('/products');
+  const response = await apiClient.get<ProductsApiResponse>('/products?limit=1000');
   // A resposta da API vem em response.data (ApiResponse wrapper)
-  return response.data || { products: [], total: 0, page: 1, limit: 10 };
+  return response.data || { products: [], total: 0, page: 1, limit: 1000 };
 };
 
 const createProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<Product> => {

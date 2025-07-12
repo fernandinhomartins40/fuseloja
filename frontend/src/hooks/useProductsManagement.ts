@@ -110,43 +110,8 @@ export const useProductsManagement = () => {
     setIsFormOpen(true);
   };
 
-  // Dados de fallback para desenvolvimento
-  const fallbackProducts: Product[] = [
-    {
-      id: 'fallback-1',
-      title: 'Produto de Exemplo 1',
-      price: 99.90,
-      originalPrice: 149.90,
-      imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-      category: 'electronics',
-      stock: 10,
-      tag: 'promocao',
-      shortDescription: 'Produto de exemplo para demonstração',
-      description: 'Este é um produto de exemplo usado para testar a funcionalidade da loja.',
-      specifications: [
-        { name: 'Cor', value: 'Preto' },
-        { name: 'Material', value: 'Metal' }
-      ]
-    },
-    {
-      id: 'fallback-2',
-      title: 'Produto de Exemplo 2',
-      price: 199.90,
-      imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-      category: 'fashion',
-      stock: 5,
-      tag: 'novo',
-      shortDescription: 'Outro produto de exemplo',
-      description: 'Este é outro produto de exemplo para demonstração.',
-      specifications: [
-        { name: 'Tamanho', value: 'M' },
-        { name: 'Material', value: 'Algodão' }
-      ]
-    }
-  ];
-
-  // Use API data if available, otherwise fall back to example data
-  const products = productsData?.products?.length > 0 ? productsData.products : fallbackProducts;
+  // Always use API data - if no data available, show empty state
+  const products = productsData?.products || [];
 
   // Funções específicas para adicionar e atualizar
   const handleAddProduct = (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -162,7 +127,7 @@ export const useProductsManagement = () => {
     isLoading,
     isError,
     error: error?.message,
-    apiDataAvailable: (productsData?.products?.length || 0) > 0,
+    apiDataAvailable: true, // Always expect API data
     totalProducts: products.length,
     editingProduct,
     isFormOpen,

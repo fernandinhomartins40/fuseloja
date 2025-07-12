@@ -11,6 +11,7 @@
     "lint": "echo \"Lint skipped\" && exit 0",
     "deploy:setup": "npm ci --production && npx pm2 start src/index.js --name fuseloja-minimal",
     "deploy:restart": "npx pm2 restart fuseloja-minimal",
+    "deploy:reload": "npx pm2 reload fuseloja-minimal",
     "deploy:stop": "npx pm2 stop fuseloja-minimal",
     "deploy:logs": "npx pm2 logs fuseloja-minimal"
   },

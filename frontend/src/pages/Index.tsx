@@ -8,6 +8,7 @@ import { PromotionProducts } from '../components/sections/PromotionProducts';
 import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocomplete';
 import { NewArrivals } from '../components/sections/NewArrivals';
+import { BestSellers } from '../components/sections/BestSellers';
 
 const Index = () => {
   return <div className="min-h-screen flex flex-col">
@@ -27,8 +28,7 @@ const Index = () => {
         </section>
         <CategoryIcons />
         <NewArrivals />
-        
-        
+        <BestSellers />
         <DynamicCategoryCarousels />
         
         

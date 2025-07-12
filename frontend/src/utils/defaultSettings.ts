@@ -50,19 +50,76 @@ export const defaultSettings: StoreSettings = {
     banners: [
       {
         id: "1",
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+        image: "/lovable-uploads/ebda897d-7a2c-4efe-9208-e4a4d94ae3e2.png",
         title: "Novidades para você",
         subtitle: "Confira os lançamentos da estação",
         actionText: "Ver ofertas",
         actionLink: "/ofertas",
-        active: true
+        active: true,
+        textPosition: "left",
+        textColor: "#ffffff",
+        backgroundColor: "#000000",
+        overlay: {
+          enabled: true,
+          color: "#000000",
+          opacity: 40
+        }
+      },
+      {
+        id: "2",
+        image: "/lovable-uploads/addb029a-6ab4-4684-b7fc-ab0bf991fe7e.png",
+        title: "Ofertas Especiais",
+        subtitle: "Até 50% de desconto em produtos selecionados",
+        actionText: "Comprar agora",
+        actionLink: "/ofertas",
+        active: true,
+        textPosition: "center",
+        textColor: "#ffffff",
+        backgroundColor: "#1e293b",
+        overlay: {
+          enabled: true,
+          color: "#000000",
+          opacity: 30
+        }
+      },
+      {
+        id: "3",
+        image: "/lovable-uploads/5a9b8c6c-0135-4082-b30a-84b29edbe1cf.png",
+        title: "Tecnologia Avançada",
+        subtitle: "Os melhores produtos para o seu dia a dia",
+        actionText: "Explorar",
+        actionLink: "/produtos",
+        active: true,
+        textPosition: "right",
+        textColor: "#ffffff",
+        backgroundColor: "#1e293b",
+        overlay: {
+          enabled: true,
+          color: "#000000",
+          opacity: 35
+        }
       }
     ],
     autoplay: true,
     duration: 5000,
-    transition: "fade",
+    transition: "slide",
     showDots: true,
-    showArrows: true
+    showArrows: true,
+    height: 500,
+    aspectRatio: "16:9",
+    navigation: {
+      arrowStyle: "default",
+      arrowColor: "#ffffff",
+      arrowSize: "md",
+      dotStyle: "default",
+      dotColor: "#ffffff",
+      dotActiveColor: "#ffffff"
+    },
+    effects: {
+      parallax: false,
+      kenBurns: false,
+      fadeInText: true
+    }
   },
   featureCards: {
     enabled: true,

@@ -7,6 +7,7 @@ interface SettingsContextType {
   updateSettings: (newSettings: StoreSettings) => void;
   updateGeneralSettings: (generalSettings: StoreSettings['general']) => void;
   updateVisualSettings: (visualSettings: StoreSettings['visual']) => void;
+  updateSliderSettings: (sliderSettings: StoreSettings['slider']) => void;
   updateBannerSettings: (bannerSettings: StoreSettings['banners']) => void;
   updatePageContent: (pageContent: StoreSettings['pageContent']) => void;
   saveSettings: () => Promise<void>;
@@ -142,6 +143,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     setHasUnsavedChanges(true);
   };
 
+  const updateSliderSettings = (sliderSettings: StoreSettings['slider']) => {
+    const newSettings = { ...settings, slider: sliderSettings };
+    setSettings(newSettings);
+    setHasUnsavedChanges(true);
+  };
+
   const updateBannerSettings = (bannerSettings: StoreSettings['banners']) => {
     const newSettings = { ...settings, banners: bannerSettings };
     setSettings(newSettings);
@@ -210,6 +217,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     updateSettings,
     updateGeneralSettings,
     updateVisualSettings,
+    updateSliderSettings,
     updateBannerSettings,
     updatePageContent,
     saveSettings,

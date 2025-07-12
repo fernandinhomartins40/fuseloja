@@ -54,12 +54,35 @@ export interface SliderSettings {
     actionText: string;
     actionLink: string;
     active: boolean;
+    textPosition?: 'left' | 'center' | 'right';
+    textColor?: string;
+    backgroundColor?: string;
+    overlay?: {
+      enabled: boolean;
+      color: string;
+      opacity: number;
+    };
   }>;
   autoplay: boolean;
   duration: number;
   transition: 'fade' | 'slide';
   showDots: boolean;
   showArrows: boolean;
+  height?: number;
+  aspectRatio?: 'auto' | '16:9' | '21:9' | '4:3' | '1:1';
+  navigation: {
+    arrowStyle: 'default' | 'modern' | 'minimal';
+    arrowColor: string;
+    arrowSize: 'sm' | 'md' | 'lg';
+    dotStyle: 'default' | 'modern' | 'minimal';
+    dotColor: string;
+    dotActiveColor: string;
+  };
+  effects: {
+    parallax: boolean;
+    kenBurns: boolean;
+    fadeInText: boolean;
+  };
 }
 
 export interface FeatureCardsSettings {

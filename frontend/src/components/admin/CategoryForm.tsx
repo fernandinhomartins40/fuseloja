@@ -152,36 +152,40 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
         </div>
         
         {/* Preview */}
-        {category.name && category.icon && category.color && (
-          <div className="mt-4 border rounded p-4">
-            <p className="text-sm font-medium mb-2">Preview:</p>
-            <div className="flex items-center gap-2">
-              {category.icon && (
-                <div 
-                  className="p-2 rounded-full"
-                  style={{ 
-                    backgroundColor: category.color 
-                  }}
-                >
-                  {(() => {
-                    const IconComp = category.icon ? 
-                      iconComponents[category.icon as IconName] : 
-                      null;
-                    return IconComp ? 
-                      <IconComp 
-                        className="h-5 w-5" 
-                        style={{ 
-                          color: textColor
-                        }}
-                      /> : 
-                      null;
-                  })()}
+        <div className="mt-4 border rounded-lg p-4 bg-gray-50">
+          <p className="text-sm font-medium mb-3">Preview da Categoria:</p>
+          <div className="flex items-center gap-3">
+            <div 
+              className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm"
+              style={{ 
+                backgroundColor: category.color || '#E5DEFF'
+              }}
+            >
+              {category.icon && iconComponents[category.icon as IconName] ? (
+                React.createElement(iconComponents[category.icon as IconName], {
+                  size: 24,
+                  color: textColor,
+                  className: "drop-shadow-sm"
+                })
+              ) : (
+                <div className="w-6 h-6 bg-white/50 rounded-full flex items-center justify-center">
+                  <span className="text-xs">?</span>
                 </div>
               )}
-              <span className="font-medium">{category.name}</span>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                {category.name || 'Nome da categoria'}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {category.description || 'Descrição da categoria'}
+              </p>
+              <div className="text-xs text-gray-400 font-mono mt-1">
+                Ícone: {category.icon || 'não selecionado'} | Cor: {category.color || 'não definida'}
+              </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
       
       <div className="flex justify-end gap-2 pt-2">

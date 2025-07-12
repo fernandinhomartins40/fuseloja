@@ -46,9 +46,16 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch orders from API on mount
+  // Load orders from localStorage on mount (no API call for public users)
   useEffect(() => {
-    fetchOrders();
+    const savedOrders = localStorage.getItem('orders');
+    if (savedOrders) {
+      try {
+        setOrders(JSON.parse(savedOrders));
+      } catch (parseError) {
+        console.error('Failed to parse orders from localStorage:', parseError);
+      }
+    }
   }, []);
 
   const fetchOrders = async () => {

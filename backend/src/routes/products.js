@@ -134,38 +134,23 @@ router.get('/best-sellers', async (req, res) => {
 
     let productsResult;
 
-    if (tableCheck.rows[0].orders_exist) {
-      // If orders table exists, get best sellers based on actual sales
-      console.log('📊 Getting best sellers based on order data');
-      productsResult = await query(`
-        SELECT p.*, c.name as category_name, 
-               COALESCE(sales.total_sold, 0) as total_sold
-        FROM products p 
-        LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN (
-          SELECT 
-            json_extract_path_text(item.value, 'id') as product_id,
-            SUM(json_extract_path_text(item.value, 'quantity')::integer) as total_sold
-          FROM orders o,
-          json_array_elements(o.items) as item
-          GROUP BY json_extract_path_text(item.value, 'id')
-        ) sales ON p.id::text = sales.product_id
-        WHERE p.is_active = true
-        ORDER BY COALESCE(sales.total_sold, 0) DESC, p.created_at DESC
-        LIMIT $1
-      `, [limit]);
-    } else {
-      // Fallback: get random products
-      console.log('🎲 Orders table not found, getting random products');
-      productsResult = await query(`
-        SELECT p.*, c.name as category_name, 0 as total_sold
-        FROM products p 
-        LEFT JOIN categories c ON p.category_id = c.id
-        WHERE p.is_active = true
-        ORDER BY RANDOM()
-        LIMIT $1
-      `, [limit]);
-    }
+    // Simplified best sellers - use products with 'promocao' tag or highest price (popular items)
+    console.log('📊 Getting best sellers - simplified approach');
+    productsResult = await query(`
+      SELECT p.*, c.name as category_name
+      FROM products p 
+      LEFT JOIN categories c ON p.category_id = c.id 
+      WHERE p.is_active = true
+      ORDER BY 
+        CASE 
+          WHEN p.tag = 'promocao' THEN 1
+          WHEN p.tag = 'novo' THEN 2
+          ELSE 3
+        END,
+        p.price DESC,
+        p.created_at DESC
+      LIMIT $1
+    `, [limit]);
 
     const products = productsResult.rows.map(p => ({
       id: p.id,

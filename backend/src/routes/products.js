@@ -95,7 +95,7 @@ router.get('/', async (req, res) => {
       updatedAt: p.updated_at
     }));
     
-    return response.success(res, { products, page: parseInt(page), limit: parseInt(limit), total: totalCount }, 'Products listed successfully');
+    return response.success(res, { products, page: parseInt(page), limit: parseInt(limit), total: totalCount }, 'Products listed successfully (updated)');
   } catch (error) {
     console.error('List products error:', {
       message: error.message,

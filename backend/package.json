@@ -9,11 +9,11 @@
     "test": "echo \"Sem testes ainda\" && exit 0",
     "build": "echo \"No build needed for JavaScript\" && exit 0",
     "lint": "echo \"Lint skipped\" && exit 0",
-    "deploy:setup": "npm ci --production && npx pm2 start src/index.js --name fuseloja-minimal",
-    "deploy:restart": "npx pm2 restart fuseloja-minimal",
-    "deploy:reload": "npx pm2 reload fuseloja-minimal",
-    "deploy:stop": "npx pm2 stop fuseloja-minimal",
-    "deploy:logs": "npx pm2 logs fuseloja-minimal"
+    "deploy:setup": "npm ci --production && systemctl --user enable fuseloja.service && systemctl --user start fuseloja.service",
+    "deploy:restart": "systemctl --user restart fuseloja.service",
+    "deploy:stop": "systemctl --user stop fuseloja.service",
+    "deploy:status": "systemctl --user status fuseloja.service",
+    "deploy:logs": "journalctl --user -u fuseloja.service -f"
   },
   "keywords": [
     "express",

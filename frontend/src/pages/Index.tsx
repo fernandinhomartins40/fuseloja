@@ -9,13 +9,23 @@ import { FloatingCartButton } from '../components/cart/FloatingCartButton';
 import { SearchBarWithAutocomplete } from '../components/ui/SearchBarWithAutocomplete';
 import { NewArrivals } from '../components/sections/NewArrivals';
 import { BestSellers } from '../components/sections/BestSellers';
+import { useSettings } from '@/contexts/SettingsContext';
 
 const Index = () => {
+  const { settings } = useSettings();
+  const headerHeight = settings.navbar.height || 80;
+  
   return <div className="min-h-screen flex flex-col">
       {/* Header is already provided by PublicLayout in router */}
       
       {/* Main content with proper spacing - start directly after fixed header */}
-      <div className="bg-slate-950 -mt-20 pt-20">
+      <div 
+        className="bg-slate-950"
+        style={{ 
+          marginTop: `-${headerHeight}px`,
+          paddingTop: `${headerHeight}px`
+        }}
+      >
         <Marquee />
         <HeroSlider />
         <PromotionProducts />

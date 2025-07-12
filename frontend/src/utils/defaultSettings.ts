@@ -19,11 +19,32 @@ export const defaultSettings: StoreSettings = {
   },
   navbar: {
     logo: "https://cdn.builder.io/api/v1/image/assets/TEMP/e090bda74d8b6b74bc4d3502a92715f9622ce8f5",
+    logoWidth: 120,
+    logoHeight: 34,
     showSearch: true,
     showCategories: true,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#1e293b", // slate-950
+    borderColor: "#334155", // slate-700
+    borderWidth: 0,
     textColor: "#2B2D42",
-    sticky: true
+    sticky: true,
+    height: 80,
+    menu: {
+      color: "#ffffff",
+      hoverColor: "#D90429",
+      activeColor: "#D90429",
+      fontWeight: "normal",
+      fontSize: "base",
+      textTransform: "none"
+    },
+    icons: {
+      color: "#ffffff",
+      hoverColor: "#D90429",
+      size: 24,
+      hoverAnimation: "scale",
+      hoverAnimationDuration: 300,
+      hoverAnimationIntensity: 10
+    }
   },
   slider: {
     banners: [

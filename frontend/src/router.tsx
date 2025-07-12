@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { useSettings } from '@/contexts/SettingsContext';
 
 // Layout Components
 import { Header } from '@/components/layout/Header';
@@ -31,10 +32,13 @@ import Settings from '@/pages/admin/Settings';
 
 // Layout wrapper for public pages
 const PublicLayout = ({ children }: { children: React.ReactNode }) => {
+  const { settings } = useSettings();
+  const headerHeight = settings.navbar.height || 80;
+  
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-20">
+      <main style={{ paddingTop: `${headerHeight}px` }}>
         {children}
       </main>
     </div>

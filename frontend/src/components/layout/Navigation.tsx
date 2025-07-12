@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ShoppingCart, UserRound, LogOut } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -25,35 +25,142 @@ export const Navigation: React.FC = () => {
   const {
     settings
   } = useSettings();
+  const location = useLocation();
   const [loginSheetOpen, setLoginSheetOpen] = useState(false);
+  
+  const navbarConfig = settings.navbar;
+  
+  // Helper function to determine if a menu item is active
+  const isActiveRoute = (path: string) => {
+    return location.pathname === path;
+  };
+  
+  // Generate dynamic styles
+  const menuItemStyle = (isActive: boolean = false) => ({
+    color: isActive ? navbarConfig.menu.activeColor : navbarConfig.menu.color,
+    fontWeight: navbarConfig.menu.fontWeight,
+    fontSize: getFontSize(navbarConfig.menu.fontSize),
+    textTransform: navbarConfig.menu.textTransform,
+    transition: 'all 0.3s ease',
+  });
+  
+  const menuItemHoverStyle = {
+    color: navbarConfig.menu.hoverColor,
+  };
+  
+  const iconStyle = {
+    color: navbarConfig.icons.color,
+    width: `${navbarConfig.icons.size}px`,
+    height: `${navbarConfig.icons.size}px`,
+    transition: `all ${navbarConfig.icons.hoverAnimationDuration}ms ease`,
+  };
+  
+  const iconHoverStyle = {
+    color: navbarConfig.icons.hoverColor,
+    transform: getIconHoverTransform(),
+  };
+  
+  const logoStyle = {
+    height: navbarConfig.logoHeight ? `${navbarConfig.logoHeight}px` : '34px',
+    width: navbarConfig.logoWidth ? `${navbarConfig.logoWidth}px` : 'auto',
+  };
+  
+  // Helper functions
+  function getFontSize(size: string): string {
+    const sizeMap = {
+      'xs': '0.75rem',
+      'sm': '0.875rem', 
+      'base': '1rem',
+      'lg': '1.125rem',
+      'xl': '1.25rem'
+    };
+    return sizeMap[size as keyof typeof sizeMap] || '1rem';
+  }
+  
+  function getIconHoverTransform(): string {
+    const { hoverAnimation, hoverAnimationIntensity } = navbarConfig.icons;
+    switch (hoverAnimation) {
+      case 'scale':
+        return `scale(${1 + (hoverAnimationIntensity / 100)})`;
+      case 'rotate':
+        return `rotate(${hoverAnimationIntensity * 3.6}deg)`;
+      case 'bounce':
+        return `translateY(-${hoverAnimationIntensity / 10}px)`;
+      case 'pulse':
+        return 'scale(1.1)';
+      default:
+        return 'none';
+    }
+  }
   const handleLogout = () => {
     logout();
   };
   const handleLoginSuccess = () => {
     setLoginSheetOpen(false);
   };
-  return <div className="flex justify-between items-center h-full px-4 bg-slate-950">
+  return <div className="flex justify-between items-center h-full px-4" style={{ backgroundColor: navbarConfig.backgroundColor }}>
       <Link to="/">
-        <img src={settings.visual.logo} alt={settings.general.storeName} className="h-[34px]" />
+        <img 
+          src={settings.visual.logo} 
+          alt={settings.general.storeName} 
+          style={logoStyle}
+          className="object-contain transition-all duration-300"
+        />
       </Link>
       
       <nav className="flex gap-[15px] max-sm:hidden" aria-label="Navegação Principal">
-        <Link to="/" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
+        <Link 
+          to="/" 
+          className="no-underline transition-all duration-300"
+          style={menuItemStyle(isActiveRoute('/'))}
+          onMouseEnter={(e) => Object.assign(e.currentTarget.style, menuItemHoverStyle)}
+          onMouseLeave={(e) => Object.assign(e.currentTarget.style, menuItemStyle(isActiveRoute('/')))}
+        >
           Início
         </Link>
-        <a href="#" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
+        <a 
+          href="#" 
+          className="no-underline transition-all duration-300"
+          style={menuItemStyle()}
+          onMouseEnter={(e) => Object.assign(e.currentTarget.style, menuItemHoverStyle)}
+          onMouseLeave={(e) => Object.assign(e.currentTarget.style, menuItemStyle())}
+        >
           Ofertas
         </a>
-        <a href="#" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
+        <a 
+          href="#" 
+          className="no-underline transition-all duration-300"
+          style={menuItemStyle()}
+          onMouseEnter={(e) => Object.assign(e.currentTarget.style, menuItemHoverStyle)}
+          onMouseLeave={(e) => Object.assign(e.currentTarget.style, menuItemStyle())}
+        >
           Novidades
         </a>
-        <a href="#" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
+        <a 
+          href="#" 
+          className="no-underline transition-all duration-300"
+          style={menuItemStyle()}
+          onMouseEnter={(e) => Object.assign(e.currentTarget.style, menuItemHoverStyle)}
+          onMouseLeave={(e) => Object.assign(e.currentTarget.style, menuItemStyle())}
+        >
           Categorias
         </a>
-        <Link to="/sobre" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
+        <Link 
+          to="/sobre" 
+          className="no-underline transition-all duration-300"
+          style={menuItemStyle(isActiveRoute('/sobre'))}
+          onMouseEnter={(e) => Object.assign(e.currentTarget.style, menuItemHoverStyle)}
+          onMouseLeave={(e) => Object.assign(e.currentTarget.style, menuItemStyle(isActiveRoute('/sobre')))}
+        >
           Sobre Nós
         </Link>
-        <Link to="/contato" className="text-white no-underline text-base hover:text-[#D90429] transition-colors">
+        <Link 
+          to="/contato" 
+          className="no-underline transition-all duration-300"
+          style={menuItemStyle(isActiveRoute('/contato'))}
+          onMouseEnter={(e) => Object.assign(e.currentTarget.style, menuItemHoverStyle)}
+          onMouseLeave={(e) => Object.assign(e.currentTarget.style, menuItemStyle(isActiveRoute('/contato')))}
+        >
           Contato
         </Link>
       </nav>
@@ -61,11 +168,17 @@ export const Navigation: React.FC = () => {
       <div className="flex items-center gap-4">
         {isAuthenticated ? <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="relative text-white hover:text-[#D90429] transition-colors flex items-center" aria-label="Perfil do usuário">
-                {user?.avatar ? <Avatar className="h-8 w-8">
+              <button 
+                className="relative flex items-center transition-all"
+                style={iconStyle}
+                onMouseEnter={(e) => Object.assign(e.currentTarget.style, iconHoverStyle)}
+                onMouseLeave={(e) => Object.assign(e.currentTarget.style, iconStyle)}
+                aria-label="Perfil do usuário"
+              >
+                {user?.avatar ? <Avatar style={{ width: `${navbarConfig.icons.size}px`, height: `${navbarConfig.icons.size}px` }}>
                     <AvatarImage src={user.avatar} alt={user.name} />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                  </Avatar> : <UserRound size={24} />}
+                  </Avatar> : <UserRound />}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
@@ -98,8 +211,14 @@ export const Navigation: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu> : <Sheet open={loginSheetOpen} onOpenChange={setLoginSheetOpen}>
             <SheetTrigger asChild>
-              <button className="relative text-white hover:text-[#D90429] transition-colors" aria-label="Entrar">
-                <UserRound size={24} />
+              <button 
+                className="relative transition-all"
+                style={iconStyle}
+                onMouseEnter={(e) => Object.assign(e.currentTarget.style, iconHoverStyle)}
+                onMouseLeave={(e) => Object.assign(e.currentTarget.style, iconStyle)}
+                aria-label="Entrar"
+              >
+                <UserRound />
               </button>
             </SheetTrigger>
             <SheetContent>
@@ -116,12 +235,18 @@ export const Navigation: React.FC = () => {
         
         {/* Cart button that opens the cart drawer */}
         <button
-          className="relative text-white hover:text-[#D90429] transition-colors"
+          className="relative transition-all"
+          style={iconStyle}
+          onMouseEnter={(e) => Object.assign(e.currentTarget.style, iconHoverStyle)}
+          onMouseLeave={(e) => Object.assign(e.currentTarget.style, iconStyle)}
           aria-label="Carrinho de compras"
           onClick={openCart}
         >
-          <ShoppingCart size={24} />
-          <div className="absolute -top-2 -right-2 w-5 h-5 text-white text-[10px] bg-[#D90429] rounded-full flex items-center justify-center">
+          <ShoppingCart />
+          <div 
+            className="absolute -top-2 -right-2 w-5 h-5 text-white text-[10px] rounded-full flex items-center justify-center transition-all duration-300"
+            style={{ backgroundColor: navbarConfig.menu.activeColor }}
+          >
             {totalItems}
           </div>
         </button>

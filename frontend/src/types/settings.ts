@@ -17,11 +17,32 @@ export interface GeneralSettings {
 
 export interface NavbarSettings {
   logo: string;
+  logoWidth?: number;
+  logoHeight?: number;
   showSearch: boolean;
   showCategories: boolean;
   backgroundColor: string;
+  borderColor?: string;
+  borderWidth?: number;
   textColor: string;
   sticky: boolean;
+  height?: number;
+  menu: {
+    color: string;
+    hoverColor: string;
+    activeColor: string;
+    fontWeight: 'normal' | 'medium' | 'semibold' | 'bold';
+    fontSize: 'xs' | 'sm' | 'base' | 'lg' | 'xl';
+    textTransform: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
+  };
+  icons: {
+    color: string;
+    hoverColor: string;
+    size: number;
+    hoverAnimation: 'none' | 'scale' | 'rotate' | 'bounce' | 'pulse';
+    hoverAnimationDuration: number;
+    hoverAnimationIntensity: number;
+  };
 }
 
 export interface SliderSettings {

@@ -15,20 +15,26 @@ interface CategoryFormProps {
   onCancel: () => void;
 }
 
-export const CategoryForm: React.FC<CategoryFormProps> = ({ 
-  initialData, 
-  onSubmit, 
-  onCancel 
+export const CategoryForm: React.FC<CategoryFormProps> = ({
+  initialData,
+  onSubmit,
+  onCancel
 }) => {
-  const [category, setCategory] = useState<Partial<Category>>(
-    initialData || {
+  const [category, setCategory] = useState<Partial<Category>>(() => {
+    const defaultCategory = {
       name: '',
       slug: '',
       description: '',
       icon: '',
       color: '#E5DEFF', // Default color
-    }
-  );
+    };
+    return {
+      ...defaultCategory,
+      ...(initialData || {}),
+      // Ensure color is always a string, even if initialData.color is null/undefined
+      color: (initialData && initialData.color) ? initialData.color : defaultCategory.color,
+    };
+  });
 
   const handleChange = (field: keyof Category, value: any) => {
     setCategory(prev => {

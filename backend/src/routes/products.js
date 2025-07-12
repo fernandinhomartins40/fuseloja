@@ -8,7 +8,15 @@ const router = express.Router();
 // GET /api/v1/products - List all products (public)
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, category, search, tag, sortBy = 'created_at', order = 'desc', price_min, price_max } = req.query;
+    const { page = 1, limit = 1000, category, search, tag, sortBy = 'created_at', order = 'desc', price_min, price_max } = req.query;
+    
+    // Debug log
+    console.log('🔍 Products API Debug:', {
+      host: req.get('host'),
+      limit: limit,
+      query: req.query,
+      ip: req.ip
+    });
     const offset = (page - 1) * limit;
 
     // Verificar se as tabelas existem primeiro

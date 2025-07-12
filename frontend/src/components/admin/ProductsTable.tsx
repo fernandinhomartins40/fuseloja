@@ -36,7 +36,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                 <TableCell>
                   <div className="w-12 h-12 rounded overflow-hidden">
                     <img 
-                      src={product.image} 
+                      src={product.imageUrl} 
                       alt={product.title} 
                       className="w-full h-full object-cover"
                     />

@@ -29,7 +29,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
       id: '',
       title: '',
       price: 0,
-      image: '',
+      imageUrl: '',
       category: '',
       stock: 0,
       images: [],
@@ -43,8 +43,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
   
   // Initialize images array with main image if it exists and images is empty
   useEffect(() => {
-    if (product.image && (!product.images || product.images.length === 0)) {
-      setImages([product.image]);
+    if (product.imageUrl && (!product.images || product.images.length === 0)) {
+      setImages([product.imageUrl]);
     }
   }, []);
   
@@ -80,7 +80,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
 
   // Update main image and images array
   const handleMainImageChange = (newMainImage: string) => {
-    handleChange('image', newMainImage);
+    handleChange('imageUrl', newMainImage);
   };
   
   const handleImagesChange = (newImages: string[]) => {
@@ -138,7 +138,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
         <TabsContent value="images" className="pt-4">
           <UnifiedProductImageUploader
             images={images}
-            mainImage={product.image}
+            mainImage={product.imageUrl}
             onImagesChange={handleImagesChange}
             onMainImageChange={handleMainImageChange}
           />

@@ -8,7 +8,7 @@ interface ProductCardProps {
   price: number;
   originalPrice?: number;
   installments?: number;
-  image: string;
+  imageUrl: string;
   tag?: TagType;
   id?: string;
 }
@@ -17,7 +17,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   price,
   originalPrice,
   installments = 6,
-  image,
+  imageUrl,
   tag,
   id = "p001" // Fallback ID if none provided
 }) => {
@@ -31,7 +31,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       id,
       title,
       price,
-      image,
+      imageUrl,
       stock: 1,
       // We don't have this info in the ProductCard, assume it's available
       category: "" // We don't have this info in the ProductCard
@@ -47,7 +47,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           )}
           <img 
-            src={image} 
+            src={imageUrl} 
             alt={title} 
             className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110" 
           />

@@ -13,6 +13,11 @@ import { Package2, Plus } from 'lucide-react';
 const Products: React.FC = () => {
   const {
     products,
+    isLoading,
+    isError,
+    error,
+    apiDataAvailable,
+    totalProducts,
     editingProduct,
     isFormOpen,
     setIsFormOpen,
@@ -22,6 +27,16 @@ const Products: React.FC = () => {
     handleUpdateProduct,
     handleNewProductClick
   } = useProductsManagement();
+
+  // Debug information
+  console.log('Products Page Debug:', {
+    productsCount: products.length,
+    isLoading,
+    isError,
+    error,
+    apiDataAvailable,
+    totalProducts
+  });
 
   // Filter configuration for products
   const filterConfig: FilterOption[] = [
@@ -103,8 +118,8 @@ const Products: React.FC = () => {
         { label: 'Produtos' }
       ]}
       badge={{
-        text: `${filteredData.length} de ${products.length} itens`,
-        variant: 'secondary'
+        text: `${filteredData.length} de ${products.length} itens ${!apiDataAvailable ? '(dados de exemplo)' : '(do banco)'}`,
+        variant: apiDataAvailable ? 'secondary' : 'outline'
       }}
       action={{
         label: 'Novo Produto',

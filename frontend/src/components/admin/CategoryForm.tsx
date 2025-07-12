@@ -61,7 +61,17 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       return;
     }
     
-    onSubmit(category as Omit<Category, 'id'>);
+    // Ensure all required fields are present
+    const categoryData = {
+      name: category.name,
+      slug: category.slug,
+      description: category.description || '',
+      icon: category.icon,
+      color: category.color,
+    };
+    
+    console.log('Submitting category data:', categoryData);
+    onSubmit(categoryData);
   };
 
   // Get text color based on background color for better contrast

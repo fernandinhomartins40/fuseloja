@@ -60,16 +60,16 @@ class ECommerceService {
    * Cria uma nova categoria.
    */
   async createCategory(categoryData: Omit<Category, 'id'>): Promise<Category> {
-    const response = await apiClient.post<Category>('/categories', categoryData);
-    return response.data;
+    const response = await apiClient.post<{ category: Category }>('/categories', categoryData);
+    return response.data.category;
   }
 
   /**
    * Atualiza uma categoria existente.
    */
   async updateCategory(id: string, categoryData: Partial<Category>): Promise<Category> {
-    const response = await apiClient.put<Category>(`/categories/${id}`, categoryData);
-    return response.data;
+    const response = await apiClient.put<{ category: Category }>(`/categories/${id}`, categoryData);
+    return response.data.category;
   }
 
   /**

@@ -33,24 +33,27 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => 
   };
 
   const presetColors = [
-    '#D90429', '#2B2D42', '#EF233C', '#8D99AE', '#EDF2F4',
-    '#05668D', '#028090', '#00A896', '#02C39A', '#F0F3BD',
-    '#22223B', '#4A4E69', '#9A8C98', '#C9ADA7', '#F2E9E4',
+    '#3B82F6', '#EC4899', '#10B981', '#EF4444', '#8B5CF6',
+    '#F59E0B', '#06B6D4', '#84CC16', '#F97316', '#14B8A6',
+    '#6366F1', '#D946EF', '#059669', '#DC2626', '#7C3AED',
+    '#CA8A04', '#0891B2', '#65A30D', '#EA580C', '#0D9488',
   ];
 
   return (
     <Popover open={isOpen} onOpenChange={handlePopoverOpenChange}>
       <PopoverTrigger asChild>
-        <div className="flex items-center gap-2 cursor-pointer">
+        <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-md transition-colors">
           <div
-            className="w-10 h-10 border rounded-md shadow-sm"
+            className="w-10 h-10 border-2 border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow"
             style={{ backgroundColor: currentColor }}
+            title={`Cor atual: ${currentColor}`}
           />
           <Input
             value={currentColor}
             onChange={handleColorChange}
             onBlur={handleBlur}
-            className="w-32"
+            className="w-32 font-mono text-sm"
+            placeholder="#000000"
           />
         </div>
       </PopoverTrigger>

@@ -14,12 +14,78 @@ export const Footer: React.FC = () => {
   const { refreshProfile, apiUser } = useAuth();
   const [isNavigating, setIsNavigating] = useState(false);
   
-  // Use footer logo if available, otherwise use the main logo
-  const logoUrl = settings.visual.footerLogo || settings.visual.logo;
+  // Get configuration values
+  const footerConfig = settings.footer;
+  const logoUrl = footerConfig.logo || settings.visual.footerLogo || settings.visual.logo;
   const storeName = settings.general.storeName;
   const phone = settings.general.phone;
   const email = settings.general.email;
   const address = settings.general.address;
+
+  // Helper functions for styling
+  const getFontSize = (size: string) => {
+    const sizeMap = {
+      'sm': 'text-sm',
+      'base': 'text-base',
+      'lg': 'text-lg'
+    };
+    return sizeMap[size as keyof typeof sizeMap] || 'text-base';
+  };
+
+  const getFontWeight = (weight: string) => {
+    const weightMap = {
+      'normal': 'font-normal',
+      'medium': 'font-medium',
+      'semibold': 'font-semibold',
+      'bold': 'font-bold'
+    };
+    return weightMap[weight as keyof typeof weightMap] || 'font-normal';
+  };
+
+  const getHeadingFontSize = (size: string) => {
+    const sizeMap = {
+      'lg': 'text-lg',
+      'xl': 'text-xl',
+      '2xl': 'text-2xl',
+      '3xl': 'text-3xl'
+    };
+    return sizeMap[size as keyof typeof sizeMap] || 'text-2xl';
+  };
+
+  // Dynamic styles
+  const footerStyle = {
+    backgroundColor: footerConfig.backgroundColor,
+    paddingTop: `${footerConfig.styling.padding.top}px`,
+    paddingBottom: `${footerConfig.styling.padding.bottom}px`,
+    fontFamily: footerConfig.styling.fontFamily,
+  };
+
+  const logoStyle = {
+    maxHeight: footerConfig.logoHeight ? `${footerConfig.logoHeight}px` : '64px',
+    maxWidth: footerConfig.logoWidth ? `${footerConfig.logoWidth}px` : 'auto',
+  };
+
+  const textStyle = {
+    color: footerConfig.textColor,
+  };
+
+  const headingStyle = {
+    color: footerConfig.styling.headingColor,
+  };
+
+  const linkStyle = {
+    color: footerConfig.textColor,
+    marginBottom: `${footerConfig.styling.linkSpacing}px`,
+  };
+
+  const linkHoverStyle = {
+    color: footerConfig.textHoverColor,
+  };
+
+  const borderStyle = {
+    borderTopWidth: `${footerConfig.styling.borderWidth}px`,
+    borderTopColor: footerConfig.styling.borderColor,
+  };
 
   // Log estado atual para debug
   useEffect(() => {
@@ -81,63 +147,154 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[#0B0909] pt-[60px] pb-0">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+    <footer 
+      className={`${getFontSize(footerConfig.styling.fontSize)} ${getFontWeight(footerConfig.styling.fontWeight)}`}
+      style={footerStyle}
+    >
+      <div className="container mx-auto" style={{ paddingLeft: `${footerConfig.styling.padding.horizontal}px`, paddingRight: `${footerConfig.styling.padding.horizontal}px` }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-10" style={{ gap: `${footerConfig.styling.sectionSpacing}px` }}>
           <div>
             <img
               src={logoUrl}
               alt={storeName}
-              className="max-h-16"
+              className="object-contain transition-all duration-300"
+              style={logoStyle}
             />
+            {footerConfig.description && (
+              <p 
+                className="mt-4 leading-relaxed"
+                style={textStyle}
+              >
+                {footerConfig.description}
+              </p>
+            )}
           </div>
           
           <div>
-            <h4 className="text-white text-2xl mb-5">Links</h4>
-            <nav className="flex flex-col gap-2.5">
-              <Link to="/" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Início</Link>
-              <Link to="/" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Ofertas</Link>
-              <Link to="/" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Categorias</Link>
-              {settings.footer.links.aboutUs && (
-                <Link to="/sobre" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Sobre</Link>
+            <h4 
+              className={`${getHeadingFontSize(footerConfig.styling.headingFontSize)} ${getFontWeight(footerConfig.styling.headingFontWeight)} mb-5`}
+              style={headingStyle}
+            >
+              Links
+            </h4>
+            <nav className="flex flex-col" style={{ gap: `${footerConfig.styling.linkSpacing}px` }}>
+              <Link 
+                to="/" 
+                className="no-underline transition-colors duration-300"
+                style={linkStyle}
+                onMouseEnter={(e) => Object.assign(e.currentTarget.style, linkHoverStyle)}
+                onMouseLeave={(e) => Object.assign(e.currentTarget.style, linkStyle)}
+              >
+                Início
+              </Link>
+              <Link 
+                to="/" 
+                className="no-underline transition-colors duration-300"
+                style={linkStyle}
+                onMouseEnter={(e) => Object.assign(e.currentTarget.style, linkHoverStyle)}
+                onMouseLeave={(e) => Object.assign(e.currentTarget.style, linkStyle)}
+              >
+                Ofertas
+              </Link>
+              <Link 
+                to="/" 
+                className="no-underline transition-colors duration-300"
+                style={linkStyle}
+                onMouseEnter={(e) => Object.assign(e.currentTarget.style, linkHoverStyle)}
+                onMouseLeave={(e) => Object.assign(e.currentTarget.style, linkStyle)}
+              >
+                Categorias
+              </Link>
+              {footerConfig.links.aboutUs && (
+                <Link 
+                  to="/sobre" 
+                  className="no-underline transition-colors duration-300"
+                  style={linkStyle}
+                  onMouseEnter={(e) => Object.assign(e.currentTarget.style, linkHoverStyle)}
+                  onMouseLeave={(e) => Object.assign(e.currentTarget.style, linkStyle)}
+                >
+                  Sobre
+                </Link>
               )}
-              {settings.footer.links.contact && (
-                <Link to="/contato" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Contato</Link>
+              {footerConfig.links.contact && (
+                <Link 
+                  to="/contato" 
+                  className="no-underline transition-colors duration-300"
+                  style={linkStyle}
+                  onMouseEnter={(e) => Object.assign(e.currentTarget.style, linkHoverStyle)}
+                  onMouseLeave={(e) => Object.assign(e.currentTarget.style, linkStyle)}
+                >
+                  Contato
+                </Link>
               )}
-              {settings.footer.links.privacyPolicy && (
-                <Link to="/privacidade" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Política de Privacidade</Link>
+              {footerConfig.links.privacyPolicy && (
+                <Link 
+                  to="/privacidade" 
+                  className="no-underline transition-colors duration-300"
+                  style={linkStyle}
+                  onMouseEnter={(e) => Object.assign(e.currentTarget.style, linkHoverStyle)}
+                  onMouseLeave={(e) => Object.assign(e.currentTarget.style, linkStyle)}
+                >
+                  Política de Privacidade
+                </Link>
               )}
-              {settings.footer.links.termsOfService && (
-                <Link to="/termos" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">Termos de Uso</Link>
+              {footerConfig.links.termsOfService && (
+                <Link 
+                  to="/termos" 
+                  className="no-underline transition-colors duration-300"
+                  style={linkStyle}
+                  onMouseEnter={(e) => Object.assign(e.currentTarget.style, linkHoverStyle)}
+                  onMouseLeave={(e) => Object.assign(e.currentTarget.style, linkStyle)}
+                >
+                  Termos de Uso
+                </Link>
               )}
-              {settings.footer.links.faq && (
-                <Link to="/faq" className="text-[#999] no-underline hover:text-[#D90429] transition-colors">FAQ</Link>
+              {footerConfig.links.faq && (
+                <Link 
+                  to="/faq" 
+                  className="no-underline transition-colors duration-300"
+                  style={linkStyle}
+                  onMouseEnter={(e) => Object.assign(e.currentTarget.style, linkHoverStyle)}
+                  onMouseLeave={(e) => Object.assign(e.currentTarget.style, linkStyle)}
+                >
+                  FAQ
+                </Link>
               )}
             </nav>
           </div>
           
           <div>
-            <h4 className="text-white text-2xl mb-5">Contato</h4>
-            <div className="flex flex-col gap-2.5 text-[#999]">
-              <div className="flex items-center gap-2.5">
-                <i className="ti ti-phone" />
-                <span>{phone}</span>
+            <h4 
+              className={`${getHeadingFontSize(footerConfig.styling.headingFontSize)} ${getFontWeight(footerConfig.styling.headingFontWeight)} mb-5`}
+              style={headingStyle}
+            >
+              Contato
+            </h4>
+            <div className="flex flex-col" style={{ gap: `${footerConfig.styling.linkSpacing}px` }}>
+              <div className="flex items-center" style={{ gap: `${footerConfig.styling.linkSpacing}px` }}>
+                <i className="ti ti-phone" style={textStyle} />
+                <span style={textStyle}>{phone}</span>
               </div>
-              <div className="flex items-center gap-2.5">
-                <i className="ti ti-mail" />
-                <span>{email}</span>
+              <div className="flex items-center" style={{ gap: `${footerConfig.styling.linkSpacing}px` }}>
+                <i className="ti ti-mail" style={textStyle} />
+                <span style={textStyle}>{email}</span>
               </div>
-              <div className="flex items-center gap-2.5">
-                <i className="ti ti-map-pin" />
-                <span>{address}</span>
+              <div className="flex items-center" style={{ gap: `${footerConfig.styling.linkSpacing}px` }}>
+                <i className="ti ti-map-pin" style={textStyle} />
+                <span style={textStyle}>{address}</span>
               </div>
             </div>
           </div>
           
           {settings.footer.showNewsletter && (
             <div>
-              <h4 className="text-white text-2xl mb-5">{settings.footer.newsletterTitle}</h4>
-              <p className="text-[#999] mb-5">{settings.footer.newsletterDescription}</p>
+              <h4 
+                className={`${getHeadingFontSize(footerConfig.styling.headingFontSize)} ${getFontWeight(footerConfig.styling.headingFontWeight)} mb-5`}
+                style={headingStyle}
+              >
+                {settings.footer.newsletterTitle}
+              </h4>
+              <p className="mb-5" style={textStyle}>{settings.footer.newsletterDescription}</p>
               <form className="flex">
                 <input 
                   type="email" 
@@ -155,8 +312,11 @@ export const Footer: React.FC = () => {
           )}
         </div>
         
-        <div className="border-t border-solid border-[#333] py-5 flex flex-col md:flex-row justify-between items-center text-[#999]">
-          <p>{settings.footer.copyright}</p>
+        <div 
+          className="border-t border-solid py-5 flex flex-col md:flex-row justify-between items-center"
+          style={borderStyle}
+        >
+          <p style={textStyle}>{settings.footer.copyright}</p>
           <Button 
             variant="outline" 
             className="mt-4 md:mt-0 border-[#D90429] text-[#D90429] hover:bg-[#D90429] hover:text-white"

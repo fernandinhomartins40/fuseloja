@@ -203,9 +203,12 @@ export const defaultSettings: StoreSettings = {
   },
   footer: {
     logo: "https://cdn.builder.io/api/v1/image/assets/TEMP/e090bda74d8b6b74bc4d3502a92715f9622ce8f5",
+    logoWidth: 120,
+    logoHeight: 64,
     description: "Sua loja online completa com os melhores produtos e atendimento especializado.",
-    backgroundColor: "#2B2D42",
-    textColor: "#FFFFFF",
+    backgroundColor: "#0B0909",
+    textColor: "#999999",
+    textHoverColor: "#D90429",
     showSocialMedia: true,
     showNewsletter: true,
     newsletterTitle: "Receba nossas ofertas",
@@ -217,6 +220,23 @@ export const defaultSettings: StoreSettings = {
       privacyPolicy: true,
       termsOfService: true,
       faq: true
+    },
+    styling: {
+      fontFamily: "Inter, sans-serif",
+      fontSize: "base",
+      fontWeight: "normal",
+      headingFontSize: "2xl",
+      headingFontWeight: "normal",
+      headingColor: "#ffffff",
+      linkSpacing: 10,
+      sectionSpacing: 40,
+      padding: {
+        top: 60,
+        bottom: 0,
+        horizontal: 16
+      },
+      borderColor: "#333333",
+      borderWidth: 1
     }
   },
   visual: {

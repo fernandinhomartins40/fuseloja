@@ -9,6 +9,7 @@ interface SettingsContextType {
   updateMarqueeSettings: (marqueeSettings: StoreSettings['marquee']) => void;
   updateVisualSettings: (visualSettings: StoreSettings['visual']) => void;
   updateSliderSettings: (sliderSettings: StoreSettings['slider']) => void;
+  updateFooterSettings: (footerSettings: StoreSettings['footer']) => void;
   updateBannerSettings: (bannerSettings: StoreSettings['banners']) => void;
   updatePageContent: (pageContent: StoreSettings['pageContent']) => void;
   saveSettings: () => Promise<void>;
@@ -157,6 +158,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     setHasUnsavedChanges(true);
   };
 
+  const updateFooterSettings = (footerSettings: StoreSettings['footer']) => {
+    const newSettings = { ...settings, footer: footerSettings };
+    setSettings(newSettings);
+    setHasUnsavedChanges(true);
+  };
+
   const updateBannerSettings = (bannerSettings: StoreSettings['banners']) => {
     const newSettings = { ...settings, banners: bannerSettings };
     setSettings(newSettings);
@@ -227,6 +234,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     updateMarqueeSettings,
     updateVisualSettings,
     updateSliderSettings,
+    updateFooterSettings,
     updateBannerSettings,
     updatePageContent,
     saveSettings,

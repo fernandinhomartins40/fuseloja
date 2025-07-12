@@ -133,9 +133,12 @@ export interface FeatureCardsSettings {
 
 export interface FooterSettings {
   logo: string;
+  logoWidth?: number;
+  logoHeight?: number;
   description: string;
   backgroundColor: string;
   textColor: string;
+  textHoverColor: string;
   showSocialMedia: boolean;
   showNewsletter: boolean;
   newsletterTitle: string;
@@ -147,6 +150,23 @@ export interface FooterSettings {
     privacyPolicy: boolean;
     termsOfService: boolean;
     faq: boolean;
+  };
+  styling: {
+    fontFamily: string;
+    fontSize: 'sm' | 'base' | 'lg';
+    fontWeight: 'normal' | 'medium' | 'semibold' | 'bold';
+    headingFontSize: 'lg' | 'xl' | '2xl' | '3xl';
+    headingFontWeight: 'normal' | 'medium' | 'semibold' | 'bold';
+    headingColor: string;
+    linkSpacing: number;
+    sectionSpacing: number;
+    padding: {
+      top: number;
+      bottom: number;
+      horizontal: number;
+    };
+    borderColor: string;
+    borderWidth: number;
   };
 }
 

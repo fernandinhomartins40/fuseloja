@@ -34,6 +34,7 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
   // Use category data directly from database
   const IconComponent = iconComponents[category.icon] || iconComponents['Package'];
   const textColor = getContrastTextColor(category.color);
+  const iconColor = category.icon_color || '#FFFFFF';
   
   if (category.products.length === 0) {
     return null; // Don't render empty categories
@@ -58,21 +59,21 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
         {/* Modern header with category styling */}
         <div className="text-center mb-12">
           <div 
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-sm font-medium mb-4 border"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-sm font-medium mb-4 border-2"
             style={{
               backgroundColor: `${category.color}10`,
-              borderColor: `${category.color}80`,
-              color: `${category.color}dd`
+              borderColor: iconColor,
+              color: iconColor
             }}
           >
-            <IconComponent size={20} style={{ color: `${category.color}dd` }} />
-            <span style={{ color: `${category.color}dd` }}>{category.name}</span>
+            <IconComponent size={20} style={{ color: iconColor }} />
+            <span style={{ color: iconColor }}>{category.name}</span>
             <div 
               className="w-2 h-2 rounded-full animate-pulse"
-              style={{ backgroundColor: `${category.color}dd` }}
+              style={{ backgroundColor: iconColor }}
             />
           </div>
-          <h2 className="text-4xl font-bold mb-4" style={{ color: `${category.color}dd` }}>
+          <h2 className="text-4xl font-bold mb-4" style={{ color: iconColor }}>
             {category.name}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -93,11 +94,11 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
               {category.products.map((product, index) => (
                 <CarouselItem key={index} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                   <div 
-                    className="group bg-card/95 backdrop-blur-sm border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-[520px] flex flex-col"
+                    className="group bg-card/95 backdrop-blur-sm border-2 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-[520px] flex flex-col"
                     style={{ 
-                      borderColor: category.color,
-                      boxShadow: `0 4px 6px -1px ${category.color}40`,
-                      '--category-color': category.color
+                      borderColor: iconColor,
+                      boxShadow: `0 4px 6px -1px ${iconColor}40`,
+                      '--icon-color': iconColor
                     } as React.CSSProperties}
                   >
                     <div className="relative overflow-hidden">
@@ -113,15 +114,16 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
                         {product.tag && (
                           <div className="absolute top-4 left-4">
                             <span 
-                              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold"
+                              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border"
                               style={{ 
-                                backgroundColor: category.color,
-                                color: getContrastTextColor(category.color)
+                                backgroundColor: `${iconColor}20`,
+                                borderColor: iconColor,
+                                color: iconColor
                               }}
                             >
                               <span 
                                 className="w-1.5 h-1.5 rounded-full" 
-                                style={{ backgroundColor: getContrastTextColor(category.color) }}
+                                style={{ backgroundColor: iconColor }}
                               />
                               {product.tag.toUpperCase()}
                             </span>
@@ -143,13 +145,13 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
                       <h3 
                         className="font-semibold text-sm leading-tight line-clamp-2 transition-colors"
                         style={{
-                          color: `${category.color}dd`
+                          color: iconColor
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.color = `${category.color}ee`;
+                          e.currentTarget.style.color = `${iconColor}dd`;
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.color = `${category.color}dd`;
+                          e.currentTarget.style.color = iconColor;
                         }}
                       >
                         {product.title}
@@ -163,7 +165,7 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
                             </span>
                           )}
                         </div>
-                        <div className="text-xl font-bold" style={{ color: `${category.color}dd` }}>
+                        <div className="text-xl font-bold" style={{ color: iconColor }}>
                           R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </div>
                         <div className="text-xs text-muted-foreground">
@@ -172,10 +174,11 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
                       </div>
                       
                       <button 
-                        className="w-full text-white py-3 rounded-xl font-medium text-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] mt-auto"
+                        className="w-full text-white py-3 rounded-xl font-medium text-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] mt-auto border"
                         style={{
-                          background: `linear-gradient(135deg, ${category.color}dd, ${category.color}cc)`,
-                          boxShadow: `0 4px 14px 0 ${category.color}40`
+                          background: `linear-gradient(135deg, ${iconColor}, ${iconColor}dd)`,
+                          borderColor: iconColor,
+                          boxShadow: `0 4px 14px 0 ${iconColor}40`
                         }}
                       >
                         Adicionar ao Carrinho
@@ -190,15 +193,15 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
             <CarouselPrevious 
               className="left-4 border-2 bg-white/90 backdrop-blur-sm hover:bg-white"
               style={{ 
-                borderColor: `${category.color}dd`,
-                color: `${category.color}dd`
+                borderColor: iconColor,
+                color: iconColor
               }}
             />
             <CarouselNext 
               className="right-4 border-2 bg-white/90 backdrop-blur-sm hover:bg-white"
               style={{ 
-                borderColor: `${category.color}dd`,
-                color: `${category.color}dd`
+                borderColor: iconColor,
+                color: iconColor
               }}
             />
           </Carousel>
@@ -207,10 +210,11 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
         {/* Category-themed CTA button */}
         <div className="text-center mt-12">
           <button 
-            className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-2xl font-medium transition-all duration-300 hover:shadow-xl"
+            className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-2xl font-medium transition-all duration-300 hover:shadow-xl border group"
             style={{
-              background: `linear-gradient(135deg, ${category.color}dd, ${category.color}cc)`,
-              boxShadow: `0 10px 25px -5px ${category.color}50`
+              background: `linear-gradient(135deg, ${iconColor}, ${iconColor}dd)`,
+              borderColor: iconColor,
+              boxShadow: `0 10px 25px -5px ${iconColor}50`
             }}
           >
             Ver Todos em {category.name}

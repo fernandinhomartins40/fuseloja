@@ -5,16 +5,6 @@ const response = require('../utils/response');
 
 const router = express.Router();
 
-// Test endpoint to verify deployment
-router.get('/test-deployment', async (req, res) => {
-  return res.json({ 
-    status: 'OK', 
-    message: 'Server updated successfully',
-    timestamp: new Date().toISOString(),
-    version: 'v2.0-products-fix'
-  });
-});
-
 // GET /api/v1/products - List all products (public)
 router.get('/', async (req, res) => {
   try {
@@ -105,7 +95,7 @@ router.get('/', async (req, res) => {
       updatedAt: p.updated_at
     }));
     
-    return response.success(res, { products, page: parseInt(page), limit: parseInt(limit), total: totalCount }, 'Products listed successfully (updated)');
+    return response.success(res, { products, page: parseInt(page), limit: parseInt(limit), total: totalCount }, 'Products listed successfully');
   } catch (error) {
     console.error('List products error:', {
       message: error.message,

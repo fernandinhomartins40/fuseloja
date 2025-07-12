@@ -12,6 +12,7 @@ export interface Category {
   description?: string;
   icon: CategoryIcon;
   color: CategoryColor;
+  icon_color?: CategoryColor;
   isDefault?: boolean; // Whether this is a predefined category
 }
 

@@ -26,13 +26,15 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       slug: '',
       description: '',
       icon: '',
-      color: '#E5DEFF', // Default color
+      color: '#E5DEFF', // Default background color
+      icon_color: '#FFFFFF', // Default icon color
     };
     return {
       ...defaultCategory,
       ...(initialData || {}),
-      // Ensure color is always a string, even if initialData.color is null/undefined
+      // Ensure colors are always strings, even if initialData values are null/undefined
       color: (initialData && initialData.color) ? initialData.color : defaultCategory.color,
+      icon_color: (initialData && initialData.icon_color) ? initialData.icon_color : defaultCategory.icon_color,
     };
   });
 
@@ -57,7 +59,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!category.name || !category.slug || !category.icon || !category.color) {
+    if (!category.name || !category.slug || !category.icon || !category.color || !category.icon_color) {
       return;
     }
     
@@ -68,6 +70,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       description: category.description || '',
       icon: category.icon,
       color: category.color,
+      icon_color: category.icon_color,
     };
     
     console.log('Submitting category data:', categoryData);
@@ -142,11 +145,30 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
               onChange={(color) => handleChange('color', color)}
             />
             <p className="text-xs text-muted-foreground">
-              Selecione uma cor para identificar visualmente a categoria
+              Selecione uma cor para o fundo da categoria
             </p>
             {/* Debug info */}
             <div className="text-xs text-gray-500 font-mono">
-              Cor atual: {category.color || 'não definida'}
+              Cor da categoria: {category.color || 'não definida'}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium block mb-1">
+            Cor do Ícone*
+          </label>
+          <div className="space-y-2">
+            <ColorPicker
+              color={category.icon_color || '#FFFFFF'}
+              onChange={(color) => handleChange('icon_color', color)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Selecione uma cor para o ícone da categoria
+            </p>
+            {/* Debug info */}
+            <div className="text-xs text-gray-500 font-mono">
+              Cor do ícone: {category.icon_color || 'não definida'}
             </div>
           </div>
         </div>
@@ -164,12 +186,12 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
               {category.icon && iconComponents[category.icon as IconName] ? (
                 React.createElement(iconComponents[category.icon as IconName], {
                   size: 24,
-                  color: textColor,
+                  color: category.icon_color || '#FFFFFF',
                   className: "drop-shadow-sm"
                 })
               ) : (
                 <div className="w-6 h-6 bg-white/50 rounded-full flex items-center justify-center">
-                  <span className="text-xs">?</span>
+                  <span className="text-xs" style={{ color: category.icon_color || '#000000' }}>?</span>
                 </div>
               )}
             </div>
@@ -181,7 +203,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                 {category.description || 'Descrição da categoria'}
               </p>
               <div className="text-xs text-gray-400 font-mono mt-1">
-                Ícone: {category.icon || 'não selecionado'} | Cor: {category.color || 'não definida'}
+                Ícone: {category.icon || 'não selecionado'} | Cor fundo: {category.color || 'não definida'} | Cor ícone: {category.icon_color || 'não definida'}
               </div>
             </div>
           </div>
@@ -194,7 +216,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
         </Button>
         <Button 
           type="submit" 
-          disabled={!category.name || !category.slug || !category.icon || !category.color}
+          disabled={!category.name || !category.slug || !category.icon || !category.color || !category.icon_color}
         >
           {initialData ? 'Atualizar Categoria' : 'Adicionar Categoria'}
         </Button>

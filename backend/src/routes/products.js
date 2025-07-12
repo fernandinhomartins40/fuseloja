@@ -5,6 +5,16 @@ const response = require('../utils/response');
 
 const router = express.Router();
 
+// Test endpoint to verify deployment
+router.get('/test-deployment', async (req, res) => {
+  return res.json({ 
+    status: 'OK', 
+    message: 'Server updated successfully',
+    timestamp: new Date().toISOString(),
+    version: 'v2.0-products-fix'
+  });
+});
+
 // GET /api/v1/products - List all products (public)
 router.get('/', async (req, res) => {
   try {

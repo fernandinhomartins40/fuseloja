@@ -7,7 +7,7 @@ import { toast } from '@/hooks/use-toast';
 import { defaultCategories } from '@/utils/categoryIcons';
 import { Category } from '@/types/category';
 import CategoryCard from '@/components/admin/CategoryCard';
-import CategoryForm from '@/components/admin/TestCategoryForm';
+import CategoryForm from '@/components/admin/CategoryForm';
 import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
 import { SearchFilter, FilterOption } from '@/components/admin/ui/SearchFilter';
 import { useSearchFilter } from '@/hooks/useSearchFilter';
@@ -215,7 +215,7 @@ const Categories: React.FC = () => {
                 {editingCategory ? 'Editar Categoria' : 'Adicionar Nova Categoria'}
               </DialogTitle>
             </DialogHeader>
-            <TestCategoryForm
+            <CategoryForm
               initialData={editingCategory}
               onSubmit={editingCategory ? handleUpdateCategory : handleAddCategory}
               onCancel={() => {

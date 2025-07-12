@@ -69,7 +69,7 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
           <div 
             className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-sm font-medium mb-4 border-2"
             style={{
-              backgroundColor: `${category.color}10`,
+              backgroundColor: category.color,
               borderColor: iconColor,
               color: iconColor
             }}

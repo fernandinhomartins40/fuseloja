@@ -1,8 +1,9 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ProductCard } from '../ui/ProductCard';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { TrendingUp, Star, Award } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useCart } from '@/contexts/CartContext';
 import apiClient from '@/services/api';
 import { Product } from '@/types/product';
 
@@ -28,13 +29,15 @@ export const BestSellers: React.FC = () => {
     queryKey: ['best-sellers'],
     queryFn: fetchBestSellers,
   });
+  
+  const { addItem } = useCart();
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-gradient-to-br from-orange-50 via-white to-red-50 relative overflow-hidden">
+      <section className="py-16 bg-gradient-to-br from-slate-50 via-white to-slate-50 relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
             <p className="mt-4 text-muted-foreground">Carregando mais vendidos...</p>
           </div>
         </div>
@@ -47,24 +50,22 @@ export const BestSellers: React.FC = () => {
   }
 
   return (
-    <section className="py-20 bg-gradient-to-br from-orange-50 via-white to-red-50 relative overflow-hidden">
+    <section className="py-16 bg-gradient-to-br from-slate-50 via-white to-slate-50 relative overflow-hidden">
       {/* Background decorative elements */}
-      <div className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-orange-400/10 to-red-400/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full blur-3xl"></div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-red-400/5 to-pink-400/5 rounded-full blur-3xl"></div>
+      <div className="absolute top-10 right-20 w-32 h-32 bg-primary/5 rounded-full blur-xl"></div>
+      <div className="absolute bottom-20 left-10 w-24 h-24 bg-accent/10 rounded-full blur-lg"></div>
       
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16 py-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200/50 mb-6">
-            <TrendingUp className="w-4 h-4 text-orange-600" />
-            <span className="text-sm font-medium text-orange-700">Produtos em Destaque</span>
+      <div className="container mx-auto px-4 relative">
+        {/* Modern header with gradient accent */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <TrendingUp className="w-4 h-4" />
+            <span>Mais Populares</span>
           </div>
-          
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-orange-600 bg-clip-text text-transparent mb-6">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent mb-4">
             Mais Vendidos
           </h2>
-          
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Descubra os produtos favoritos dos nossos clientes - selecionados com base nas vendas e avaliações
           </p>
         </div>
@@ -80,57 +81,64 @@ export const BestSellers: React.FC = () => {
             <CarouselContent className="-ml-2 md:-ml-4">
               {products.map((product, index) => (
                 <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                  <div className="group bg-card/95 backdrop-blur-sm border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-[520px] flex flex-col relative">
-                    {/* Best seller badge */}
-                    <div className="absolute top-4 left-4 z-10">
-                      <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-semibold shadow-lg">
-                        <Star className="w-3 h-3 fill-current" />
-                        #{index + 1} Vendido
-                      </div>
-                    </div>
-
-                    <div className="relative overflow-hidden">
-                      <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-50 relative">
-                        <img 
-                          src={product.imageUrl} 
-                          alt={product.title}
-                          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        
-                        {/* Price badge for discounted items */}
-                        {product.originalPrice && (
-                          <div className="absolute top-4 right-4">
-                            <span className="bg-red-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
-                              -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                  <div 
+                    className="group bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-2"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <Link to={`/produto/${product.id}`} className="block">
+                      <div className="relative overflow-hidden">
+                        <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-50 relative">
+                          <img 
+                            src={product.imageUrl} 
+                            alt={product.title}
+                            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          
+                          {/* Best seller badge */}
+                          <div className="absolute top-4 left-4">
+                            <span className="inline-flex items-center gap-1 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                              <Star className="w-3 h-3 fill-current" />
+                              #{index + 1}
                             </span>
                           </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="p-6 space-y-4 flex-1 flex flex-col">
-                      <h3 className="font-semibold text-sm leading-tight line-clamp-2 transition-colors text-orange-700">
-                        {product.title}
-                      </h3>
-                      
-                      <div className="space-y-2 flex-1">
-                        <div className="flex items-baseline gap-2">
+                          
+                          {/* Price badge */}
                           {product.originalPrice && (
-                            <span className="text-sm text-muted-foreground line-through">
-                              R$ {product.originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                            </span>
+                            <div className="absolute top-4 right-4">
+                              <span className="bg-red-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
+                                -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                              </span>
+                            </div>
                           )}
                         </div>
-                        <div className="text-xl font-bold text-orange-600">
+                      </div>
+                    </Link>
+                    
+                    <div className="p-6 space-y-4">
+                      <Link to={`/produto/${product.id}`} className="block">
+                        <h3 className="font-semibold text-slate-900 text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                          {product.title}
+                        </h3>
+                      </Link>
+                      
+                      <div className="space-y-2">
+                        {product.originalPrice && (
+                          <span className="text-sm text-slate-400 line-through">
+                            R$ {product.originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          </span>
+                        )}
+                        <div className="text-xl font-bold text-slate-900">
                           R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </div>
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-xs text-slate-500">
                           6x de R$ {(product.price / 6).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} sem juros
                         </div>
                       </div>
                       
-                      <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-xl font-medium text-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] mt-auto border border-orange-400">
+                      <button 
+                        onClick={() => addItem(product)}
+                        className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground py-3 rounded-xl font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]">
                         Adicionar ao Carrinho
                       </button>
                     </div>
@@ -139,27 +147,15 @@ export const BestSellers: React.FC = () => {
               ))}
             </CarouselContent>
             
-            {/* Navigation with orange theme */}
-            <CarouselPrevious 
-              className="left-4 border bg-white/90 backdrop-blur-sm hover:bg-white"
-              style={{ 
-                borderColor: '#f97316',
-                color: '#f97316'
-              }}
-            />
-            <CarouselNext 
-              className="right-4 border bg-white/90 backdrop-blur-sm hover:bg-white"
-              style={{ 
-                borderColor: '#f97316',
-                color: '#f97316'
-              }}
-            />
+            {/* Navigation with consistent theme */}
+            <CarouselPrevious className="left-4" />
+            <CarouselNext className="right-4" />
           </Carousel>
         </div>
 
-        {/* CTA Section */}
+        {/* Modern CTA button */}
         <div className="text-center mt-12">
-          <button className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl font-medium transition-all duration-300 hover:shadow-xl border border-orange-400 group">
+          <button className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-medium transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/25 group">
             <Award className="w-5 h-5" />
             Ver Todos os Mais Vendidos
             <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

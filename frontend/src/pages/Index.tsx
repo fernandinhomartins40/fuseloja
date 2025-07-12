@@ -14,8 +14,8 @@ const Index = () => {
   return <div className="min-h-screen flex flex-col">
       {/* Header is already provided by PublicLayout in router */}
       
-      {/* Main content with proper spacing */}
-      <div className="bg-slate-950">
+      {/* Main content with proper spacing - start directly after fixed header */}
+      <div className="bg-slate-950 -mt-20 pt-20">
         <Marquee />
         <HeroSlider />
         <PromotionProducts />

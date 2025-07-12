@@ -32,7 +32,7 @@ export const Navigation: React.FC = () => {
   const handleLoginSuccess = () => {
     setLoginSheetOpen(false);
   };
-  return <div className="flex justify-between items-center py-5 px-4 bg-slate-950">
+  return <div className="flex justify-between items-center h-full px-4 bg-slate-950">
       <Link to="/">
         <img src={settings.visual.logo} alt={settings.general.storeName} className="h-[34px]" />
       </Link>

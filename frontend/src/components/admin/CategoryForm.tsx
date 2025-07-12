@@ -136,13 +136,19 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           <label className="text-sm font-medium block mb-1">
             Cor da Categoria*
           </label>
-          <ColorPicker
-            color={category.color || '#E5DEFF'}
-            onChange={(color) => handleChange('color', color)}
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            Selecione uma cor para identificar visualmente a categoria
-          </p>
+          <div className="space-y-2">
+            <ColorPicker
+              color={category.color || '#E5DEFF'}
+              onChange={(color) => handleChange('color', color)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Selecione uma cor para identificar visualmente a categoria
+            </p>
+            {/* Debug info */}
+            <div className="text-xs text-gray-500 font-mono">
+              Cor atual: {category.color || 'não definida'}
+            </div>
+          </div>
         </div>
         
         {/* Preview */}

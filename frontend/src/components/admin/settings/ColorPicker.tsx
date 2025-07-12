@@ -40,23 +40,33 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => 
   ];
 
   return (
-    <Popover open={isOpen} onOpenChange={handlePopoverOpenChange}>
-      <PopoverTrigger asChild>
-        <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-md transition-colors">
-          <div
-            className="w-10 h-10 border-2 border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-            style={{ backgroundColor: currentColor }}
-            title={`Cor atual: ${currentColor}`}
-          />
+    <div className="space-y-3">
+      {/* Color preview and input */}
+      <div className="flex items-center gap-3 p-3 border rounded-lg bg-white">
+        <div
+          className="w-12 h-12 border-2 border-gray-300 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-all"
+          style={{ backgroundColor: currentColor }}
+          title={`Cor atual: ${currentColor}`}
+          onClick={() => setIsOpen(true)}
+        />
+        <div className="flex-1">
           <Input
             value={currentColor}
             onChange={handleColorChange}
             onBlur={handleBlur}
-            className="w-32 font-mono text-sm"
+            className="w-full font-mono text-sm"
             placeholder="#000000"
           />
         </div>
-      </PopoverTrigger>
+      </div>
+
+      {/* Color picker popover */}
+      <Popover open={isOpen} onOpenChange={handlePopoverOpenChange}>
+        <PopoverTrigger asChild>
+          <button className="w-full px-3 py-2 text-sm border rounded-md hover:bg-gray-50 transition-colors">
+            Escolher cor
+          </button>
+        </PopoverTrigger>
       <PopoverContent className="w-64 p-3">
         <div className="space-y-2">
           <div className="relative overflow-hidden">
@@ -93,5 +103,25 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => 
         </div>
       </PopoverContent>
     </Popover>
+
+      {/* Quick color selection */}
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-gray-700">Cores rápidas:</p>
+        <div className="grid grid-cols-10 gap-2">
+          {presetColors.map((presetColor, i) => (
+            <button
+              key={i}
+              className="w-8 h-8 border-2 border-gray-200 rounded-md hover:scale-110 transition-transform shadow-sm hover:shadow-md"
+              style={{ backgroundColor: presetColor }}
+              onClick={() => {
+                setCurrentColor(presetColor);
+                onChange(presetColor);
+              }}
+              title={`Selecionar cor ${presetColor}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };

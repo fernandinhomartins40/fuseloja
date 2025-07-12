@@ -36,15 +36,15 @@ router.get('/:id', async (req, res) => {
 // POST /api/v1/categories - Create a new category (admin only)
 router.post('/', authenticateToken, requireAdmin, async (req, res) => {
     try {
-        const { name, description, image_url, icon, color } = req.body;
+        const { name, description, image_url, icon, color, icon_color, slug } = req.body;
 
         if (!name) {
             return response.badRequest(res, 'Category name is required');
         }
 
         const newCategoryResult = await query(
-            'INSERT INTO categories (name, description, image_url, icon, color) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [name, description, image_url, icon, color]
+            'INSERT INTO categories (name, description, image_url, icon, color, icon_color, slug) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [name, description, image_url, icon, color, icon_color, slug]
         );
 
         return response.created(res, { category: newCategoryResult.rows[0] }, 'Category created successfully');
@@ -61,15 +61,15 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
 router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, image_url, icon, color } = req.body;
+        const { name, description, image_url, icon, color, icon_color, slug } = req.body;
 
         if (!name) {
             return response.badRequest(res, 'Category name is required');
         }
 
         const updatedCategoryResult = await query(
-            'UPDATE categories SET name = $1, description = $2, image_url = $3, icon = $4, color = $5, updated_at = CURRENT_TIMESTAMP WHERE id = $6 RETURNING *',
-            [name, description, image_url, icon, color, id]
+            'UPDATE categories SET name = $1, description = $2, image_url = $3, icon = $4, color = $5, icon_color = $6, slug = $7, updated_at = CURRENT_TIMESTAMP WHERE id = $8 RETURNING *',
+            [name, description, image_url, icon, color, icon_color, slug, id]
         );
 
         if (updatedCategoryResult.rows.length === 0) {

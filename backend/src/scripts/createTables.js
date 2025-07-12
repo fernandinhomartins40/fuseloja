@@ -31,6 +31,7 @@ const createTables = async () => {
         image_url VARCHAR(255),
         icon VARCHAR(50) DEFAULT 'Package',
         color VARCHAR(7) DEFAULT '#6B7280',
+        icon_color VARCHAR(7) DEFAULT '#FFFFFF',
         slug VARCHAR(100),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -41,6 +42,7 @@ const createTables = async () => {
     try {
       await query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS icon VARCHAR(50) DEFAULT 'Package'`);
       await query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS color VARCHAR(7) DEFAULT '#6B7280'`);
+      await query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS icon_color VARCHAR(7) DEFAULT '#FFFFFF'`);
       await query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS slug VARCHAR(100)`);
     } catch (error) {
       // Columns might already exist, continue

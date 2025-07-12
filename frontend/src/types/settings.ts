@@ -15,6 +15,37 @@ export interface GeneralSettings {
   taxId: string;
 }
 
+export interface MarqueeSettings {
+  enabled: boolean;
+  features: Array<{
+    id: string;
+    icon: string;
+    text: string;
+    active: boolean;
+  }>;
+  animation: {
+    speed: number; // seconds for one complete cycle
+    direction: 'left' | 'right';
+    pauseOnHover: boolean;
+  };
+  styling: {
+    gradientColors: {
+      from: string;
+      via: string;
+      to: string;
+    };
+    textColor: string;
+    fontSize: 'sm' | 'base' | 'lg' | 'xl';
+    fontWeight: 'normal' | 'medium' | 'semibold' | 'bold';
+    iconSize: number;
+    padding: {
+      vertical: number;
+      horizontal: number;
+    };
+    itemSpacing: number;
+  };
+}
+
 export interface NavbarSettings {
   logo: string;
   logoWidth?: number;
@@ -172,6 +203,7 @@ export interface PageContent {
 
 export interface StoreSettings {
   general: GeneralSettings;
+  marquee: MarqueeSettings;
   navbar: NavbarSettings;
   slider: SliderSettings;
   featureCards: FeatureCardsSettings;

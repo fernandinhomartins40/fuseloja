@@ -6,6 +6,7 @@ interface SettingsContextType {
   settings: StoreSettings;
   updateSettings: (newSettings: StoreSettings) => void;
   updateGeneralSettings: (generalSettings: StoreSettings['general']) => void;
+  updateMarqueeSettings: (marqueeSettings: StoreSettings['marquee']) => void;
   updateVisualSettings: (visualSettings: StoreSettings['visual']) => void;
   updateSliderSettings: (sliderSettings: StoreSettings['slider']) => void;
   updateBannerSettings: (bannerSettings: StoreSettings['banners']) => void;
@@ -40,6 +41,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
           ...defaultSettings,
           ...parsedSettings,
           // Ensure new sections exist with defaults if not present
+          marquee: { ...defaultSettings.marquee, ...parsedSettings.marquee },
           navbar: { ...defaultSettings.navbar, ...parsedSettings.navbar },
           slider: { ...defaultSettings.slider, ...parsedSettings.slider },
           featureCards: { ...defaultSettings.featureCards, ...parsedSettings.featureCards },
@@ -137,6 +139,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     setHasUnsavedChanges(true);
   };
 
+  const updateMarqueeSettings = (marqueeSettings: StoreSettings['marquee']) => {
+    const newSettings = { ...settings, marquee: marqueeSettings };
+    setSettings(newSettings);
+    setHasUnsavedChanges(true);
+  };
+
   const updateVisualSettings = (visualSettings: StoreSettings['visual']) => {
     const newSettings = { ...settings, visual: visualSettings };
     setSettings(newSettings);
@@ -216,6 +224,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     settings,
     updateSettings,
     updateGeneralSettings,
+    updateMarqueeSettings,
     updateVisualSettings,
     updateSliderSettings,
     updateBannerSettings,

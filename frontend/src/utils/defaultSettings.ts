@@ -17,6 +17,56 @@ export const defaultSettings: StoreSettings = {
     businessHours: "Segunda a Sexta: 9h às 18h | Sábado: 9h às 13h",
     taxId: "00.000.000/0001-00"
   },
+  marquee: {
+    enabled: true,
+    features: [
+      {
+        id: "1",
+        icon: "Truck",
+        text: "Frete Grátis SP",
+        active: true
+      },
+      {
+        id: "2", 
+        icon: "Shield",
+        text: "Garantia de 30 Dias",
+        active: true
+      },
+      {
+        id: "3",
+        icon: "HeadphonesIcon",
+        text: "Suporte Especializado", 
+        active: true
+      },
+      {
+        id: "4",
+        icon: "Zap",
+        text: "Entrega Rápida",
+        active: true
+      }
+    ],
+    animation: {
+      speed: 30, // seconds for one complete cycle
+      direction: "left",
+      pauseOnHover: false
+    },
+    styling: {
+      gradientColors: {
+        from: "hsl(var(--primary))",
+        via: "hsl(var(--chart-1))", 
+        to: "hsl(var(--chart-2))"
+      },
+      textColor: "#ffffff",
+      fontSize: "lg",
+      fontWeight: "semibold",
+      iconSize: 24,
+      padding: {
+        vertical: 5,
+        horizontal: 32
+      },
+      itemSpacing: 16
+    }
+  },
   navbar: {
     logo: "https://cdn.builder.io/api/v1/image/assets/TEMP/e090bda74d8b6b74bc4d3502a92715f9622ce8f5",
     logoWidth: 120,

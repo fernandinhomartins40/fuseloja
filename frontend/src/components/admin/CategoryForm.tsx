@@ -15,7 +15,7 @@ interface CategoryFormProps {
   onCancel: () => void;
 }
 
-export const CategoryForm: React.FC<CategoryFormProps> = ({
+const CategoryForm: React.FC<CategoryFormProps> = ({
   initialData,
   onSubmit,
   onCancel

@@ -29,18 +29,33 @@ export const CategoryIcons: React.FC = () => {
 
   if (isLoading) {
     return (
-      <section className="py-12 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2">Categorias</h2>
-            <p className="text-muted-foreground">Explore nossas categorias</p>
-          </div>
-          
-          <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
+      <section className="py-8 px-4 bg-gradient-to-b from-slate-50 to-background">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-4 md:gap-6">
             {Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="flex flex-col items-center gap-2 animate-pulse">
-                <div className="w-16 h-16 bg-muted rounded-2xl"></div>
-                <div className="h-4 bg-muted rounded w-16"></div>
+              <div key={index} className="flex flex-col items-center group cursor-pointer">
+                <div 
+                  className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-md group-hover:shadow-xl"
+                  style={{ 
+                    background: `linear-gradient(135deg, #ccc20, #ccc10)`,
+                    border: `1px solid #ccc30`
+                  }}
+                >
+                  <div 
+                    className="transition-all duration-300 group-hover:scale-110" 
+                    style={{ color: '#ccc' }}
+                  >
+                    {/* Placeholder for icon */}
+                    <div className="w-8 h-8 bg-gray-300 rounded-full animate-pulse"></div>
+                  </div>
+                  <div 
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                    style={{ backgroundColor: '#ccc' }}
+                  />
+                </div>
+                <span className="text-xs md:text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300 text-center px-1">
+                  Carregando...
+                </span>
               </div>
             ))}
           </div>
@@ -54,35 +69,32 @@ export const CategoryIcons: React.FC = () => {
   }
 
   return (
-    <section className="py-12 bg-muted/50">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold mb-2">Categorias</h2>
-          <p className="text-muted-foreground">Explore nossas categorias</p>
-        </div>
-        
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
-          {categories.map((category) => {
+    <section className="py-8 px-4 bg-gradient-to-b from-slate-50 to-background">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-4 md:gap-6">
+          {categories.map((category, index) => {
             const IconComponent = iconComponents[category.icon] || iconComponents['Package'];
-            
             return (
-              <div
-                key={category.id}
-                className="flex flex-col items-center gap-2 p-3 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg group"
-                style={{
-                  background: `linear-gradient(135deg, ${category.color}15, ${category.color}25)`
-                }}
-              >
-                <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-white transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
-                  style={{ backgroundColor: category.color }}
+              <div key={index} className="flex flex-col items-center group cursor-pointer">
+                <div 
+                  className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-md group-hover:shadow-xl"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${category.color}20, ${category.color}10)`,
+                    border: `1px solid ${category.color}30`
+                  }}
                 >
-                  <IconComponent size={32} />
+                  <div 
+                    className="transition-all duration-300 group-hover:scale-110" 
+                    style={{ color: category.color }}
+                  >
+                    <IconComponent size={window.innerWidth >= 768 ? 28 : 24} />
+                  </div>
+                  <div 
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                    style={{ backgroundColor: category.color }}
+                  />
                 </div>
-                <span 
-                  className="text-sm font-medium text-center leading-tight"
-                  style={{ color: category.color }}
-                >
+                <span className="text-xs md:text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300 text-center px-1">
                   {category.name}
                 </span>
               </div>

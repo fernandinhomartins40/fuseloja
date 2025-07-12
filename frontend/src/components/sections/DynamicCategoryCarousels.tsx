@@ -14,6 +14,7 @@ interface Category {
   image_url?: string;
   icon: IconName;
   color: string;
+  icon_color?: string;
   slug?: string;
   created_at?: string;
   updated_at?: string;
@@ -35,6 +36,13 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
   const IconComponent = iconComponents[category.icon] || iconComponents['Package'];
   const textColor = getContrastTextColor(category.color);
   const iconColor = category.icon_color || '#FFFFFF';
+  
+  // Debug log para verificar se as cores estão sendo aplicadas
+  console.log(`Category ${category.name}:`, {
+    backgroundColor: category.color,
+    iconColor: iconColor,
+    hasIconColor: !!category.icon_color
+  });
   
   if (category.products.length === 0) {
     return null; // Don't render empty categories

@@ -10,6 +10,7 @@ interface Category {
   image_url?: string;
   icon: IconName;
   color: string;
+  icon_color?: string;
   slug?: string;
   created_at?: string;
   updated_at?: string;
@@ -74,27 +75,31 @@ export const CategoryIcons: React.FC = () => {
         <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-4 md:gap-6">
           {categories.map((category, index) => {
             const IconComponent = iconComponents[category.icon] || iconComponents['Package'];
+            const iconColor = category.icon_color || '#FFFFFF';
             return (
               <div key={index} className="flex flex-col items-center group cursor-pointer">
                 <div 
                   className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-md group-hover:shadow-xl"
                   style={{ 
-                    background: `linear-gradient(135deg, ${category.color}20, ${category.color}10)`,
-                    border: `1px solid ${category.color}30`
+                    backgroundColor: category.color,
+                    border: `2px solid ${iconColor}30`
                   }}
                 >
                   <div 
                     className="transition-all duration-300 group-hover:scale-110" 
-                    style={{ color: category.color }}
+                    style={{ color: iconColor }}
                   >
                     <IconComponent size={28} className="w-6 h-6 md:w-7 md:h-7" />
                   </div>
                   <div 
-                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"
-                    style={{ backgroundColor: category.color }}
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                    style={{ backgroundColor: iconColor }}
                   />
                 </div>
-                <span className="text-xs md:text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300 text-center px-1">
+                <span 
+                  className="text-xs md:text-sm font-medium transition-colors duration-300 text-center px-1"
+                  style={{ color: iconColor }}
+                >
                   {category.name}
                 </span>
               </div>

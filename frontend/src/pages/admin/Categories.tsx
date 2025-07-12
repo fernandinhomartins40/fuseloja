@@ -11,12 +11,77 @@ import CategoryForm from '@/components/admin/CategoryForm';
 import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
 import { SearchFilter, FilterOption } from '@/components/admin/ui/SearchFilter';
 import { useSearchFilter } from '@/hooks/useSearchFilter';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { eCommerceService } from '@/services/eCommerce.service';
 
 const Categories: React.FC = () => {
-  // Initialize with default categories and add custom ones
-  const [categories, setCategories] = useState<Category[]>(defaultCategories);
+  const queryClient = useQueryClient();
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+
+  // Fetch categories
+  const { data: categories = [], isLoading, isError } = useQuery<Category[], Error>({
+    queryKey: ['categories'],
+    queryFn: eCommerceService.getCategories,
+  });
+
+  // Mutations for CRUD operations
+  const createCategoryMutation = useMutation({
+    mutationFn: eCommerceService.createCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      toast({
+        title: "Categoria adicionada",
+        description: "A nova categoria foi criada com sucesso."
+      });
+      setIsFormOpen(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao adicionar categoria",
+        description: error.message || "Ocorreu um erro ao criar a categoria.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const updateCategoryMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Category> }) => eCommerceService.updateCategory(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      toast({
+        title: "Categoria atualizada",
+        description: "As informações da categoria foram atualizadas."
+      });
+      setIsFormOpen(false);
+      setEditingCategory(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao atualizar categoria",
+        description: error.message || "Ocorreu um erro ao atualizar a categoria.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: eCommerceService.deleteCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      toast({
+        title: "Categoria excluída",
+        description: "A categoria foi removida com sucesso."
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao excluir categoria",
+        description: error.message || "Ocorreu um erro ao excluir a categoria.",
+        variant: "destructive"
+      });
+    }
+  });
 
   // Filter configuration for categories
   const filterConfig: FilterOption[] = [
@@ -51,38 +116,12 @@ const Categories: React.FC = () => {
   });
 
   const handleAddCategory = (categoryData: Omit<Category, 'id'>) => {
-    // Generate a new ID for the category
-    const newCategory: Category = {
-      ...categoryData,
-      id: `cat-${Date.now().toString(36)}`,
-    };
-    
-    setCategories([newCategory, ...categories]);
-    setIsFormOpen(false);
-    
-    toast({
-      title: "Categoria adicionada",
-      description: "A nova categoria foi criada com sucesso."
-    });
+    createCategoryMutation.mutate(categoryData);
   };
 
   const handleUpdateCategory = (categoryData: Omit<Category, 'id'>) => {
     if (!editingCategory) return;
-
-    const updatedCategories = categories.map(category =>
-      category.id === editingCategory.id 
-        ? { ...categoryData, id: category.id, isDefault: category.isDefault } 
-        : category
-    );
-    
-    setCategories(updatedCategories);
-    setIsFormOpen(false);
-    setEditingCategory(null);
-    
-    toast({
-      title: "Categoria atualizada",
-      description: "As informações da categoria foram atualizadas."
-    });
+    updateCategoryMutation.mutate({ id: editingCategory.id, data: categoryData });
   };
 
   const handleEditCategory = (category: Category) => {
@@ -91,25 +130,49 @@ const Categories: React.FC = () => {
   };
 
   const handleDeleteCategory = (id: string) => {
-    const categoryToDelete = categories.find(cat => cat.id === id);
-    
-    if (categoryToDelete?.isDefault) {
-      toast({
-        title: "Operação não permitida",
-        description: "Categorias padrão do sistema não podem ser excluídas.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+    // No need to check isDefault here, backend should handle permissions
     if (confirm('Tem certeza que deseja excluir esta categoria?')) {
-      setCategories(categories.filter(category => category.id !== id));
-      toast({
-        title: "Categoria excluída",
-        description: "A categoria foi removida com sucesso."
-      });
+      deleteCategoryMutation.mutate(id);
     }
   };
+
+  if (isLoading) {
+    return (
+      <AdminPageLayout
+        title="Categorias"
+        description="Organize e gerencie todas as categorias de produtos da sua loja"
+        breadcrumbs={[
+          { label: 'Admin', href: '/admin' },
+          { label: 'Catálogo', href: '/admin' },
+          { label: 'Categorias' }
+        ]}
+        badge={{ text: 'Carregando...', variant: 'secondary' }}
+      >
+        <div className="flex items-center justify-center h-64">
+          <p className="text-muted-foreground">Carregando categorias...</p>
+        </div>
+      </AdminPageLayout>
+    );
+  }
+
+  if (isError) {
+    return (
+      <AdminPageLayout
+        title="Categorias"
+        description="Organize e gerencie todas as categorias de produtos da sua loja"
+        breadcrumbs={[
+          { label: 'Admin', href: '/admin' },
+          { label: 'Catálogo', href: '/admin' },
+          { label: 'Categorias' }
+        ]}
+        badge={{ text: 'Erro', variant: 'destructive' }}
+      >
+        <div className="flex items-center justify-center h-64">
+          <p className="text-destructive">Erro ao carregar categorias. Tente novamente mais tarde.</p>
+        </div>
+      </AdminPageLayout>
+    );
+  }
 
   return (
     <AdminPageLayout

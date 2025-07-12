@@ -16,11 +16,17 @@ async function seedDatabase() {
         // 1. Seed Categories
         console.log('Creating categories...');
         const categories = [];
-        const categoryNames = ['Smartphones', 'Notebooks', 'Fones de Ouvido', 'Acessórios', 'Smartwatches'];
-        for (const name of categoryNames) {
+        const categoryDetails = [
+            { name: 'Smartphones', icon: 'Smartphone', color: '#3B82F6' },
+            { name: 'Notebooks', icon: 'Laptop', color: '#10B981' },
+            { name: 'Fones de Ouvido', icon: 'Headphones', color: '#EC4899' },
+            { name: 'Acessórios', icon: 'Package', color: '#F59E0B' },
+            { name: 'Smartwatches', icon: 'Watch', color: '#8B5CF6' },
+        ];
+        for (const detail of categoryDetails) {
             const res = await query(
-                'INSERT INTO categories (name, description, image_url) VALUES ($1, $2, $3) ON CONFLICT (name) DO NOTHING RETURNING id',
-                [name, `Descrição para ${name}`, `https://placehold.co/600x400/purple/white?text=${name}`]
+                'INSERT INTO categories (name, description, image_url, icon, color) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (name) DO NOTHING RETURNING id',
+                [detail.name, `Descrição para ${detail.name}`, `https://placehold.co/600x400/purple/white?text=${detail.name}`, detail.icon, detail.color]
             );
             if (res.rows[0]) {
                 categories.push(res.rows[0].id);

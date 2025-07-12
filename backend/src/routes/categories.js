@@ -36,15 +36,15 @@ router.get('/:id', async (req, res) => {
 // POST /api/v1/categories - Create a new category (admin only)
 router.post('/', authenticateToken, requireAdmin, async (req, res) => {
     try {
-        const { name, description, image_url } = req.body;
+        const { name, description, image_url, icon, color } = req.body;
 
         if (!name) {
             return response.badRequest(res, 'Category name is required');
         }
 
         const newCategoryResult = await query(
-            'INSERT INTO categories (name, description, image_url) VALUES ($1, $2, $3) RETURNING *',
-            [name, description, image_url]
+            'INSERT INTO categories (name, description, image_url, icon, color) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [name, description, image_url, icon, color]
         );
 
         return response.created(res, { category: newCategoryResult.rows[0] }, 'Category created successfully');
@@ -61,15 +61,15 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
 router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, image_url } = req.body;
+        const { name, description, image_url, icon, color } = req.body;
 
         if (!name) {
             return response.badRequest(res, 'Category name is required');
         }
 
         const updatedCategoryResult = await query(
-            'UPDATE categories SET name = $1, description = $2, image_url = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING *',
-            [name, description, image_url, id]
+            'UPDATE categories SET name = $1, description = $2, image_url = $3, icon = $4, color = $5, updated_at = CURRENT_TIMESTAMP WHERE id = $6 RETURNING *',
+            [name, description, image_url, icon, color, id]
         );
 
         if (updatedCategoryResult.rows.length === 0) {

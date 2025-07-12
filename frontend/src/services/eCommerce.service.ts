@@ -1,5 +1,6 @@
 import apiClient from './api';
 import { CartItem } from '@/contexts/CartContext';
+import { Category } from '@/types/category';
 
 // Interface para a resposta da criação de usuário provisório
 interface ProvisionalUserResponse {
@@ -45,6 +46,37 @@ class ECommerceService {
     };
     const response = await apiClient.post<OrderResponse>('/orders', orderData);
     return response.data;
+  }
+
+  /**
+   * Busca todas as categorias.
+   */
+  async getCategories(): Promise<Category[]> {
+    const response = await apiClient.get<{ categories: Category[] }>('/categories');
+    return response.data.categories;
+  }
+
+  /**
+   * Cria uma nova categoria.
+   */
+  async createCategory(categoryData: Omit<Category, 'id'>): Promise<Category> {
+    const response = await apiClient.post<Category>('/categories', categoryData);
+    return response.data;
+  }
+
+  /**
+   * Atualiza uma categoria existente.
+   */
+  async updateCategory(id: string, categoryData: Partial<Category>): Promise<Category> {
+    const response = await apiClient.put<Category>(`/categories/${id}`, categoryData);
+    return response.data;
+  }
+
+  /**
+   * Exclui uma categoria.
+   */
+  async deleteCategory(id: string): Promise<void> {
+    await apiClient.delete(`/categories/${id}`);
   }
 }
 

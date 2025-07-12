@@ -82,7 +82,7 @@ export const CategoryIcons: React.FC = () => {
                   className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-md group-hover:shadow-xl"
                   style={{ 
                     backgroundColor: category.color,
-                    border: `2px solid ${iconColor}30`
+                    border: `1px solid ${iconColor}50`
                   }}
                 >
                   <div 

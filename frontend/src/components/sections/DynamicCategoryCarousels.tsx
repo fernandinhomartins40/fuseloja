@@ -67,7 +67,7 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
         {/* Modern header with category styling */}
         <div className="text-center mb-12">
           <div 
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-sm font-medium mb-4 border-2"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-sm font-medium mb-4 border"
             style={{
               backgroundColor: category.color,
               borderColor: iconColor,
@@ -102,7 +102,7 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
               {category.products.map((product, index) => (
                 <CarouselItem key={index} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                   <div 
-                    className="group bg-card/95 backdrop-blur-sm border-2 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-[520px] flex flex-col"
+                    className="group bg-card/95 backdrop-blur-sm border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-[520px] flex flex-col"
                     style={{ 
                       borderColor: iconColor,
                       boxShadow: `0 4px 6px -1px ${iconColor}40`,
@@ -199,14 +199,14 @@ const CategoryCarousel: React.FC<{ category: CategoryWithProducts }> = ({ catego
             
             {/* Category-themed carousel navigation */}
             <CarouselPrevious 
-              className="left-4 border-2 bg-white/90 backdrop-blur-sm hover:bg-white"
+              className="left-4 border bg-white/90 backdrop-blur-sm hover:bg-white"
               style={{ 
                 borderColor: iconColor,
                 color: iconColor
               }}
             />
             <CarouselNext 
-              className="right-4 border-2 bg-white/90 backdrop-blur-sm hover:bg-white"
+              className="right-4 border bg-white/90 backdrop-blur-sm hover:bg-white"
               style={{ 
                 borderColor: iconColor,
                 color: iconColor

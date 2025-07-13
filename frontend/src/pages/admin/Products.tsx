@@ -2,13 +2,13 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ProductForm from '@/components/admin/ProductForm';
-import ProductsTable from '@/components/admin/ProductsTable';
+import { VirtualizedTable } from '@/components/admin/ui/VirtualizedTable';
 import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
-import { SearchFilter, FilterOption } from '@/components/admin/ui/SearchFilter';
+import { FilterOption } from '@/components/admin/ui/SearchFilter';
 import { useProductsManagement } from '@/hooks/useProductsManagement';
-import { useSearchFilter } from '@/hooks/useSearchFilter';
 import { Product } from '@/types/product';
-import { Package2, Plus } from 'lucide-react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Products: React.FC = () => {
   const {
@@ -96,17 +96,103 @@ const Products: React.FC = () => {
     }
   ];
 
-  const {
-    searchValue,
-    setSearchValue,
-    activeFilters,
-    setActiveFilters,
-    clearFilters,
-    filteredData
-  } = useSearchFilter(products, {
-    filterConfig,
-    initialSearch: ''
-  });
+  // Column definitions for virtualized table
+  const columns = [
+    {
+      key: 'imageUrl' as keyof Product,
+      label: 'Imagem',
+      width: '80px',
+      align: 'center' as const,
+      render: (value: string) => (
+        <div className="w-12 h-12 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+          <img
+            src={value}
+            alt="Produto"
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      )
+    },
+    {
+      key: 'title' as keyof Product,
+      label: 'Nome',
+      sortable: true,
+      width: '2fr'
+    },
+    {
+      key: 'category' as keyof Product,
+      label: 'Categoria',
+      sortable: true,
+      width: '150px'
+    },
+    {
+      key: 'price' as keyof Product,
+      label: 'Preço',
+      sortable: true,
+      width: '120px',
+      align: 'right' as const,
+      render: (value: number) => `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    },
+    {
+      key: 'stock' as keyof Product,
+      label: 'Estoque',
+      sortable: true,
+      width: '100px',
+      align: 'center' as const,
+      render: (value: number) => (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+          value > 10 ? 'bg-green-100 text-green-800' :
+          value > 0 ? 'bg-yellow-100 text-yellow-800' :
+          'bg-red-100 text-red-800'
+        }`}>
+          {value}
+        </span>
+      )
+    },
+    {
+      key: 'createdAt' as keyof Product,
+      label: 'Criado em',
+      sortable: true,
+      width: '120px',
+      render: (value: string | Date) => {
+        const date = value instanceof Date ? value : new Date(value);
+        return date.toLocaleDateString('pt-BR');
+      }
+    },
+    {
+      key: 'actions' as keyof Product,
+      label: 'Ações',
+      width: '120px',
+      align: 'center' as const,
+      render: (_value: any, item: Product) => (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEditProduct(item);
+            }}
+            className="h-8 w-8 p-0"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteProduct(item.id);
+            }}
+            className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      )
+    }
+  ];
 
   return (
     <AdminPageLayout
@@ -118,7 +204,7 @@ const Products: React.FC = () => {
         { label: 'Produtos' }
       ]}
       badge={{
-        text: `${filteredData.length} de ${products.length} itens ${!apiDataAvailable ? '(dados de exemplo)' : '(do banco)'}`,
+        text: `${products.length} itens ${!apiDataAvailable ? '(dados de exemplo)' : '(do banco)'}`,
         variant: apiDataAvailable ? 'secondary' : 'outline'
       }}
       action={{
@@ -128,17 +214,6 @@ const Products: React.FC = () => {
       }}
     >
       <div className="space-y-4 sm:space-y-6">
-        <SearchFilter
-          searchValue={searchValue}
-          onSearchChange={setSearchValue}
-          searchPlaceholder="Buscar produtos por nome, categoria, SKU..."
-          filters={filterConfig}
-          activeFilters={activeFilters}
-          onFiltersChange={setActiveFilters}
-          onClearFilters={clearFilters}
-          showFilterCount={true}
-        />
-        
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogContent className="w-[95vw] max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -156,10 +231,19 @@ const Products: React.FC = () => {
           </DialogContent>
         </Dialog>
         
-        <ProductsTable 
-          products={filteredData}
-          onEdit={handleEditProduct}
-          onDelete={handleDeleteProduct}
+        <VirtualizedTable
+          data={products}
+          columns={columns}
+          itemHeight={80}
+          containerHeight={600}
+          searchFields={['title', 'category', 'sku', 'description']}
+          filterConfig={filterConfig}
+          searchPlaceholder="Buscar produtos por nome, categoria, SKU..."
+          onRowClick={(_product) => {
+            // Optional: handle row click for quick preview
+          }}
+          loading={isLoading}
+          emptyMessage={isError ? `Erro ao carregar produtos: ${error}` : "Nenhum produto encontrado"}
         />
       </div>
     </AdminPageLayout>

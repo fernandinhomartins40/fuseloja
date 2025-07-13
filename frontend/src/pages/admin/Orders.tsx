@@ -1,21 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Eye } from 'lucide-react';
 import { 
   Dialog, 
@@ -26,8 +10,8 @@ import {
 import OrderDetails from '@/components/admin/OrderDetails';
 import { useOrders, Order, OrderStatus } from '@/contexts/OrderContext';
 import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
-import { SearchFilter, FilterOption } from '@/components/admin/ui/SearchFilter';
-import { useSearchFilter } from '@/hooks/useSearchFilter';
+import { VirtualizedTable } from '@/components/admin/ui/VirtualizedTable';
+import { FilterOption } from '@/components/admin/ui/SearchFilter';
 import { StatusBadge } from '@/components/admin/ui/StatusBadge';
 import { toast } from '@/hooks/use-toast';
 
@@ -83,17 +67,72 @@ const Orders: React.FC = () => {
     }
   ];
 
-  const {
-    searchValue,
-    setSearchValue,
-    activeFilters,
-    setActiveFilters,
-    clearFilters,
-    filteredData: filteredOrders
-  } = useSearchFilter(orders, {
-    filterConfig,
-    initialSearch: ''
-  });
+  // Column definitions for orders table
+  const columns = [
+    {
+      key: 'id' as keyof Order,
+      label: 'Pedido',
+      width: '120px',
+      sortable: true
+    },
+    {
+      key: 'customer' as keyof Order,
+      label: 'Cliente',
+      width: '200px',
+      sortable: true,
+      render: (customer: any) => customer?.name || 'N/A'
+    },
+    {
+      key: 'date' as keyof Order,
+      label: 'Data',
+      width: '120px',
+      sortable: true,
+      render: (date: string | Date) => {
+        const dateObj = date instanceof Date ? date : new Date(date);
+        return dateObj.toLocaleDateString('pt-BR');
+      }
+    },
+    {
+      key: 'total' as keyof Order,
+      label: 'Total',
+      width: '120px',
+      align: 'right' as const,
+      sortable: true,
+      render: (value: number) => `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    },
+    {
+      key: 'status' as keyof Order,
+      label: 'Status',
+      width: '150px',
+      sortable: true,
+      render: (status: OrderStatus) => (
+        <StatusBadge 
+          status={getStatusType(status) as any}
+          text={getStatusLabel(status)}
+        />
+      )
+    },
+    {
+      key: 'actions' as keyof Order,
+      label: 'Ações',
+      width: '120px',
+      align: 'center' as const,
+      render: (_value: any, order: Order) => (
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={(e) => {
+            e.stopPropagation();
+            handleViewOrder(order);
+          }}
+          className="h-8"
+        >
+          <Eye className="h-4 w-4 mr-1" />
+          Detalhes
+        </Button>
+      )
+    }
+  ];
 
   const handleViewOrder = (order: Order) => {
     setSelectedOrder(order);
@@ -144,74 +183,24 @@ const Orders: React.FC = () => {
         { label: 'Pedidos' }
       ]}
       badge={{
-        text: `${filteredOrders.length} de ${orders.length} pedidos`,
+        text: `${orders.length} pedidos`,
         variant: 'secondary'
       }}
     >
       <div className="space-y-4 sm:space-y-6">
-        <SearchFilter
-          searchValue={searchValue}
-          onSearchChange={setSearchValue}
+        <VirtualizedTable
+          data={orders}
+          columns={columns}
+          itemHeight={80}
+          containerHeight={600}
+          searchFields={['id', 'customer_name', 'customer_email', 'customer_phone']}
+          filterConfig={filterConfig}
           searchPlaceholder="Buscar por cliente, número do pedido ou email..."
-          filters={filterConfig}
-          activeFilters={activeFilters}
-          onFiltersChange={setActiveFilters}
-          onClearFilters={clearFilters}
-          showFilterCount={true}
+          onRowClick={(order) => {
+            handleViewOrder(order);
+          }}
+          emptyMessage={orders.length === 0 ? "Nenhum pedido foi criado ainda" : "Nenhum pedido encontrado"}
         />
-
-        <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Pedido</TableHead>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredOrders.length > 0 ? (
-                    filteredOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">{order.id}</TableCell>
-                        <TableCell>{order.customer.name}</TableCell>
-                        <TableCell>{order.date}</TableCell>
-                        <TableCell>R$ {order.total.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <StatusBadge 
-                            status={getStatusType(order.status) as any}
-                            text={getStatusLabel(order.status)}
-                          />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => handleViewOrder(order)}
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            Detalhes
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center h-24">
-                        {orders.length === 0 ? "Nenhum pedido foi criado ainda" : "Nenhum pedido encontrado"}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
 
         <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
           <DialogContent className="w-[95vw] max-w-[700px] max-h-[90vh] overflow-y-auto">

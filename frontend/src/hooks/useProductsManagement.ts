@@ -17,11 +17,54 @@ interface SingleProductApiResponse {
   product: Product;
 }
 
-// Funções de fetch da API
+// Funções de fetch da API - versão robusta
 const fetchProducts = async (): Promise<ProductsApiResponse> => {
-  const response = await apiClient.get<ProductsApiResponse>('/products?limit=1000');
-  // A resposta da API vem em response.data (ApiResponse wrapper)
-  return response.data || { products: [], total: 0, page: 1, limit: 1000 };
+  try {
+    // Primeira tentativa com limite alto
+    const response = await apiClient.get<ProductsApiResponse>('/products?limit=1000&page=1');
+    const data = response.data || { products: [], total: 0, page: 1, limit: 1000 };
+    
+    // Se retornou poucos produtos, tenta buscar mais páginas
+    if (data.products && data.products.length < 50 && data.total > data.products.length) {
+      console.log('🔄 Poucos produtos retornados, buscando mais páginas...');
+      
+      // Busca múltiplas páginas para garantir que temos todos os produtos
+      const allProducts: Product[] = [...data.products];
+      let page = 2;
+      let hasMore = true;
+      
+      while (hasMore && page <= 10) { // máximo 10 páginas para evitar loop infinito
+        try {
+          const pageResponse = await apiClient.get<ProductsApiResponse>(`/products?limit=1000&page=${page}`);
+          const pageData = pageResponse.data;
+          
+          if (pageData?.products && pageData.products.length > 0) {
+            allProducts.push(...pageData.products);
+            page++;
+          } else {
+            hasMore = false;
+          }
+        } catch (pageError) {
+          console.warn(`Erro ao buscar página ${page}:`, pageError);
+          hasMore = false;
+        }
+      }
+      
+      console.log(`✅ Total de produtos carregados: ${allProducts.length}`);
+      
+      return {
+        products: allProducts,
+        total: allProducts.length,
+        page: 1,
+        limit: allProducts.length
+      };
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('❌ Erro ao buscar produtos:', error);
+    return { products: [], total: 0, page: 1, limit: 1000 };
+  }
 };
 
 const createProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<Product> => {

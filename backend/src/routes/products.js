@@ -222,9 +222,22 @@ router.get('/:id', async (req, res) => {
 // POST /api/v1/products - Create a new product (admin only)
 router.post('/', authenticateToken, requireAdmin, async (req, res) => {
   try {
+    console.log('🔍 CREATE PRODUCT - Request body:', JSON.stringify(req.body, null, 2));
+    console.log('🔍 CREATE PRODUCT - User:', req.user);
+    
     const { title, description, price, original_price, sku, stock, category_id, tag, image_url } = req.body;
 
+    console.log('🔍 CREATE PRODUCT - Extracted fields:', {
+      title, description, price, original_price, sku, stock, category_id, tag, image_url
+    });
+
     if (!title || !price || !stock || !category_id) {
+      console.log('❌ CREATE PRODUCT - Validation failed:', {
+        hasTitle: !!title,
+        hasPrice: !!price, 
+        hasStock: !!stock,
+        hasCategoryId: !!category_id
+      });
       return response.badRequest(res, 'Title, price, stock, and category are required');
     }
 

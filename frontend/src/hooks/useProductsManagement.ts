@@ -5,6 +5,21 @@ import apiClient from '@/services/api';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
+// Interface para categoria
+interface Category {
+  id: number;
+  name: string;
+  description: string;
+  image_url: string;
+  icon: string;
+  color: string;
+}
+
+// Interface para as respostas da API de categorias
+interface CategoriesApiResponse {
+  categories: Category[];
+}
+
 // Interfaces para as respostas da API
 interface ProductsApiResponse {
   products: Product[];
@@ -16,6 +31,56 @@ interface ProductsApiResponse {
 interface SingleProductApiResponse {
   product: Product;
 }
+
+// Função para buscar categorias
+const fetchCategories = async (): Promise<Category[]> => {
+  try {
+    const response = await apiClient.get<CategoriesApiResponse>('/categories');
+    return response.data?.categories || [];
+  } catch (error) {
+    console.error('❌ Erro ao buscar categorias:', error);
+    return [];
+  }
+};
+
+// Função para mapear produto do frontend para backend
+const mapProductToBackend = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const categories = await fetchCategories();
+  const category = categories.find(cat => cat.name === product.category);
+  
+  return {
+    title: product.title,
+    description: product.description || '',
+    price: product.price,
+    original_price: product.originalPrice || null,
+    sku: product.sku || '',
+    stock: product.stock,
+    category_id: category?.id || 1, // fallback para primeira categoria
+    tag: product.tag || '',
+    image_url: product.imageUrl || ''
+  };
+};
+
+// Função para mapear produto do backend para frontend
+const mapProductFromBackend = (backendProduct: any): Product => {
+  return {
+    id: backendProduct.id,
+    title: backendProduct.title,
+    shortDescription: backendProduct.short_description,
+    description: backendProduct.description,
+    price: parseFloat(backendProduct.price),
+    originalPrice: backendProduct.original_price ? parseFloat(backendProduct.original_price) : undefined,
+    sku: backendProduct.sku,
+    stock: backendProduct.stock,
+    imageUrl: backendProduct.image_url,
+    category: backendProduct.category_name || backendProduct.category,
+    tag: backendProduct.tag,
+    createdAt: backendProduct.created_at,
+    updatedAt: backendProduct.updated_at,
+    images: backendProduct.images || [backendProduct.image_url].filter(Boolean),
+    specifications: backendProduct.specifications || []
+  };
+};
 
 // Funções de fetch da API - versão robusta
 const fetchProducts = async (): Promise<ProductsApiResponse> => {
@@ -60,7 +125,13 @@ const fetchProducts = async (): Promise<ProductsApiResponse> => {
       };
     }
     
-    return data;
+    // Mapear produtos do backend para frontend
+    const mappedData = {
+      ...data,
+      products: data.products.map(mapProductFromBackend)
+    };
+    
+    return mappedData;
   } catch (error) {
     console.error('❌ Erro ao buscar produtos:', error);
     return { products: [], total: 0, page: 1, limit: 1000 };
@@ -68,13 +139,19 @@ const fetchProducts = async (): Promise<ProductsApiResponse> => {
 };
 
 const createProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<Product> => {
-  const response = await apiClient.post<SingleProductApiResponse>('/products', product);
-  return response.data?.product || product as Product;
+  const backendData = await mapProductToBackend(product);
+  console.log('📤 Enviando produto para backend:', backendData);
+  
+  const response = await apiClient.post<SingleProductApiResponse>('/products', backendData);
+  return mapProductFromBackend(response.data?.product) || product as Product;
 };
 
 const updateProduct = async (product: Product): Promise<Product> => {
-  const response = await apiClient.put<SingleProductApiResponse>(`/products/${product.id}`, product);
-  return response.data?.product || product;
+  const backendData = await mapProductToBackend(product);
+  console.log('📤 Atualizando produto no backend:', backendData);
+  
+  const response = await apiClient.put<SingleProductApiResponse>(`/products/${product.id}`, backendData);
+  return mapProductFromBackend(response.data?.product) || product;
 };
 
 const deleteProduct = async (productId: string): Promise<void> => {

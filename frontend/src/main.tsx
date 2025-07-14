@@ -21,7 +21,7 @@ const preloadCriticalResources = () => {
   if (hostname.includes('fuseloja.com.br')) {
     const link = document.createElement('link');
     link.rel = 'dns-prefetch';
-    link.href = '//82.25.69.57';
+    link.href = '//82.25.69.57:3001';
     document.head.appendChild(link);
   }
 };

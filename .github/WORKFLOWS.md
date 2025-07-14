@@ -97,7 +97,7 @@ Para simplificar, foram removidos:
 ## 🔗 **Links Úteis**
 
 - [🌐 Site](https://fuseloja.com.br)
-- [❤️ Health Check](http://82.25.69.57:3000/health)
+- [❤️ Health Check](http://82.25.69.57:3001/health)
 - [📊 GitHub Actions](../../actions)
 - [⚙️ Repository Settings](../../settings)
 

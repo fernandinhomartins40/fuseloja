@@ -9,7 +9,7 @@ module.exports = {
     max_memory_restart: '500M',
     env: {
       NODE_ENV: 'production',
-      PORT: 3000,
+      PORT: 3001,
       FRONTEND_URL: 'https://fuseloja.com.br'
     },
     error_file: '/opt/fuseloja/logs/error.log',
@@ -31,7 +31,7 @@ module.exports = {
     // Environment variables
     env_production: {
       NODE_ENV: 'production',
-      PORT: 3000,
+      PORT: 3001,
       FRONTEND_URL: 'https://fuseloja.com.br',
       PM2_SERVE_PATH: '/opt/fuseloja/current/backend/public',
       PM2_SERVE_PORT: 8080,
@@ -40,7 +40,7 @@ module.exports = {
     },
     env_development: {
       NODE_ENV: 'development',
-      PORT: 3000
+      PORT: 3001
     }
   }],
 

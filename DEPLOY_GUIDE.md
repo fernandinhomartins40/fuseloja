@@ -57,8 +57,8 @@ git push origin main
 
 ### **URLs de Acesso**
 - **Website**: https://fuseloja.com.br
-- **Health Check**: http://82.25.69.57:3000/health
-- **API**: http://82.25.69.57:3000/
+- **Health Check**: http://82.25.69.57:3001/health
+- **API**: http://82.25.69.57:3001/
 
 ### **Comandos de Verificação no VPS**
 ```bash
@@ -72,7 +72,7 @@ pm2 status fuseloja
 pm2 logs fuseloja
 
 # Verificar health check
-curl http://localhost:3000/health
+curl http://localhost:3001/health
 
 # Reiniciar aplicação (se necessário)
 pm2 restart fuseloja
@@ -94,8 +94,8 @@ pm2 start fuseloja           # Iniciar aplicação
 # Verificar uso de recursos
 htop
 
-# Verificar porta 3000
-netstat -tulpn | grep :3000
+# Verificar porta 3001
+netstat -tulpn | grep :3001
 
 # Verificar PostgreSQL
 systemctl status postgresql
@@ -117,8 +117,8 @@ pm2 restart fuseloja
 
 ### **Erro de porta em uso?**
 ```bash
-# Verificar o que está usando a porta 3000
-lsof -i :3000
+# Verificar o que está usando a porta 3001
+lsof -i :3001
 
 # Matar processo se necessário
 pkill -f node
@@ -140,7 +140,7 @@ pm2 start /opt/fuseloja/current/backend/src/index.js --name fuseloja
 Em caso de problemas:
 1. Verificar [GitHub Actions](https://github.com/fernandinhomartins40/fuseloja/actions) para logs do deploy
 2. Acessar VPS via SSH para verificar logs da aplicação
-3. Executar health check: `curl http://82.25.69.57:3000/health`
+3. Executar health check: `curl http://82.25.69.57:3001/health`
 
 ---
 

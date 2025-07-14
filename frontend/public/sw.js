@@ -52,7 +52,7 @@ self.addEventListener('fetch', function(event) {
 
   // Pular requisições da API - sempre ir para rede
   if (event.request.url.includes('/api/') || 
-      event.request.url.includes(':3000') ||
+      event.request.url.includes(':3001') ||
       event.request.url.includes('82.25.69.57')) {
     event.respondWith(fetch(event.request));
     return;

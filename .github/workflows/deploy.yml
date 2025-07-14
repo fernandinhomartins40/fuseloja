@@ -181,7 +181,7 @@ jobs:
             echo "⚙️ Creating environment file..."
             cat > .env << EOF
           NODE_ENV=production
-          PORT=3000
+          PORT=3001
           FRONTEND_URL=https://fuseloja.com.br
           DB_HOST=localhost
           DB_PORT=5432
@@ -213,7 +213,7 @@ jobs:
           sleep 10
           
           for i in {1..6}; do
-            if curl -f http://localhost:3000/health > /dev/null 2>&1; then
+            if curl -f http://localhost:3001/health > /dev/null 2>&1; then
               echo "✅ Health check passed!"
               break
             else
@@ -235,4 +235,4 @@ jobs:
           
           echo "🎉 FuseLoja deployed successfully!"
           echo "🌐 Application is live at: https://fuseloja.com.br"
-          echo "❤️ Health check: http://82.25.69.57:3000/health" 
+          echo "❤️ Health check: http://82.25.69.57:3001/health" 

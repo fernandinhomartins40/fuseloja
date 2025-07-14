@@ -19,7 +19,7 @@ const { createTables } = require('./scripts/createTables');
 const { seedData } = require('./scripts/seedData');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Rate limiting - more lenient for development
 const limiter = rateLimit({

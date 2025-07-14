@@ -38,7 +38,7 @@ git push origin main
 
 Após o deploy, verifique:
 - **GitHub Actions**: Deve mostrar ✅ para Build e Deploy
-- **Health Check**: `curl http://82.25.69.57:3000/health`
+- **Health Check**: `curl http://82.25.69.57:3001/health`
 - **Website**: https://fuseloja.com.br
 
 ## ✅ Credenciais Configuradas

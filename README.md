@@ -75,9 +75,9 @@ sudo -u postgres createdb fuseloja
 ### 🌐 **URLs de Desenvolvimento**
 
 - **Frontend:** http://localhost:5173
-- **Backend:** http://localhost:3000
-- **API Docs:** http://localhost:3000 (JSON endpoints)
-- **Health Check:** http://localhost:3000/health
+- **Backend:** http://localhost:3001
+- **API Docs:** http://localhost:3001 (JSON endpoints)
+- **Health Check:** http://localhost:3001/health
 
 ### 📊 **Endpoints Principais**
 
@@ -126,8 +126,8 @@ git push origin main
 
 #### **Monitoramento**
 - **App:** https://www.fuseloja.com.br
-- **Health:** http://seu-ip:3000/health
-- **API:** http://seu-ip:3000/api/v1/
+- **Health:** http://seu-ip:3001/health
+- **API:** http://seu-ip:3001/api/v1/
 - **Logs:** `pm2 logs fuseloja-minimal`
 
 ### 🔒 **Segurança**
@@ -170,7 +170,7 @@ pm2 list
 pm2 logs fuseloja-backend
 
 # Health checks
-curl http://localhost:3000/health
+curl http://localhost:3001/health
 ```
 
 ### 🔄 **Roadmap**

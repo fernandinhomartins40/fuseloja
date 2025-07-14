@@ -43,7 +43,7 @@ export const RecommendedProducts: React.FC = () => {
               title={product.title}
               price={product.price}
               originalPrice={product.originalPrice}
-              image={product.imageUrl}
+              imageUrl={product.imageUrl}
               tag={convertToTagType(product.tag)}
             />
           ))}

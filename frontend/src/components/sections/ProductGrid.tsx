@@ -75,7 +75,7 @@ const ProductGrid: React.FC = () => {
               originalPrice={product.originalPrice}
               imageUrl={product.imageUrl}
               tag={product.tag}
-              productId={product.id}
+              id={product.id}
             />
           ))}
         </div>

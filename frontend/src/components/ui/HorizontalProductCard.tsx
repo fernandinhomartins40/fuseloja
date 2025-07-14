@@ -45,6 +45,12 @@ export const HorizontalProductCard: React.FC<HorizontalProductCardProps> = ({
           alt={title}
           className="w-16 h-16 object-cover rounded-md"
           loading="lazy"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== '/placeholder.svg') {
+              target.src = '/placeholder.svg';
+            }
+          }}
         />
         {discountPercentage > 0 && (
           <div className="absolute -top-1 -right-1 bg-destructive text-white text-xs font-bold px-1.5 py-0.5 rounded-full">

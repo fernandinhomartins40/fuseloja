@@ -86,6 +86,13 @@ export const BestSellers: React.FC = () => {
                             src={product.imageUrl} 
                             alt={product.title}
                             className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                            loading="lazy"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              if (target.src !== '/placeholder.svg') {
+                                target.src = '/placeholder.svg';
+                              }
+                            }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           

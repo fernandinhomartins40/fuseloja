@@ -122,6 +122,13 @@ const ProductDetail: React.FC = () => {
                   src={product.imageUrl}
                   alt={product.title}
                   className="w-full h-full object-cover"
+                  loading="eager"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (target.src !== '/placeholder.svg') {
+                      target.src = '/placeholder.svg';
+                    }
+                  }}
                 />
               </AspectRatio>
             </div>
@@ -132,7 +139,18 @@ const ProductDetail: React.FC = () => {
                 {product.images.map((img, index) => (
                   <div key={index} className="rounded-md overflow-hidden border cursor-pointer hover:opacity-80 transition-opacity">
                     <AspectRatio ratio={1 / 1}>
-                      <img src={img} alt={`${product.title} - Imagem ${index + 1}`} className="w-full h-full object-cover" />
+                      <img 
+                        src={img} 
+                        alt={`${product.title} - Imagem ${index + 1}`} 
+                        className="w-full h-full object-cover" 
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          if (target.src !== '/placeholder.svg') {
+                            target.src = '/placeholder.svg';
+                          }
+                        }}
+                      />
                     </AspectRatio>
                   </div>
                 ))}

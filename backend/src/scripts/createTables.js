@@ -16,6 +16,7 @@ const createTables = async () => {
         last_name VARCHAR(100) NOT NULL,
         role VARCHAR(20) DEFAULT 'user',
         is_active BOOLEAN DEFAULT true,
+        is_provisional BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -61,7 +62,7 @@ const createTables = async () => {
         sku VARCHAR(100) UNIQUE,
         stock INT NOT NULL DEFAULT 0,
         image_url VARCHAR(255),
-        category_id INT REFERENCES categories(id),
+        category_id INT REFERENCES categories(id) ON DELETE SET NULL,
         tag VARCHAR(50),
         is_active BOOLEAN DEFAULT true,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -105,87 +106,30 @@ const createTables = async () => {
     `);
     console.log('✅ Orders table created/verified');
 
-    // Create indexes for better performance
-    await query(`
-      CREATE INDEX IF NOT EXISTS idx_customers_phone ON customers(phone)
-    `);
-    console.log('✅ Index created for customers phone');
+    // Create admin user if it doesn't exist
+    console.log('🔧 Setting up admin user...');
+    await createAdminUser();
 
-    await query(`
-      CREATE INDEX IF NOT EXISTS idx_orders_customer_phone ON orders(customer_phone)
-    `);
-    console.log('✅ Index created for orders customer phone');
-
-    await query(`
-      CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status)
-    `);
-    console.log('✅ Index created for orders status');
-
-    await query(`
-      CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at)
-    `);
-    console.log('✅ Index created for orders created_at');
-
-    await query(`
-      CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id)
-    `);
-    console.log('✅ Index created for products category_id');
-    
-    await query(`
-      CREATE INDEX IF NOT EXISTS idx_products_is_active ON products(is_active)
-    `);
-    console.log('✅ Index created for products is_active');
-
-    // Add is_provisional column to users table if it doesn't exist
-    await query(`
-      ALTER TABLE users 
-      ADD COLUMN IF NOT EXISTS is_provisional BOOLEAN DEFAULT false
-    `);
-    console.log('✅ Users table updated with is_provisional column');
-    
-    // Create trigger for updated_at on users table
-    await query(`
-      CREATE OR REPLACE FUNCTION update_updated_at_column()
-      RETURNS TRIGGER AS $$
-      BEGIN
-        NEW.updated_at = CURRENT_TIMESTAMP;
-        RETURN NEW;
-      END;
-      $$ language 'plpgsql';
-    `);
-
-    await query(`
-      DROP TRIGGER IF EXISTS update_users_updated_at ON users;
-      CREATE TRIGGER update_users_updated_at
-        BEFORE UPDATE ON users
-        FOR EACH ROW
-        EXECUTE FUNCTION update_updated_at_column();
-    `);
-    console.log('✅ Trigger for users updated_at created/verified');
-
-    console.log('🎉 All tables and extensions created successfully!');
-    
+    console.log('🎉 Database initialization completed successfully!');
+    return true;
   } catch (error) {
     console.error('❌ Error creating tables:', error);
     throw error;
   }
 };
 
-// Run the migration if this script is called directly
+// Export the function
+module.exports = { createTables };
+
+// Run directly if called as script
 if (require.main === module) {
   createTables()
     .then(() => {
-      // Create admin user after tables are created
-      return createAdminUser();
-    })
-    .then(() => {
-      console.log('✨ Database migration and admin creation completed successfully!');
+      console.log('✅ Tables created successfully');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('💥 Database migration failed:', error);
+      console.error('❌ Failed to create tables:', error);
       process.exit(1);
     });
 }
-
-module.exports = { createTables };

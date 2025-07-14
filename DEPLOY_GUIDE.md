@@ -1,314 +1,159 @@
-# 🚀 Guia Completo de Deploy - FuseLoja Minimal
+# 🚀 Guia Simplificado de Deploy - FuseLoja
 
-## 📋 **Status Atual**
-- ✅ Backend Minimalista (8 dependências)
-- ✅ Frontend Otimizado (chunks separados)
-- ✅ GitHub Actions Configurados
-- ✅ Docker Pronto
-- ✅ PM2 Configurado
-- ✅ Health Checks Implementados
+## 📋 **Informações do Deploy**
+- **Domínio**: fuseloja.com.br
+- **VPS**: 82.25.69.57 (SSH root)
+- **Workflow**: Simplificado com apenas Build e Deploy
+- **Método**: Deploy via SCP + SSH
 
-## 🔧 **Configurações de Secrets Necessárias**
+## 🔧 **Configuração de Secrets**
 
 ### GitHub Repository Secrets
-Vá para: `https://github.com/fernandinhomartins40/fuseloja/settings/secrets/actions`
+Acesse: `Settings` → `Secrets and variables` → `Actions`
 
-#### **Obrigatórios**
+**Secret Necessária:**
 ```
-VPS_HOST=82.25.69.57
-VPS_USERNAME=root
-VPS_PASSWORD=sua-senha-vps
+VPS_PASSWORD=sua-senha-da-vps
 ```
 
-#### **Opcionais (Recomendados)**
-```
-JWT_SECRET=seu-jwt-secret-32-chars-minimo
-DB_HOST=localhost
-DB_USER=postgres
-DB_PASSWORD=sua-senha-db
-DB_NAME=fuseloja
-```
+> ℹ️ O host (82.25.69.57) e username (root) já estão configurados no workflow
 
-## 🚀 **Métodos de Deploy**
+## 🚀 **Como Fazer Deploy**
 
 ### **1. Deploy Automático (Recomendado)**
 ```bash
-# Qualquer push na branch main ativa o deploy
+# Qualquer push na branch main ativa o deploy automaticamente
 git add .
 git commit -m "feat: nova funcionalidade"
 git push origin main
 ```
 
-### **2. Deploy Manual via GitHub Actions**
-1. Vá para: `https://github.com/fernandinhomartins40/fuseloja/actions`
-2. Clique em "🚀 Deploy Fuseloja Minimal"
+### **2. Deploy Manual**
+1. Acesse: [GitHub Actions](https://github.com/fernandinhomartins40/fuseloja/actions)
+2. Clique em "🚀 Deploy FuseLoja"
 3. Clique em "Run workflow"
 4. Selecione branch `main`
 5. Clique em "Run workflow"
 
-### **3. Deploy via SSH Direto**
+## 📦 **O que o Deploy Faz**
+
+### **Job 1: 🏗️ Build**
+- Instala dependências do frontend e backend
+- Compila o frontend React para arquivos estáticos
+- Copia build do frontend para backend/public
+- Cria pacote de deployment compactado
+
+### **Job 2: 🚀 Deploy**
+- Envia pacote para VPS via SCP
+- Instala Node.js 18 e PM2 (se necessário)
+- Configura PostgreSQL (se necessário)
+- Extrai pacote e instala dependências de produção
+- Configura variáveis de ambiente
+- Inicializa banco de dados
+- Reinicia aplicação com PM2
+- Executa health check
+
+## 🔍 **Verificação do Deploy**
+
+### **URLs de Acesso**
+- **Website**: https://fuseloja.com.br
+- **Health Check**: http://82.25.69.57:3000/health
+- **API**: http://82.25.69.57:3000/
+
+### **Comandos de Verificação no VPS**
 ```bash
-# 1. Conectar no VPS
+# Conectar no VPS
 ssh root@82.25.69.57
 
-# 2. Executar script de deploy
-cd /opt/fuseloja
-./deploy.sh
+# Verificar status da aplicação
+pm2 status fuseloja
+
+# Ver logs da aplicação
+pm2 logs fuseloja
+
+# Verificar health check
+curl http://localhost:3000/health
+
+# Reiniciar aplicação (se necessário)
+pm2 restart fuseloja
 ```
 
-## 🔄 **Pipeline de Deploy**
+## 🛠️ **Comandos Úteis**
 
-### **Etapas Automáticas**
-1. **🏗️ Build**
-   - Instala dependências do frontend e backend
-   - Compila frontend (React → estáticos)
-   - Verifica startup do backend
-
-2. **🚀 Deploy**
-   - Conecta no VPS via SSH
-   - Baixa código mais recente
-   - Instala dependências de produção
-   - Copia build do frontend para backend/public
-   - Reinicia aplicação com PM2
-
-3. **🔍 Verificação**
-   - Testa health check
-   - Verifica logs
-   - Confirma que aplicação está rodando
-
-## 🛠️ **Comandos Úteis no VPS**
-
-### **PM2 (Gerenciamento do App)**
+### **Gerenciamento PM2**
 ```bash
-# Status da aplicação
-pm2 status fuseloja-minimal
-
-# Logs em tempo real
-pm2 logs fuseloja-minimal
-
-# Reiniciar aplicação
-pm2 restart fuseloja-minimal
-
-# Parar aplicação
-pm2 stop fuseloja-minimal
-
-# Iniciar aplicação
-pm2 start fuseloja-minimal
-
-# Configurações PM2
-pm2 show fuseloja-minimal
+pm2 status fuseloja          # Status da aplicação
+pm2 logs fuseloja            # Logs em tempo real
+pm2 restart fuseloja         # Reiniciar aplicação
+pm2 stop fuseloja            # Parar aplicação
+pm2 start fuseloja           # Iniciar aplicação
 ```
 
-### **Sistema (Debugging)**
+### **Comandos de Sistema**
 ```bash
-# Verificar processos Node.js
-ps aux | grep node
+# Verificar uso de recursos
+htop
 
 # Verificar porta 3000
-netstat -tlnp | grep 3000
+netstat -tulpn | grep :3000
 
-# Espaço em disco
-df -h
-
-# Logs do sistema
-journalctl -u pm2-root --since "1 hour ago"
-
-# Testar aplicação localmente
-curl http://localhost:3000/health
+# Verificar PostgreSQL
+systemctl status postgresql
 ```
 
-### **Deploy Manual (Se Necessário)**
+## 🚨 **Troubleshooting**
+
+### **Deploy Falhou?**
+1. Verifique os logs no GitHub Actions
+2. Confira se a secret VPS_PASSWORD está configurada
+3. Teste conexão SSH manualmente: `ssh root@82.25.69.57`
+
+### **Aplicação não responde?**
 ```bash
-# Navegar para diretório
-cd /opt/fuseloja/current
-
-# Atualizar código
-git pull origin main
-
-# Backend
-cd backend
-npm ci --production
-
-# Frontend
-cd ../frontend
-npm ci
-npm run build
-cp -r dist ../backend/public
-
-# Reiniciar
-cd ../backend
-pm2 restart fuseloja-minimal
-```
-
-## 🐳 **Deploy com Docker (Alternativo)**
-
-### **Opção 1: Docker Simples**
-```bash
-# Build da imagem
-docker build -f Dockerfile.minimal -t fuseloja-minimal .
-
-# Executar container
-docker run -d \
-  --name fuseloja-app \
-  -p 3000:3000 \
-  -e NODE_ENV=production \
-  -e JWT_SECRET=seu-jwt-secret \
-  fuseloja-minimal
-```
-
-### **Opção 2: Docker Compose (Com PostgreSQL)**
-```bash
-# Executar stack completa
-docker-compose -f docker-compose.minimal.yml up -d
-
-# Ver logs
-docker-compose logs -f
-
-# Parar tudo
-docker-compose down
-```
-
-## 🔍 **Monitoramento e Debugging**
-
-### **URLs de Verificação**
-- **App Principal**: https://www.fuseloja.com.br
-- **Health Check**: http://82.25.69.57:3000/health
-- **API Status**: http://82.25.69.57:3000/
-- **Ready Check**: http://82.25.69.57:3000/ready
-
-### **Logs Importantes**
-```bash
-# Logs da aplicação
-pm2 logs fuseloja-minimal --lines 50
-
-# Logs de erro
-pm2 logs fuseloja-minimal --err --lines 20
-
-# Logs do Nginx (se usando)
-tail -f /var/log/nginx/error.log
-
-# Logs do sistema
-journalctl -xe
-```
-
-### **Health Check Detalhado**
-```bash
-# Verificar saúde da aplicação
-curl -s http://localhost:3000/health | jq '.'
-
-# Exemplo de resposta esperada:
-{
-  "status": "healthy",
-  "timestamp": "2025-01-11T...",
-  "uptime": 1234.56,
-  "memory": {...},
-  "version": "1.0.0-minimal",
-  "environment": "production",
-  "platform": "linux",
-  "node_version": "v18.x.x",
-  "pid": 12345,
-  "database": "connected",
-  "endpoints": {
-    "auth": "/api/v1/auth",
-    "users": "/api/v1/users",
-    "health": "/health"
-  }
-}
-```
-
-## 🚨 **Troubleshooting Comum**
-
-### **❌ Deploy Falhou**
-```bash
-# 1. Verificar secrets do GitHub
-# 2. Testar conexão SSH
 ssh root@82.25.69.57
-
-# 3. Verificar espaço em disco
-df -h
-
-# 4. Ver logs do último deploy
-cat /opt/fuseloja/deploy.log
+pm2 logs fuseloja --lines 50
+pm2 restart fuseloja
 ```
 
-### **❌ Aplicação Não Inicia**
+### **Erro de porta em uso?**
 ```bash
-# Verificar logs de erro
-pm2 logs fuseloja-minimal --err
+# Verificar o que está usando a porta 3000
+lsof -i :3000
 
-# Tentar iniciar manualmente
-cd /opt/fuseloja/current/backend
-node src/index.js
-
-# Verificar dependências
-npm list --depth=0
+# Matar processo se necessário
+pkill -f node
+pm2 delete all
+pm2 start /opt/fuseloja/current/backend/src/index.js --name fuseloja
 ```
 
-### **❌ Health Check Falha**
-```bash
-# Verificar se porta está sendo usada
-netstat -tlnp | grep 3000
+## ✅ **Checklist de Deploy**
 
-# Testar localhost
-curl -v http://localhost:3000/health
-
-# Verificar variáveis de ambiente
-pm2 env 0
-```
-
-## 🎯 **Performance e Otimizações**
-
-### **Métricas de Deploy**
-- ⚡ **Build Time**: ~30 segundos
-- ⚡ **Deploy Time**: ~60 segundos
-- ⚡ **App Startup**: ~3 segundos
-- ⚡ **Health Check**: <100ms
-
-### **Recursos do Servidor**
-- 💾 **RAM**: ~50MB em uso
-- 💽 **Disk**: ~100MB total
-- 🔧 **CPU**: <5% em idle
-- 🌐 **Bandwidth**: Minimal
-
-### **Otimizações Aplicadas**
-- ✅ **Frontend**: Chunks separados, minificação
-- ✅ **Backend**: JavaScript puro, sem build
-- ✅ **Dependencies**: Apenas 8 para backend
-- ✅ **PM2**: Auto-restart, clustering pronto
-- ✅ **Docker**: Multi-stage build
-- ✅ **Health Checks**: Robustos e rápidos
+- [ ] Secret `VPS_PASSWORD` configurada no GitHub
+- [ ] Código commitado na branch `main`
+- [ ] Push feito para o repositório
+- [ ] Deploy executado com sucesso no GitHub Actions
+- [ ] Health check retorna status 200
+- [ ] Site acessível em https://fuseloja.com.br
 
 ## 📞 **Suporte**
 
-### **Em caso de problemas**
-1. ✅ Verificar [GitHub Actions](https://github.com/fernandinhomartins40/fuseloja/actions)
-2. ✅ Testar "Test VPS Connection" workflow
-3. ✅ Verificar logs: `pm2 logs fuseloja-minimal`
-4. ✅ Health check: `curl http://localhost:3000/health`
-
-### **Comandos de Emergência**
-```bash
-# Reset completo da aplicação
-pm2 delete fuseloja-minimal
-cd /opt/fuseloja/current/backend
-pm2 start src/index.js --name fuseloja-minimal
-
-# Rollback para versão anterior
-cd /opt/fuseloja
-cp -r backup_20250111_* current/
-pm2 restart fuseloja-minimal
-```
+Em caso de problemas:
+1. Verificar [GitHub Actions](https://github.com/fernandinhomartins40/fuseloja/actions) para logs do deploy
+2. Acessar VPS via SSH para verificar logs da aplicação
+3. Executar health check: `curl http://82.25.69.57:3000/health`
 
 ---
 
-## 🎉 **Deploy Pronto!**
+## 🎉 **Deploy Simplificado Pronto!**
 
-A aplicação está **100% otimizada** para deploy automático e monitoramento em produção.
+O workflow agora possui apenas **2 jobs essenciais**:
+- ✅ **Build**: Compila e empacota a aplicação
+- ✅ **Deploy**: Envia e configura na VPS
 
-**Next Steps:**
-1. ✅ Configure os secrets no GitHub
-2. ✅ Faça push na branch main
-3. ✅ Acompanhe o deploy em Actions
-4. ✅ Acesse https://www.fuseloja.com.br
+**Próximos passos:**
+1. Configure a secret `VPS_PASSWORD`
+2. Faça push na branch main
+3. Acompanhe o deploy
+4. Acesse https://fuseloja.com.br
 
-**Stack minimalista** = **Deploy em 60 segundos** 🚀
+🚀 **Deploy em produção simplificado e otimizado!**

@@ -1,23 +1,19 @@
 
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Product } from '@/types/product';
 import apiClient from '@/services/api';
 import { toast } from 'sonner';
-import { useState } from 'react';
 
-// Interface para categoria
-interface Category {
+// Interface para categoria do backend
+interface BackendCategory {
   id: number;
   name: string;
   description: string;
   image_url: string;
   icon: string;
   color: string;
-}
-
-// Interface para as respostas da API de categorias
-interface CategoriesApiResponse {
-  categories: Category[];
+  slug: string;
 }
 
 // Interfaces para as respostas da API
@@ -32,11 +28,23 @@ interface SingleProductApiResponse {
   product: Product;
 }
 
+interface CategoriesApiResponse {
+  categories: BackendCategory[];
+}
+
+// Cache para categorias (para evitar múltiplas requisições)
+let categoriesCache: BackendCategory[] | null = null;
+
 // Função para buscar categorias
-const fetchCategories = async (): Promise<Category[]> => {
+const fetchCategories = async (): Promise<BackendCategory[]> => {
+  if (categoriesCache) {
+    return categoriesCache;
+  }
+  
   try {
     const response = await apiClient.get<CategoriesApiResponse>('/categories');
-    return response.data?.categories || [];
+    categoriesCache = response.data?.categories || [];
+    return categoriesCache;
   } catch (error) {
     console.error('❌ Erro ao buscar categorias:', error);
     return [];
@@ -45,18 +53,32 @@ const fetchCategories = async (): Promise<Category[]> => {
 
 // Função para mapear produto do frontend para backend
 const mapProductToBackend = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
-  const categories = await fetchCategories();
-  const category = categories.find(cat => cat.name === product.category);
+  let categoryId = null;
+  
+  // Se category é um ID numérico (string), usar diretamente
+  if (product.category && !isNaN(parseInt(product.category))) {
+    categoryId = parseInt(product.category);
+  } else {
+    // Se category é um nome, buscar o ID correspondente
+    const categories = await fetchCategories();
+    const category = categories.find(cat => 
+      cat.name === product.category || 
+      cat.slug === product.category ||
+      cat.id.toString() === product.category
+    );
+    categoryId = category?.id || null;
+  }
   
   return {
     title: product.title,
+    short_description: product.shortDescription || '',
     description: product.description || '',
     price: product.price,
     original_price: product.originalPrice || null,
     sku: product.sku || '',
     stock: product.stock,
-    category_id: category?.id || 1, // fallback para primeira categoria
-    tag: product.tag || '',
+    category_id: categoryId,
+    tag: product.tag || null,
     image_url: product.imageUrl || ''
   };
 };
@@ -64,20 +86,20 @@ const mapProductToBackend = async (product: Omit<Product, 'id' | 'createdAt' | '
 // Função para mapear produto do backend para frontend
 const mapProductFromBackend = (backendProduct: any): Product => {
   return {
-    id: backendProduct.id,
-    title: backendProduct.title,
-    shortDescription: backendProduct.short_description,
-    description: backendProduct.description,
-    price: parseFloat(backendProduct.price),
+    id: backendProduct.id?.toString() || '',
+    title: backendProduct.title || '',
+    shortDescription: backendProduct.short_description || '',
+    description: backendProduct.description || '',
+    price: parseFloat(backendProduct.price) || 0,
     originalPrice: backendProduct.original_price ? parseFloat(backendProduct.original_price) : undefined,
-    sku: backendProduct.sku,
-    stock: backendProduct.stock,
-    imageUrl: backendProduct.image_url,
-    category: backendProduct.category_name || backendProduct.category,
-    tag: backendProduct.tag,
-    createdAt: backendProduct.created_at,
-    updatedAt: backendProduct.updated_at,
-    images: backendProduct.images || [backendProduct.image_url].filter(Boolean),
+    sku: backendProduct.sku || '',
+    stock: parseInt(backendProduct.stock) || 0,
+    imageUrl: backendProduct.image_url || '',
+    category: backendProduct.category_name || backendProduct.category || '',
+    tag: backendProduct.tag || undefined,
+    createdAt: backendProduct.created_at ? new Date(backendProduct.created_at) : undefined,
+    updatedAt: backendProduct.updated_at ? new Date(backendProduct.updated_at) : undefined,
+    images: backendProduct.images || (backendProduct.image_url ? [backendProduct.image_url] : []),
     specifications: backendProduct.specifications || []
   };
 };
@@ -142,6 +164,11 @@ const createProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'update
   const backendData = await mapProductToBackend(product);
   console.log('📤 Enviando produto para backend:', backendData);
   
+  // Validar dados obrigatórios
+  if (!backendData.title || !backendData.price || backendData.stock < 0 || !backendData.category_id) {
+    throw new Error('Dados obrigatórios faltando: título, preço, estoque e categoria são necessários');
+  }
+  
   const response = await apiClient.post<SingleProductApiResponse>('/products', backendData);
   return mapProductFromBackend(response.data?.product) || product as Product;
 };
@@ -150,6 +177,11 @@ const updateProduct = async (product: Product): Promise<Product> => {
   const backendData = await mapProductToBackend(product);
   console.log('📤 Atualizando produto no backend:', backendData);
   
+  // Validar dados obrigatórios
+  if (!backendData.title || !backendData.price || backendData.stock < 0 || !backendData.category_id) {
+    throw new Error('Dados obrigatórios faltando: título, preço, estoque e categoria são necessários');
+  }
+  
   const response = await apiClient.put<SingleProductApiResponse>(`/products/${product.id}`, backendData);
   return mapProductFromBackend(response.data?.product) || product;
 };
@@ -157,7 +189,6 @@ const updateProduct = async (product: Product): Promise<Product> => {
 const deleteProduct = async (productId: string): Promise<void> => {
   await apiClient.delete(`/products/${productId}`);
 };
-
 
 export const useProductsManagement = () => {
   const queryClient = useQueryClient();

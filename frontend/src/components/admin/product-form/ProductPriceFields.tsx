@@ -12,6 +12,11 @@ interface ProductPriceFieldsProps {
   onStockChange: (value: number) => void;
   onOriginalPriceChange: (value: number | undefined) => void;
   onSaleToggle: (checked: boolean) => void;
+  errors?: {
+    price?: string;
+    stock?: string;
+    originalPrice?: string;
+  };
 }
 
 const ProductPriceFields: React.FC<ProductPriceFieldsProps> = ({
@@ -22,7 +27,8 @@ const ProductPriceFields: React.FC<ProductPriceFieldsProps> = ({
   onPriceChange,
   onStockChange,
   onOriginalPriceChange,
-  onSaleToggle
+  onSaleToggle,
+  errors = {}
 }) => {
   return (
     <>
@@ -37,10 +43,14 @@ const ProductPriceFields: React.FC<ProductPriceFieldsProps> = ({
             step="0.01"
             min="0"
             value={price}
-            onChange={(e) => onPriceChange(parseFloat(e.target.value))}
+            onChange={(e) => onPriceChange(parseFloat(e.target.value) || 0)}
             placeholder="0,00"
             required
+            className={errors?.price ? 'border-red-500' : ''}
           />
+          {errors?.price && (
+            <p className="text-red-500 text-sm mt-1">{errors.price}</p>
+          )}
         </div>
         
         <div className="flex flex-col">
@@ -52,10 +62,14 @@ const ProductPriceFields: React.FC<ProductPriceFieldsProps> = ({
             type="number"
             min="0"
             value={stock}
-            onChange={(e) => onStockChange(parseInt(e.target.value))}
+            onChange={(e) => onStockChange(parseInt(e.target.value) || 0)}
             placeholder="0"
             required
+            className={errors?.stock ? 'border-red-500' : ''}
           />
+          {errors?.stock && (
+            <p className="text-red-500 text-sm mt-1">{errors.stock}</p>
+          )}
         </div>
       </div>
       
@@ -81,7 +95,7 @@ const ProductPriceFields: React.FC<ProductPriceFieldsProps> = ({
       {isOnSale && (
         <div>
           <label htmlFor="original-price" className="text-sm font-medium block mb-1">
-            Preço Original
+            Preço Original*
           </label>
           <Input
             id="original-price"
@@ -89,10 +103,14 @@ const ProductPriceFields: React.FC<ProductPriceFieldsProps> = ({
             step="0.01"
             min={price}
             value={originalPrice || ''}
-            onChange={(e) => onOriginalPriceChange(parseFloat(e.target.value))}
+            onChange={(e) => onOriginalPriceChange(parseFloat(e.target.value) || undefined)}
             placeholder="Preço antes do desconto"
             required={isOnSale}
+            className={errors?.originalPrice ? 'border-red-500' : ''}
           />
+          {errors?.originalPrice && (
+            <p className="text-red-500 text-sm mt-1">{errors.originalPrice}</p>
+          )}
         </div>
       )}
     </>

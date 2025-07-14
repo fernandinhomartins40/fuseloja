@@ -4,6 +4,12 @@
 
 Sistema de e-commerce com frontend React e backend Node.js simplificado para **deploy rápido e fácil manutenção**.
 
+### ✨ **Deploy Simplificado**
+- **1 secret**: Apenas `VPS_PASSWORD` necessária
+- **3 workflows**: Deploy principal + testes de conectividade
+- **Zero configuração**: Host e username pré-configurados
+- **Domínio**: fuseloja.com.br (82.25.69.57)
+
 ### 📁 **Estrutura do Projeto**
 
 ```
@@ -189,10 +195,17 @@ curl http://localhost:3000/health
 4. Push: `git push origin feature/nova-feature`
 5. Abra um Pull Request
 
+### 📋 **Documentação de Deploy**
+
+- 🚀 **Guia de Deploy**: [DEPLOY_GUIDE.md](DEPLOY_GUIDE.md)
+- 🔐 **Configuração de Secrets**: [SETUP_SECRETS.md](SETUP_SECRETS.md)
+- 🔄 **Workflows Disponíveis**: [.github/WORKFLOWS.md](.github/WORKFLOWS.md)
+- 📊 **GitHub Actions**: [Actions](../../actions)
+
 ### 📞 **Suporte**
 
 - 📧 **Email:** suporte@fuseloja.com
-- 📚 **Docs:** [/backend/README.md](backend/README.md)
+- 📚 **Docs Backend:** [/backend/README.md](backend/README.md)
 - 🐛 **Issues:** GitHub Issues
 
 ### 📄 **Licença**

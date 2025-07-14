@@ -225,32 +225,112 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
     console.log('🔍 CREATE PRODUCT - Request body:', JSON.stringify(req.body, null, 2));
     console.log('🔍 CREATE PRODUCT - User:', req.user);
     
-    const { title, description, price, original_price, sku, stock, category_id, tag, image_url } = req.body;
+    const { title, short_description, description, price, original_price, sku, stock, category_id, tag, image_url } = req.body;
 
     console.log('🔍 CREATE PRODUCT - Extracted fields:', {
-      title, description, price, original_price, sku, stock, category_id, tag, image_url
+      title, short_description, description, price, original_price, sku, stock, category_id, tag, image_url
     });
 
-    if (!title || !price || !stock || !category_id) {
-      console.log('❌ CREATE PRODUCT - Validation failed:', {
-        hasTitle: !!title,
-        hasPrice: !!price, 
-        hasStock: !!stock,
-        hasCategoryId: !!category_id
-      });
-      return response.badRequest(res, 'Title, price, stock, and category are required');
+    // Validação completa de campos obrigatórios
+    const validationErrors = [];
+    
+    if (!title || typeof title !== 'string' || title.trim().length === 0) {
+      validationErrors.push('Title é obrigatório e deve ser uma string válida');
+    }
+    
+    if (!price || isNaN(parseFloat(price)) || parseFloat(price) <= 0) {
+      validationErrors.push('Price deve ser um número maior que zero');
+    }
+    
+    if (stock === undefined || stock === null || isNaN(parseInt(stock)) || parseInt(stock) < 0) {
+      validationErrors.push('Stock deve ser um número não negativo');
+    }
+    
+    if (!category_id || isNaN(parseInt(category_id))) {
+      validationErrors.push('Category_id é obrigatório e deve ser um número válido');
+    }
+    
+    // Validar se a categoria existe
+    if (category_id) {
+      try {
+        const categoryCheck = await query('SELECT id FROM categories WHERE id = $1', [category_id]);
+        if (categoryCheck.rows.length === 0) {
+          validationErrors.push('Categoria especificada não existe');
+        }
+      } catch (categoryError) {
+        console.error('Erro ao verificar categoria:', categoryError);
+        validationErrors.push('Erro ao validar categoria');
+      }
+    }
+    
+    // Validar SKU único se fornecido
+    if (sku && sku.trim().length > 0) {
+      try {
+        const skuCheck = await query('SELECT id FROM products WHERE sku = $1', [sku.trim()]);
+        if (skuCheck.rows.length > 0) {
+          validationErrors.push('SKU já existe');
+        }
+      } catch (skuError) {
+        console.error('Erro ao verificar SKU:', skuError);
+        validationErrors.push('Erro ao validar SKU');
+      }
+    }
+    
+    // Validar preço original se em promoção
+    if (original_price && (isNaN(parseFloat(original_price)) || parseFloat(original_price) <= parseFloat(price))) {
+      validationErrors.push('Preço original deve ser maior que o preço atual');
     }
 
+    if (validationErrors.length > 0) {
+      console.log('❌ CREATE PRODUCT - Validation failed:', validationErrors);
+      return response.badRequest(res, validationErrors.join('; '));
+    }
+
+    // Preparar dados para inserção
+    const productData = {
+      title: title.trim(),
+      short_description: short_description ? short_description.trim() : null,
+      description: description ? description.trim() : null,
+      price: parseFloat(price),
+      original_price: original_price ? parseFloat(original_price) : null,
+      sku: sku ? sku.trim() : null,
+      stock: parseInt(stock),
+      category_id: parseInt(category_id),
+      tag: tag ? tag.trim() : null,
+      image_url: image_url ? image_url.trim() : null
+    };
+
+    console.log('🔍 CREATE PRODUCT - Final product data:', productData);
+
     const newProductResult = await query(
-      'INSERT INTO products (title, description, price, original_price, sku, stock, category_id, tag, image_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-      [title, description, price, original_price, sku, stock, category_id, tag, image_url]
+      `INSERT INTO products (title, short_description, description, price, original_price, sku, stock, category_id, tag, image_url, is_active, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
+       RETURNING *`,
+      [
+        productData.title,
+        productData.short_description,
+        productData.description,
+        productData.price,
+        productData.original_price,
+        productData.sku,
+        productData.stock,
+        productData.category_id,
+        productData.tag,
+        productData.image_url
+      ]
     );
 
-    return response.created(res, { product: newProductResult.rows[0] }, 'Product created successfully');
+    const createdProduct = newProductResult.rows[0];
+    console.log('✅ CREATE PRODUCT - Success:', createdProduct.id);
+
+    return response.created(res, { product: createdProduct }, 'Product created successfully');
   } catch (error) {
     console.error('Create product error:', error);
     if (error.code === '23505') { // unique_violation
         return response.badRequest(res, 'SKU already exists');
+    }
+    if (error.code === '23503') { // foreign_key_violation
+        return response.badRequest(res, 'Invalid category ID');
     }
     return response.error(res, 'Failed to create product');
   }
@@ -260,30 +340,125 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
 router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, price, original_price, sku, stock, category_id, tag, image_url, is_active } = req.body;
+        console.log('🔍 UPDATE PRODUCT - ID:', id, 'Body:', JSON.stringify(req.body, null, 2));
+        
+        const { title, short_description, description, price, original_price, sku, stock, category_id, tag, image_url, is_active } = req.body;
 
-        if (!title || !price || !stock || !category_id) {
-            return response.badRequest(res, 'Title, price, stock, and category are required');
+        // Validação completa de campos obrigatórios
+        const validationErrors = [];
+        
+        if (!title || typeof title !== 'string' || title.trim().length === 0) {
+          validationErrors.push('Title é obrigatório e deve ser uma string válida');
         }
+        
+        if (!price || isNaN(parseFloat(price)) || parseFloat(price) <= 0) {
+          validationErrors.push('Price deve ser um número maior que zero');
+        }
+        
+        if (stock === undefined || stock === null || isNaN(parseInt(stock)) || parseInt(stock) < 0) {
+          validationErrors.push('Stock deve ser um número não negativo');
+        }
+        
+        if (!category_id || isNaN(parseInt(category_id))) {
+          validationErrors.push('Category_id é obrigatório e deve ser um número válido');
+        }
+        
+        // Validar se o produto existe
+        const productCheck = await query('SELECT id FROM products WHERE id = $1', [id]);
+        if (productCheck.rows.length === 0) {
+          return response.notFound(res, 'Product not found');
+        }
+        
+        // Validar se a categoria existe
+        if (category_id) {
+          try {
+            const categoryCheck = await query('SELECT id FROM categories WHERE id = $1', [category_id]);
+            if (categoryCheck.rows.length === 0) {
+              validationErrors.push('Categoria especificada não existe');
+            }
+          } catch (categoryError) {
+            console.error('Erro ao verificar categoria:', categoryError);
+            validationErrors.push('Erro ao validar categoria');
+          }
+        }
+        
+        // Validar SKU único se fornecido (excluindo o produto atual)
+        if (sku && sku.trim().length > 0) {
+          try {
+            const skuCheck = await query('SELECT id FROM products WHERE sku = $1 AND id != $2', [sku.trim(), id]);
+            if (skuCheck.rows.length > 0) {
+              validationErrors.push('SKU já existe');
+            }
+          } catch (skuError) {
+            console.error('Erro ao verificar SKU:', skuError);
+            validationErrors.push('Erro ao validar SKU');
+          }
+        }
+        
+        // Validar preço original se em promoção
+        if (original_price && (isNaN(parseFloat(original_price)) || parseFloat(original_price) <= parseFloat(price))) {
+          validationErrors.push('Preço original deve ser maior que o preço atual');
+        }
+
+        if (validationErrors.length > 0) {
+          console.log('❌ UPDATE PRODUCT - Validation failed:', validationErrors);
+          return response.badRequest(res, validationErrors.join('; '));
+        }
+
+        // Preparar dados para atualização
+        const productData = {
+          title: title.trim(),
+          short_description: short_description ? short_description.trim() : null,
+          description: description ? description.trim() : null,
+          price: parseFloat(price),
+          original_price: original_price ? parseFloat(original_price) : null,
+          sku: sku ? sku.trim() : null,
+          stock: parseInt(stock),
+          category_id: parseInt(category_id),
+          tag: tag ? tag.trim() : null,
+          image_url: image_url ? image_url.trim() : null,
+          is_active: is_active !== undefined ? Boolean(is_active) : true
+        };
+
+        console.log('🔍 UPDATE PRODUCT - Final product data:', productData);
 
         const updatedProductResult = await query(
             `UPDATE products SET 
-                title = $1, description = $2, price = $3, original_price = $4, sku = $5, 
-                stock = $6, category_id = $7, tag = $8, image_url = $9, is_active = $10,
+                title = $1, short_description = $2, description = $3, price = $4, original_price = $5, sku = $6, 
+                stock = $7, category_id = $8, tag = $9, image_url = $10, is_active = $11,
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $11 RETURNING *`,
-            [title, description, price, original_price, sku, stock, category_id, tag, image_url, is_active, id]
+             WHERE id = $12 RETURNING *`,
+            [
+              productData.title,
+              productData.short_description,
+              productData.description,
+              productData.price,
+              productData.original_price,
+              productData.sku,
+              productData.stock,
+              productData.category_id,
+              productData.tag,
+              productData.image_url,
+              productData.is_active,
+              id
+            ]
         );
 
         if (updatedProductResult.rows.length === 0) {
             return response.notFound(res, 'Product not found');
         }
 
-        return response.success(res, { product: updatedProductResult.rows[0] }, 'Product updated successfully');
+        const updatedProduct = updatedProductResult.rows[0];
+        console.log('✅ UPDATE PRODUCT - Success:', updatedProduct.id);
+
+        return response.success(res, { product: updatedProduct }, 'Product updated successfully');
     } catch (error) {
         console.error('Update product error:', error);
         if (error.code === '23505') {
             return response.badRequest(res, 'SKU already exists');
+        }
+        if (error.code === '23503') {
+            return response.badRequest(res, 'Invalid category ID');
         }
         return response.error(res, 'Failed to update product');
     }

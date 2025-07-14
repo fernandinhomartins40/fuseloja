@@ -2,51 +2,17 @@ name: 🧪 Test VPS Connection
 
 on:
   workflow_dispatch:
-    inputs:
-      test_ssh:
-        description: 'Test SSH connection to VPS'
-        required: false
-        default: true
-        type: boolean
-      test_docker:
-        description: 'Test Docker installation'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
-  test-secrets:
-    name: 🔍 Test Secrets Configuration
+  test-connection:
+    name: 🔍 Test VPS Connection
     runs-on: ubuntu-latest
     
     steps:
-    - name: ✅ Check Required Secrets
+    - name: ✅ Check VPS_PASSWORD Secret
       run: |
-        echo "## 🔍 Secrets Configuration Test" >> $GITHUB_STEP_SUMMARY
+        echo "## 🔍 VPS Connection Test" >> $GITHUB_STEP_SUMMARY
         
-        # Check VPS_HOST
-        if [ -n "${{ secrets.VPS_HOST }}" ]; then
-          echo "- ✅ VPS_HOST: Configured" >> $GITHUB_STEP_SUMMARY
-          echo "✅ VPS_HOST secret is configured"
-        else
-          echo "- ❌ VPS_HOST: Missing" >> $GITHUB_STEP_SUMMARY
-          echo "❌ VPS_HOST secret is missing"
-          echo "::error::VPS_HOST secret is required"
-          exit 1
-        fi
-        
-        # Check VPS_USERNAME
-        if [ -n "${{ secrets.VPS_USERNAME }}" ]; then
-          echo "- ✅ VPS_USERNAME: Configured" >> $GITHUB_STEP_SUMMARY
-          echo "✅ VPS_USERNAME secret is configured"
-        else
-          echo "- ❌ VPS_USERNAME: Missing" >> $GITHUB_STEP_SUMMARY
-          echo "❌ VPS_USERNAME secret is missing"
-          echo "::error::VPS_USERNAME secret is required"
-          exit 1
-        fi
-        
-        # Check VPS_PASSWORD
         if [ -n "${{ secrets.VPS_PASSWORD }}" ]; then
           echo "- ✅ VPS_PASSWORD: Configured" >> $GITHUB_STEP_SUMMARY
           echo "✅ VPS_PASSWORD secret is configured"
@@ -56,179 +22,82 @@ jobs:
           echo "::error::VPS_PASSWORD secret is required"
           exit 1
         fi
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📋 Optional Secrets" >> $GITHUB_STEP_SUMMARY
-        
-        # Check optional secrets
-        if [ -n "${{ secrets.JWT_SECRET }}" ]; then
-          echo "- ✅ JWT_SECRET: Configured" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- ⚠️ JWT_SECRET: Using default (recommended to set)" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        if [ -n "${{ secrets.DB_PASSWORD }}" ]; then
-          echo "- ✅ DB_PASSWORD: Configured" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- ⚠️ DB_PASSWORD: Using default" >> $GITHUB_STEP_SUMMARY
-        fi
 
-  test-ssh:
-    name: 🔌 Test SSH Connection
-    needs: test-secrets
-    runs-on: ubuntu-latest
-    if: github.event.inputs.test_ssh == 'true'
-    
-    steps:
     - name: 🔌 Test SSH Connection
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USERNAME }}
+        host: 82.25.69.57
+        username: root
         password: ${{ secrets.VPS_PASSWORD }}
         port: 22
         timeout: 30s
         script: |
-          echo "🔌 SSH Connection Test"
-          echo "=================="
-          echo "✅ SSH connection successful!"
-          echo ""
-          echo "📊 Server Information:"
+          echo "🔌 Testing SSH connection to fuseloja.com.br VPS..."
+          echo "📊 Server Info:"
           echo "- Hostname: $(hostname)"
-          echo "- OS: $(cat /etc/os-release | grep PRETTY_NAME | cut -d'"' -f2)"
+          echo "- OS: $(cat /etc/os-release | grep PRETTY_NAME | cut -d= -f2 | tr -d '\"')"
           echo "- Uptime: $(uptime -p)"
-          echo "- Available space: $(df -h / | awk 'NR==2{print $4}')"
-          echo "- Memory: $(free -h | awk 'NR==2{print $3"/"$2}')"
-          echo ""
-          echo "🔧 Installed Tools:"
+          echo "- Disk Space: $(df -h / | tail -1 | awk '{print $4}') available"
+          echo "- Memory: $(free -h | grep Mem | awk '{print $7}') available"
           
-          # Check Node.js
+          echo ""
+          echo "🔍 Checking required software..."
+          
           if command -v node &> /dev/null; then
-            echo "- ✅ Node.js: $(node --version)"
+            echo "✅ Node.js: $(node --version)"
           else
-            echo "- ❌ Node.js: Not installed"
+            echo "⚠️ Node.js: Not installed"
           fi
           
-          # Check NPM
-          if command -v npm &> /dev/null; then
-            echo "- ✅ NPM: $(npm --version)"
-          else
-            echo "- ❌ NPM: Not installed"
-          fi
-          
-          # Check PM2
           if command -v pm2 &> /dev/null; then
-            echo "- ✅ PM2: $(pm2 --version)"
+            echo "✅ PM2: $(pm2 --version)"
           else
-            echo "- ⚠️ PM2: Not installed (will be installed during deploy)"
+            echo "⚠️ PM2: Not installed"
           fi
           
-          # Check Git
-          if command -v git &> /dev/null; then
-            echo "- ✅ Git: $(git --version)"
-          else
-            echo "- ❌ Git: Not installed"
-          fi
-          
-          # Check PostgreSQL
           if command -v psql &> /dev/null; then
-            echo "- ✅ PostgreSQL: $(psql --version | head -n1)"
+            echo "✅ PostgreSQL: Available"
           else
-            echo "- ⚠️ PostgreSQL: Not installed (optional)"
+            echo "⚠️ PostgreSQL: Not installed"
           fi
           
           echo ""
-          echo "📁 Deploy Directory:"
+          echo "📂 Checking deployment directory..."
           if [ -d "/opt/fuseloja" ]; then
-            echo "- ✅ /opt/fuseloja exists"
-            ls -la /opt/fuseloja/ 2>/dev/null || echo "- (empty directory)"
-          else
-            echo "- ⚠️ /opt/fuseloja will be created during deploy"
-          fi
-          
-          echo ""
-          echo "🔌 Network Test:"
-          if curl -s --max-time 5 https://github.com > /dev/null; then
-            echo "- ✅ Internet connection: OK"
-          else
-            echo "- ❌ Internet connection: Failed"
-          fi
-
-  test-docker:
-    name: 🐳 Test Docker (Optional)
-    needs: test-secrets
-    runs-on: ubuntu-latest
-    if: github.event.inputs.test_docker == 'true'
-    
-    steps:
-    - name: 🐳 Test Docker Installation
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USERNAME }}
-        password: ${{ secrets.VPS_PASSWORD }}
-        script: |
-          echo "🐳 Docker Test"
-          echo "============="
-          
-          if command -v docker &> /dev/null; then
-            echo "✅ Docker is installed: $(docker --version)"
-            
-            # Test Docker access
-            if docker ps > /dev/null 2>&1; then
-              echo "✅ Docker access: OK"
-              echo "📊 Running containers: $(docker ps --format 'table {{.Names}}\t{{.Status}}' 2>/dev/null || echo 'None')"
+            echo "✅ /opt/fuseloja: Exists"
+            if [ -d "/opt/fuseloja/current" ]; then
+              echo "✅ Current deployment: Found"
             else
-              echo "❌ Docker access: Failed (user might need to be in docker group)"
-              echo "💡 Fix: sudo usermod -aG docker $USER && newgrp docker"
+              echo "⚠️ Current deployment: Not found"
             fi
           else
-            echo "❌ Docker is not installed"
-            echo "💡 Install: curl -fsSL https://get.docker.com | sh"
+            echo "⚠️ /opt/fuseloja: Not found"
           fi
+          
+          echo ""
+          echo "🚀 VPS is ready for FuseLoja deployment!"
 
-  summary:
-    name: 📊 Test Summary
-    needs: [test-secrets, test-ssh]
-    runs-on: ubuntu-latest
-    if: always()
-    
-    steps:
     - name: 📊 Generate Summary
+      if: always()
       run: |
-        echo "## 🧪 Connection Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔗 Connection Details" >> $GITHUB_STEP_SUMMARY
+        echo "- **Host**: 82.25.69.57" >> $GITHUB_STEP_SUMMARY
+        echo "- **Username**: root" >> $GITHUB_STEP_SUMMARY
+        echo "- **Domain**: fuseloja.com.br" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        if [ "${{ needs.test-secrets.result }}" == "success" ]; then
-          echo "- ✅ **Secrets Configuration**: All required secrets are configured" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- ❌ **Secrets Configuration**: Missing required secrets" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        if [ "${{ needs.test-ssh.result }}" == "success" ]; then
-          echo "- ✅ **SSH Connection**: Successfully connected to VPS" >> $GITHUB_STEP_SUMMARY
-        elif [ "${{ needs.test-ssh.result }}" == "failure" ]; then
-          echo "- ❌ **SSH Connection**: Failed to connect to VPS" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- ⏭️ **SSH Connection**: Test skipped" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        
-        if [ "${{ needs.test-secrets.result }}" == "success" ] && [ "${{ needs.test-ssh.result }}" == "success" ]; then
-          echo "### 🎉 Ready for Deploy!" >> $GITHUB_STEP_SUMMARY
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "### ✅ Connection Test Passed!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "All tests passed! Your VPS is ready for deployment." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Next Steps:**" >> $GITHUB_STEP_SUMMARY
+          echo "Your VPS is ready for deployment. You can now:" >> $GITHUB_STEP_SUMMARY
           echo "1. Push code to main branch for automatic deploy" >> $GITHUB_STEP_SUMMARY
-          echo "2. Or run 'Deploy Fuseloja Minimal' workflow manually" >> $GITHUB_STEP_SUMMARY
+          echo "2. Run 'Deploy FuseLoja' workflow manually" >> $GITHUB_STEP_SUMMARY
         else
-          echo "### ⚠️ Setup Required" >> $GITHUB_STEP_SUMMARY
+          echo "### ❌ Connection Test Failed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Please fix the issues above before deploying." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Need Help?**" >> $GITHUB_STEP_SUMMARY
-          echo "- Check SETUP_DEPLOY.md for detailed instructions" >> $GITHUB_STEP_SUMMARY
-          echo "- Verify your secrets in repository settings" >> $GITHUB_STEP_SUMMARY
+          echo "Please check:" >> $GITHUB_STEP_SUMMARY
+          echo "1. VPS_PASSWORD secret is correct" >> $GITHUB_STEP_SUMMARY
+          echo "2. VPS is accessible: \`ssh root@82.25.69.57\`" >> $GITHUB_STEP_SUMMARY
+          echo "3. Password authentication is enabled on VPS" >> $GITHUB_STEP_SUMMARY
         fi

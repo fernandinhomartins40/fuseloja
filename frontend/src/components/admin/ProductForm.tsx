@@ -30,7 +30,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
       title: '',
       price: 0,
       imageUrl: '',
-      category: '',
+      category: '', // Agora será category_id
       stock: 0,
       images: [],
       specifications: [],
@@ -40,6 +40,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
   const [isOnSale, setIsOnSale] = useState(!!initialData?.originalPrice);
   const [activeTab, setActiveTab] = useState('basic');
   const [images, setImages] = useState<string[]>(initialData?.images || []);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   
   // Initialize images array with main image if it exists and images is empty
   useEffect(() => {
@@ -50,14 +51,57 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
   
   const handleChange = (field: keyof Product, value: any) => {
     setProduct(prev => ({ ...prev, [field]: value }));
+    
+    // Clear validation error for this field
+    if (validationErrors[field]) {
+      setValidationErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  };
+  
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+    
+    if (!product.title?.trim()) {
+      errors.title = 'Nome do produto é obrigatório';
+    }
+    
+    if (!product.price || product.price <= 0) {
+      errors.price = 'Preço deve ser maior que zero';
+    }
+    
+    if (product.stock < 0) {
+      errors.stock = 'Estoque não pode ser negativo';
+    }
+    
+    if (!product.category) {
+      errors.category = 'Categoria é obrigatória';
+    }
+    
+    if (isOnSale && (!product.originalPrice || product.originalPrice <= product.price)) {
+      errors.originalPrice = 'Preço original deve ser maior que o preço promocional';
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!validateForm()) {
+      return;
+    }
+    
     const finalProduct = {
       ...product,
       images,
+      title: product.title.trim(),
+      shortDescription: product.shortDescription?.trim(),
+      description: product.description?.trim(),
     };
     
     if (!isOnSale) {
@@ -109,7 +153,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
               onChange={(e) => handleChange('title', e.target.value)}
               placeholder="Digite o nome do produto"
               required
+              className={validationErrors.title ? 'border-red-500' : ''}
             />
+            {validationErrors.title && (
+              <p className="text-red-500 text-sm mt-1">{validationErrors.title}</p>
+            )}
           </div>
 
           <ProductPriceFields 
@@ -121,12 +169,22 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
             onStockChange={(value) => handleChange('stock', value)}
             onOriginalPriceChange={(value) => handleChange('originalPrice', value)}
             onSaleToggle={handleSaleToggle}
+            errors={{
+              price: validationErrors.price,
+              stock: validationErrors.stock,
+              originalPrice: validationErrors.originalPrice
+            }}
           />
           
-          <ProductCategoryField 
-            value={product.category}
-            onChange={(value) => handleChange('category', value)}
-          />
+          <div>
+            <ProductCategoryField 
+              value={product.category}
+              onChange={(value) => handleChange('category', value)}
+            />
+            {validationErrors.category && (
+              <p className="text-red-500 text-sm mt-1">{validationErrors.category}</p>
+            )}
+          </div>
           
           <ProductTagField 
             value={product.tag}

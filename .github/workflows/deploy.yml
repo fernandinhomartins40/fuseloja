@@ -1,0 +1,238 @@
+name: 🚀 Deploy FuseLoja
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deploy even if no changes'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  APP_NAME: 'fuseloja'
+  DEPLOY_PATH: '/opt/fuseloja'
+
+jobs:
+  build:
+    name: 🏗️ Build Application
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: |
+          frontend/package-lock.json
+          backend/package-lock.json
+
+    - name: 🔧 Install Dependencies
+      run: |
+        echo "📦 Installing frontend dependencies..."
+        cd frontend && npm ci --silent
+        
+        echo "📦 Installing backend dependencies..."
+        cd ../backend && npm ci --silent --production
+
+    - name: 🏗️ Build Frontend
+      working-directory: ./frontend
+      run: |
+        npm run build
+        echo "✅ Frontend build completed"
+
+    - name: 📂 Copy Frontend Build to Backend
+      run: |
+        rm -rf backend/public
+        cp -r frontend/dist backend/public
+        echo "✅ Frontend copied to backend/public"
+
+    - name: 📦 Create Deployment Package
+      run: |
+        echo "📦 Creating deployment package..."
+        
+        # Create deployment directory with only necessary files
+        mkdir -p deployment/backend
+        
+        # Copy backend files
+        cp -r backend/src deployment/backend/
+        cp -r backend/public deployment/backend/
+        cp backend/package.json deployment/backend/
+        cp backend/package-lock.json deployment/backend/
+        cp backend/ecosystem.config.js deployment/backend/
+        
+        # Create deployment archive
+        cd deployment
+        tar -czf ../deployment.tar.gz .
+        cd ..
+        
+        echo "✅ Deployment package created: $(ls -lh deployment.tar.gz)"
+
+    - name: 📤 Upload Deployment Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: deployment-package
+        path: deployment.tar.gz
+        retention-days: 3
+
+  deploy:
+    name: 🚀 Deploy to VPS
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Download Deployment Package
+      uses: actions/download-artifact@v4
+      with:
+        name: deployment-package
+
+    - name: 📤 Copy Files to VPS
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: 82.25.69.57
+        username: root
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
+        source: "deployment.tar.gz"
+        target: "/tmp/"
+
+    - name: 🚀 Deploy Application
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: 82.25.69.57
+        username: root
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
+        timeout: 600s
+        script: |
+          echo "🚀 Starting deployment to fuseloja.com.br..."
+          
+          # Install system dependencies if needed
+          if ! command -v node &> /dev/null; then
+            echo "📦 Installing Node.js 18..."
+            curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+            apt install -y nodejs
+          fi
+          
+          if ! command -v pm2 &> /dev/null; then
+            echo "📦 Installing PM2..."
+            npm install -g pm2
+          fi
+          
+          # Setup PostgreSQL if not exists
+          if ! command -v psql &> /dev/null; then
+            echo "📦 Installing PostgreSQL..."
+            apt update -y
+            apt install -y postgresql postgresql-contrib
+            systemctl start postgresql
+            systemctl enable postgresql
+            
+            # Setup database
+            sudo -u postgres createdb fuseloja 2>/dev/null || echo "Database already exists"
+          fi
+          
+          # Create directories
+          mkdir -p ${{ env.DEPLOY_PATH }}
+          mkdir -p /opt/fuseloja/logs
+          cd ${{ env.DEPLOY_PATH }}
+          
+          # Backup current if exists
+          if [ -d "current" ]; then
+            echo "📦 Creating backup..."
+            cp -r current backup_$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
+            # Keep only last 2 backups
+            ls -dt backup_* | tail -n +3 | xargs rm -rf 2>/dev/null || true
+          fi
+          
+          # Extract deployment package
+          echo "📦 Extracting deployment package..."
+          if [ -f "/tmp/deployment.tar.gz" ]; then
+            rm -rf fuseloja
+            mkdir -p fuseloja
+            cd fuseloja
+            tar -xzf /tmp/deployment.tar.gz
+            cd ..
+            echo "✅ Deployment package extracted"
+          else
+            echo "❌ Deployment package not found"
+            exit 1
+          fi
+          
+          # Update current symlink
+          rm -f current
+          ln -sf fuseloja current
+          
+          # Setup backend
+          cd current/backend
+          
+          # Install production dependencies
+          echo "📦 Installing production dependencies..."
+          npm ci --silent --production --prefer-offline --no-audit --no-fund
+          
+          # Setup environment
+          if [ ! -f .env ]; then
+            echo "⚙️ Creating environment file..."
+            cat > .env << EOF
+          NODE_ENV=production
+          PORT=3000
+          FRONTEND_URL=https://fuseloja.com.br
+          DB_HOST=localhost
+          DB_PORT=5432
+          DB_NAME=fuseloja
+          DB_USER=postgres
+          DB_PASSWORD=postgres
+          JWT_SECRET=fuseloja-jwt-secret-production-2024
+          EOF
+          fi
+          
+          # Initialize database
+          echo "🗃️ Setting up database..."
+          node src/scripts/createTables.js 2>/dev/null || echo "Tables already exist"
+          node src/scripts/seedData.js 2>/dev/null || echo "Data already seeded"
+          
+          # Start/restart application
+          echo "🔄 Starting application..."
+          pm2 delete ${{ env.APP_NAME }} 2>/dev/null || true
+          pm2 start src/index.js --name ${{ env.APP_NAME }} --env production
+          pm2 save
+          
+          # Setup PM2 startup
+          pm2 startup systemd -u root --hp /root 2>/dev/null || true
+          
+          echo "✅ Deployment completed successfully!"
+          
+          # Health check
+          echo "🔍 Running health check..."
+          sleep 10
+          
+          for i in {1..6}; do
+            if curl -f http://localhost:3000/health > /dev/null 2>&1; then
+              echo "✅ Health check passed!"
+              break
+            else
+              echo "⏳ Waiting for app to start... ($i/6)"
+              sleep 10
+            fi
+            
+            if [ $i -eq 6 ]; then
+              echo "❌ Health check failed"
+              echo "📋 Application logs:"
+              pm2 logs ${{ env.APP_NAME }} --lines 20 --nostream
+              exit 1
+            fi
+          done
+          
+          # Final status
+          echo "📊 Application Status:"
+          pm2 status ${{ env.APP_NAME }}
+          
+          echo "🎉 FuseLoja deployed successfully!"
+          echo "🌐 Application is live at: https://fuseloja.com.br"
+          echo "❤️ Health check: http://82.25.69.57:3000/health" 

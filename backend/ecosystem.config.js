@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: 'fuseloja-minimal',
+    name: 'fuseloja',
     script: 'src/index.js',
     cwd: '/opt/fuseloja/current/backend',
     instances: 1,
@@ -9,7 +9,8 @@ module.exports = {
     max_memory_restart: '500M',
     env: {
       NODE_ENV: 'production',
-      PORT: 3000
+      PORT: 3000,
+      FRONTEND_URL: 'https://fuseloja.com.br'
     },
     error_file: '/opt/fuseloja/logs/error.log',
     out_file: '/opt/fuseloja/logs/out.log',
@@ -31,6 +32,7 @@ module.exports = {
     env_production: {
       NODE_ENV: 'production',
       PORT: 3000,
+      FRONTEND_URL: 'https://fuseloja.com.br',
       PM2_SERVE_PATH: '/opt/fuseloja/current/backend/public',
       PM2_SERVE_PORT: 8080,
       PM2_SERVE_SPA: true,

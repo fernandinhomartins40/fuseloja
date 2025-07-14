@@ -2,7 +2,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { X, Check, RotateCw, Move, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface SimpleCropperProps {
   imageUrl: string;
@@ -169,6 +169,9 @@ export const SimpleCropper: React.FC<SimpleCropperProps> = ({
   return (
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent className="max-w-4xl max-h-[90vh] p-0">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Recortar Imagem</DialogTitle>
+        </DialogHeader>
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
@@ -178,7 +181,7 @@ export const SimpleCropper: React.FC<SimpleCropperProps> = ({
                 <X className="h-4 w-4 mr-2" />
                 Cancelar
               </Button>
-              <Button onClick={applyCrop}>
+              <Button size="sm" onClick={applyCrop}>
                 <Check className="h-4 w-4 mr-2" />
                 Aplicar
               </Button>

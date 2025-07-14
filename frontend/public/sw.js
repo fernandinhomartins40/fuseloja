@@ -37,16 +37,14 @@ self.addEventListener('activate', function(event) {
           }
         })
       );
-    }).then(function() {
-      return self.clients.claim();
     })
   );
 });
 
-// Fetch event - estratégia network-first para melhor performance
+// Fetch event - estratégias de cache inteligentes
 self.addEventListener('fetch', function(event) {
-  // Pular requisições não GET
-  if (event.request.method !== 'GET') {
+  // Ignora requisições que não são http/https
+  if (!event.request.url.startsWith('http')) {
     return;
   }
 
@@ -54,23 +52,42 @@ self.addEventListener('fetch', function(event) {
   if (event.request.url.includes('/api/') || 
       event.request.url.includes(':3001') ||
       event.request.url.includes('82.25.69.57')) {
-    event.respondWith(fetch(event.request));
+    event.respondWith(
+      fetch(event.request)
+        .catch(function(error) {
+          console.log('Service Worker: Network error for API request', error);
+          return new Response(
+            JSON.stringify({ error: 'Network error' }),
+            { 
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: { 'Content-Type': 'application/json' }
+            }
+          );
+        })
+    );
     return;
   }
 
   // Para outros recursos: network-first com timeout rápido
   event.respondWith(
     Promise.race([
-      fetch(event.request).then(function(response) {
-        // Se sucesso, atualiza cache e retorna
-        if (response && response.status === 200) {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(event.request, responseClone);
-          });
-        }
-        return response;
-      }),
+      fetch(event.request)
+        .then(function(response) {
+          // Se sucesso, atualiza cache e retorna
+          if (response && response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then(function(cache) {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(function(error) {
+          console.log('Service Worker: Network error', error);
+          // Se erro de rede, tenta cache
+          return caches.match(event.request);
+        }),
       // Timeout de 2 segundos - se não responder, usa cache
       new Promise(function(resolve, reject) {
         setTimeout(function() {
@@ -83,9 +100,24 @@ self.addEventListener('fetch', function(event) {
           });
         }, 2000);
       })
-    ]).catch(function() {
-      // Em caso de erro, tenta cache
-      return caches.match(event.request);
+    ]).catch(function(error) {
+      console.log('Service Worker: Final fallback error', error);
+      // Em caso de erro, tenta cache uma última vez
+      return caches.match(event.request)
+        .then(function(cachedResponse) {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // Se não há cache, retorna uma resposta de erro apropriada
+          return new Response(
+            'Resource not available offline',
+            { 
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: { 'Content-Type': 'text/plain' }
+            }
+          );
+        });
     })
   );
 });
@@ -101,4 +133,10 @@ self.addEventListener('message', function(event) {
       event.ports[0].postMessage({type: 'CACHE_CLEARED'});
     });
   }
+});
+
+// Error handling global para promises não tratadas
+self.addEventListener('unhandledrejection', function(event) {
+  console.log('Service Worker: Unhandled promise rejection', event.reason);
+  event.preventDefault();
 });

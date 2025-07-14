@@ -6,3 +6,6 @@
 /* Import configurable styles (admin panel customizable) */
 @import './styles/configurable.css';
 
+/* Tabler Icons - Local Import */
+@import '@tabler/icons-webfont/tabler-icons.min.css';
+

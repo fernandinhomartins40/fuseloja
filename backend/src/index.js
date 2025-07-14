@@ -40,7 +40,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdn.gpteng.co"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"],
-      connectSrc: ["'self'", "http://82.25.69.57:3001", "https://82.25.69.57:3001", "ws://82.25.69.57:3001", "wss://82.25.69.57:3001"],
+              connectSrc: ["'self'", "https://fuseloja.com.br", "https://cdn.jsdelivr.net", "http://82.25.69.57:3001", "https://82.25.69.57:3001", "ws://82.25.69.57:3001", "wss://82.25.69.57:3001"],
       frameSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'", "data:", "https:"],

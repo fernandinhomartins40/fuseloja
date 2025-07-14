@@ -14,10 +14,10 @@ const getApiBaseUrl = (): string => {
   const hostname = window.location.hostname;
   const protocol = window.location.protocol;
   
-  // Production - fuseloja.com.br should use the backend on the same server
+  // Production - fuseloja.com.br should use the nginx proxy
   if (hostname.includes('fuseloja.com.br')) {
-    // Use direct IP for production API (backend running on port 3001)
-    return 'http://82.25.69.57:3001';
+    // Use domain with nginx proxy for production API
+    return `${protocol}//${hostname}`;
   }
   
   // Custom API URL from environment

@@ -172,9 +172,20 @@ app.get('/health', async (req, res) => {
   res.status(statusCode).json(health);
 });
 
-// Serve React app for all other routes
+// Serve React app for all other routes (SPA fallback)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public', 'index.html'));
+  // Don't serve HTML for API routes
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API route not found' });
+  }
+  
+  // Serve index.html for all SPA routes
+  res.sendFile(path.join(__dirname, '../public', 'index.html'), (err) => {
+    if (err) {
+      console.error('Error serving index.html:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 });
 
 // Error handling middleware

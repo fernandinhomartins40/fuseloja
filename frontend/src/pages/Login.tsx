@@ -15,20 +15,26 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { login, user, isAuthenticated } = useAuth();
+  const { login, user, isAuthenticated, apiUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
   const from = location.state?.from?.pathname;
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const userRole = user?.role;
-      const destination = from || (userRole === 'admin' ? '/admin' : '/');
-      console.log(`Redirecting to ${destination}`);
+    if (isAuthenticated && (user || apiUser)) {
+      // Determine redirect destination based on user role
+      const userRole = apiUser?.role || user?.role;
+      let destination = from || '/';
+      
+      if (userRole === 'admin') {
+        destination = '/admin';
+      }
+      
+      console.log(`User authenticated as ${userRole}, redirecting to ${destination}`);
       navigate(destination, { replace: true });
     }
-  }, [isAuthenticated, user, navigate, from]);
+  }, [isAuthenticated, user, apiUser, navigate, from]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +42,13 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      const success = await login(email, password);
+      if (success) {
+        // Login successful, redirection will be handled by useEffect
+        console.log('Login successful');
+      } else {
+        setError('Credenciais inválidas');
+      }
     } catch (error: any) {
       setError(error.message || 'Erro ao fazer login');
     } finally {

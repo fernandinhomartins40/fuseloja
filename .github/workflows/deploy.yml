@@ -193,6 +193,16 @@ jobs:
           node src/scripts/createTables.js 2>/dev/null || echo "Tables already exist"
           node src/scripts/seedData.js 2>/dev/null || echo "Data already seeded"
           
+          # Update nginx configuration for SPA routing
+          echo "🔧 Updating nginx configuration..."
+          if [ -f "nginx-fuseloja.conf" ]; then
+            cp nginx-fuseloja.conf /etc/nginx/sites-available/fuseloja-fullstack
+            nginx -t && systemctl reload nginx
+            echo "✅ Nginx configuration updated"
+          else
+            echo "⚠️ nginx-fuseloja.conf not found, skipping nginx update"
+          fi
+          
           # Start/restart application with systemd
           echo "🔄 Starting application..."
           systemctl daemon-reload

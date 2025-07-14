@@ -8,12 +8,25 @@ import {
   ImageValidationResult 
 } from '@/types/imageUpload';
 import { toast } from '@/hooks/use-toast';
+import apiClient from '@/services/api';
+
+// Função para fazer upload da imagem para o backend
+const uploadImageToBackend = async (imageData: string, filename?: string): Promise<string> => {
+  try {
+    const response = await apiClient.post('/upload', { imageData, filename });
+    return response.data.imageUrl;
+  } catch (error) {
+    console.error('Erro ao fazer upload da imagem:', error);
+    throw error;
+  }
+};
 
 const DEFAULT_OPTIONS: ImageUploadOptions = {
   maxSize: 5, // 5MB
   allowedFormats: ['image/jpeg', 'image/png', 'image/webp'],
   quality: 80,
-  multiple: false
+  multiple: false,
+  autoUpload: true // Novo: upload automático
 };
 
 export const useImageUpload = (options: ImageUploadOptions = {}) => {
@@ -96,34 +109,27 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
       const img = new Image();
       
       img.onload = () => {
-        canvas.width = cropSettings.width;
-        canvas.height = cropSettings.height;
+        const { x, y, width, height } = cropSettings;
         
-        // Apply rotation if needed
-        if (cropSettings.rotate) {
-          ctx.translate(canvas.width / 2, canvas.height / 2);
-          ctx.rotate((cropSettings.rotate * Math.PI) / 180);
-          ctx.translate(-canvas.width / 2, -canvas.height / 2);
-        }
+        canvas.width = width;
+        canvas.height = height;
         
         ctx.drawImage(
           img,
-          cropSettings.x,
-          cropSettings.y,
-          cropSettings.width,
-          cropSettings.height,
-          0,
-          0,
-          canvas.width,
-          canvas.height
+          x, y, width, height,
+          0, 0, width, height
         );
         
-        canvas.toBlob((blob) => resolve(blob!), 'image/jpeg', 0.9);
+        canvas.toBlob(
+          (blob) => resolve(blob!),
+          image.format,
+          config.quality! / 100
+        );
       };
       
       img.src = image.dataUrl;
     });
-  }, []);
+  }, [config.quality]);
 
   const processFile = useCallback(async (file: File): Promise<ProcessedImage> => {
     const validation = validateImage(file);
@@ -152,11 +158,32 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
       img.src = dataUrl;
     });
     
+    let finalUrl = dataUrl;
+    
+    // Auto-upload se configurado
+    if (config.autoUpload) {
+      try {
+        finalUrl = await uploadImageToBackend(dataUrl, file.name);
+        toast({
+          title: "Sucesso",
+          description: "Imagem enviada com sucesso para o servidor"
+        });
+      } catch (error) {
+        console.error('Erro no upload automático:', error);
+        toast({
+          title: "Aviso",
+          description: "Imagem processada localmente. Upload será feito ao salvar.",
+          variant: "destructive"
+        });
+      }
+    }
+    
     return {
       id: `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       originalFile: file,
       processedBlob: compressedBlob,
       dataUrl,
+      finalUrl,
       width,
       height,
       size: compressedBlob.size,
@@ -240,10 +267,22 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
         reader.readAsDataURL(croppedBlob);
       });
       
+      let finalUrl = dataUrl;
+      
+      // Auto-upload se configurado
+      if (config.autoUpload) {
+        try {
+          finalUrl = await uploadImageToBackend(dataUrl, `cropped_${image.id}`);
+        } catch (error) {
+          console.error('Erro no upload após crop:', error);
+        }
+      }
+      
       const updatedImage: ProcessedImage = {
         ...image,
         processedBlob: croppedBlob,
         dataUrl,
+        finalUrl,
         size: croppedBlob.size
       };
       
@@ -261,7 +300,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
         variant: "destructive"
       });
     }
-  }, [state.images, cropImage]);
+  }, [state.images, cropImage, config.autoUpload]);
 
   const clearImages = useCallback(() => {
     setState(prev => ({ ...prev, images: [] }));
@@ -274,6 +313,7 @@ export const useImageUpload = (options: ImageUploadOptions = {}) => {
     updateImage,
     clearImages,
     compressImage,
-    cropImage
+    cropImage,
+    uploadImageToBackend
   };
 };

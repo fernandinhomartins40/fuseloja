@@ -55,39 +55,44 @@ export const useAuth = (): UseAuthReturn => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        if (authService.isAuthenticated()) {
+        // Check for stored authentication first
+        const storedToken = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
+        
+        if (storedToken && authService.isAuthenticated()) {
           const currentUser = authService.getCurrentUser();
           
           if (currentUser) {
             setApiUser(currentUser);
+            setUser(convertApiUserToUser(currentUser));
             
-            // Try to refresh profile from server
+            // Try to refresh profile from server in background
             try {
               const freshProfile = await authService.getProfile();
               setApiUser(freshProfile);
               setUser(convertApiUserToUser(freshProfile));
             } catch (error) {
-              // If refresh fails, use cached user
-              setUser(convertApiUserToUser(currentUser));
+              console.warn('Failed to refresh profile:', error);
+              // Keep using cached user if refresh fails
             }
           }
-        } else {
-          // Check for provisional users in localStorage
-          const storedUser = localStorage.getItem('user');
-          
-          if (storedUser) {
-            try {
-              const parsedUser = JSON.parse(storedUser);
-              if (parsedUser.isProvisional) {
-                setUser(parsedUser);
-              }
-            } catch (error) {
-              console.warn('Error parsing stored user:', error);
+        } else if (storedUser) {
+          // Handle provisional users stored in localStorage
+          try {
+            const parsedUser = JSON.parse(storedUser);
+            if (parsedUser.isProvisional) {
+              setUser(parsedUser);
             }
+          } catch (error) {
+            console.warn('Error parsing stored user:', error);
+            localStorage.removeItem('user');
           }
         }
       } catch (error) {
         console.warn('Error initializing auth:', error);
+        // Clear invalid tokens
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
       } finally {
         setIsLoading(false);
       }

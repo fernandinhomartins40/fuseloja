@@ -66,7 +66,6 @@ jobs:
         cp -r backend/public deployment/backend/
         cp backend/package.json deployment/backend/
         cp backend/package-lock.json deployment/backend/
-        cp backend/ecosystem.config.js deployment/backend/
         
         # Create deployment archive
         cd deployment

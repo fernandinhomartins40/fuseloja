@@ -13,6 +13,7 @@ const productsRoutes = require('./routes/products');
 const categoriesRoutes = require('./routes/categories');
 const ordersRoutes = require('./routes/orders');
 const customersRoutes = require('./routes/customers');
+const uploadRoutes = require('./routes/upload');
 
 // Import database initialization
 const { createTables } = require('./scripts/createTables');
@@ -75,6 +76,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Static files - serve frontend build
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Static files - serve uploads
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 // Database initialization function
 const initializeDatabase = async () => {
   try {
@@ -106,6 +110,7 @@ app.use('/api/v1/products', productsRoutes);
 app.use('/api/v1/categories', categoriesRoutes);
 app.use('/api/v1/orders', ordersRoutes);
 app.use('/api/v1/customers', customersRoutes);
+app.use('/api/v1/upload', uploadRoutes);
 
 // Health check endpoint
 app.get('/health', async (req, res) => {

@@ -5,6 +5,17 @@ import { Product } from '@/types/product';
 import apiClient from '@/services/api';
 import { toast } from 'sonner';
 
+// Função para fazer upload de imagem
+const uploadImage = async (imageData: string, filename?: string): Promise<string> => {
+  try {
+    const response = await apiClient.post('/upload', { imageData, filename });
+    return response.data.imageUrl;
+  } catch (error) {
+    console.error('Erro ao fazer upload da imagem:', error);
+    throw error;
+  }
+};
+
 // Interface para categoria do backend
 interface BackendCategory {
   id: number;
@@ -69,6 +80,21 @@ const mapProductToBackend = async (product: Omit<Product, 'id' | 'createdAt' | '
     categoryId = category?.id || null;
   }
   
+  let imageUrl = product.imageUrl || '';
+  
+  // Se a imagem é um data URL (base64) ou blob URL, fazer upload
+  if (imageUrl && (imageUrl.startsWith('data:') || imageUrl.startsWith('blob:'))) {
+    try {
+      console.log('🔄 Fazendo upload da imagem principal...');
+      imageUrl = await uploadImage(imageUrl, `product_${product.title}_main`);
+      console.log('✅ Upload da imagem principal concluído:', imageUrl);
+    } catch (error) {
+      console.error('❌ Erro ao fazer upload da imagem principal:', error);
+      toast.error('Erro ao fazer upload da imagem');
+      // Manter URL original se falhar
+    }
+  }
+
   return {
     title: product.title,
     short_description: product.shortDescription || '',
@@ -79,7 +105,7 @@ const mapProductToBackend = async (product: Omit<Product, 'id' | 'createdAt' | '
     stock: product.stock,
     category_id: categoryId,
     tag: product.tag || null,
-    image_url: product.imageUrl || ''
+    image_url: imageUrl
   };
 };
 

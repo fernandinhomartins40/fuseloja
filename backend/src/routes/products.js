@@ -111,8 +111,8 @@ router.get('/', async (req, res) => {
       stack: error.stack
     });
     
-    // Retornar array vazio em caso de erro ao invés de falhar
-    return response.success(res, { products: [], page: parseInt(req.query.page || 1), limit: parseInt(req.query.limit || 10) }, 'Error occurred, returning empty products list');
+    // Retornar erro apropriado ao invés de array vazio
+    return response.error(res, 'Erro ao buscar produtos. Verifique a conexão com o banco de dados.');
   }
 });
 

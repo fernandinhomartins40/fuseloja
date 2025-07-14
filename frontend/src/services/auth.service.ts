@@ -18,14 +18,18 @@ export class AuthService {
     const response = await apiClient.post<LoginResponse>('/auth/login', credentials);
     
     if (response.success && response.data) {
-      // Store tokens
+      // Store tokens with correct key names
+      localStorage.setItem('token', response.data.tokens.accessToken);
+      localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+      
+      // Store user data
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      // Update apiClient tokens
       apiClient.setTokens(
         response.data.tokens.accessToken, 
         response.data.tokens.refreshToken
       );
-      
-      // Store user data
-      localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     
     return response.data!;
@@ -35,14 +39,18 @@ export class AuthService {
     const response = await apiClient.post<RegisterResponse>('/auth/register', userData);
     
     if (response.success && response.data) {
-      // Store tokens
+      // Store tokens with correct key names
+      localStorage.setItem('token', response.data.tokens.accessToken);
+      localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+      
+      // Store user data
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      // Update apiClient tokens
       apiClient.setTokens(
         response.data.tokens.accessToken, 
         response.data.tokens.refreshToken
       );
-      
-      // Store user data
-      localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     
     return response.data!;
@@ -58,11 +66,13 @@ export class AuthService {
       console.warn('Error during logout:', error);
     } finally {
       // Clear all local data
-      apiClient.clearTokens();
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
       localStorage.removeItem('cart');
       localStorage.removeItem('storeSettings');
       localStorage.removeItem('provisionalUsers');
+      apiClient.clearTokens();
     }
   }
 
@@ -77,6 +87,11 @@ export class AuthService {
     });
 
     if (response.success && response.data) {
+      // Store tokens with correct key names
+      localStorage.setItem('token', response.data.tokens.accessToken);
+      localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+      
+      // Update apiClient tokens
       apiClient.setTokens(
         response.data.tokens.accessToken,
         response.data.tokens.refreshToken
@@ -177,8 +192,24 @@ export class AuthService {
   }
 
   // Utility methods
+  // Authentication status check
   isAuthenticated(): boolean {
-    return apiClient.isAuthenticated();
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      return false;
+    }
+    
+    try {
+      // Simple JWT expiry check
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const now = Date.now() / 1000;
+      
+      return payload.exp > now;
+    } catch (error) {
+      console.warn('Error checking token validity:', error);
+      return false;
+    }
   }
 
   getCurrentUser(): ApiUser | null {

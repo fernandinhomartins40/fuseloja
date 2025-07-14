@@ -13,14 +13,8 @@ const fetchBestSellers = async (): Promise<Product[]> => {
     const response = await apiClient.get('/products/best-sellers');
     return response.data.products;
   } catch (error) {
-    // Fallback to random products if best-sellers endpoint doesn't exist
-    console.log('Best sellers endpoint not available, fetching random products');
-    const response = await apiClient.get('/products?limit=12');
-    const allProducts = response.data.products;
-    
-    // Shuffle array and return random selection
-    const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 8);
+    console.error('Erro ao buscar produtos mais vendidos:', error);
+    throw error; // Não fazer fallback - mostrar erro
   }
 };
 

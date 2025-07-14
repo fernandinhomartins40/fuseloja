@@ -190,8 +190,7 @@ jobs:
           
           # Initialize database
           echo "🗃️ Setting up database..."
-          node src/scripts/createTables.js 2>/dev/null || echo "Tables already exist"
-          node src/scripts/seedData.js 2>/dev/null || echo "Data already seeded"
+          node src/scripts/initDatabase.js || echo "Database initialization failed"
           
           # Update nginx configuration for SPA routing
           echo "🔧 Updating nginx configuration..."

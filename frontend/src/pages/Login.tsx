@@ -22,19 +22,26 @@ const Login: React.FC = () => {
   const from = location.state?.from?.pathname;
 
   useEffect(() => {
-    if (isAuthenticated && (user || apiUser)) {
+    // Only redirect if authenticated and not currently loading
+    if (isAuthenticated && !isLoading && (user || apiUser)) {
       // Determine redirect destination based on user role
       const userRole = apiUser?.role || user?.role;
-      let destination = from || '/';
       
-      if (userRole === 'admin') {
+      let destination = '/'; // Default destination
+      
+      // If coming from a specific route, use that
+      if (from && from !== '/login') {
+        destination = from;
+      }
+      // If user is admin, redirect to admin panel
+      else if (userRole === 'admin') {
         destination = '/admin';
       }
       
       console.log(`User authenticated as ${userRole}, redirecting to ${destination}`);
       navigate(destination, { replace: true });
     }
-  }, [isAuthenticated, user, apiUser, navigate, from]);
+  }, [isAuthenticated, isLoading, user, apiUser, navigate, from]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

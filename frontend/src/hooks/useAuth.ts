@@ -19,15 +19,15 @@ interface UseAuthReturn {
   refreshProfile: () => Promise<void>;
 }
 
-// Helper function to convert API user to local user format
+// Helper function to convert ApiUser to User
 const convertApiUserToUser = (apiUser: ApiUser): User => {
   return {
-    id: apiUser.id,
+    id: apiUser.id.toString(),
     name: `${apiUser.firstName} ${apiUser.lastName}`,
     email: apiUser.email,
-    phone: '', // Will be populated from profile
-    birthDate: '', // Will be populated from profile
-    addresses: [], // Will be populated from profile
+    phone: '',
+    birthDate: '',
+    addresses: [],
     preferences: {
       newsletter: false,
       marketing: false,
@@ -37,12 +37,11 @@ const convertApiUserToUser = (apiUser: ApiUser): User => {
         news: false
       }
     },
-    orders: [], // Will be populated from profile
+    orders: [],
     createdAt: new Date(apiUser.createdAt),
     updatedAt: new Date(apiUser.updatedAt),
     isProvisional: false,
-    cpf: undefined,
-    role: apiUser.role // Add role field
+    role: apiUser.role
   };
 };
 
@@ -55,18 +54,17 @@ export const useAuth = (): UseAuthReturn => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Check for stored authentication first
-        const storedToken = localStorage.getItem('token');
-        const storedUser = localStorage.getItem('user');
+        setIsLoading(true);
         
-        if (storedToken && authService.isAuthenticated()) {
+        // Check if user is authenticated
+        if (authService.isAuthenticated()) {
           const currentUser = authService.getCurrentUser();
           
           if (currentUser) {
             setApiUser(currentUser);
             setUser(convertApiUserToUser(currentUser));
             
-            // Try to refresh profile from server in background
+            // Try to refresh profile from server
             try {
               const freshProfile = await authService.getProfile();
               setApiUser(freshProfile);
@@ -76,22 +74,26 @@ export const useAuth = (): UseAuthReturn => {
               // Keep using cached user if refresh fails
             }
           }
-        } else if (storedUser) {
-          // Handle provisional users stored in localStorage
-          try {
-            const parsedUser = JSON.parse(storedUser);
-            if (parsedUser.isProvisional) {
-              setUser(parsedUser);
+        } else {
+          // Handle provisional users
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            try {
+              const parsedUser = JSON.parse(storedUser);
+              if (parsedUser.isProvisional) {
+                setUser(parsedUser);
+              }
+            } catch (error) {
+              console.warn('Error parsing stored user:', error);
+              localStorage.removeItem('user');
             }
-          } catch (error) {
-            console.warn('Error parsing stored user:', error);
-            localStorage.removeItem('user');
           }
         }
       } catch (error) {
         console.warn('Error initializing auth:', error);
         // Clear invalid tokens
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
       } finally {
         setIsLoading(false);
@@ -109,9 +111,7 @@ export const useAuth = (): UseAuthReturn => {
       setApiUser(response.user);
       setUser(convertApiUserToUser(response.user));
       
-      // Garante que os dados estão sincronizados após o login
       console.log('✅ Login successful, user role:', response.user.role);
-      
       toast.success('Login realizado com sucesso!');
       return true;
     } catch (error: any) {
@@ -307,7 +307,8 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, []);
 
-  const isAuthenticated = !!(user || apiUser);
+  // Determine authentication status
+  const isAuthenticated = authService.isAuthenticated() || !!user;
 
   return {
     user,
@@ -324,5 +325,3 @@ export const useAuth = (): UseAuthReturn => {
     refreshProfile
   };
 };
-
-export default useAuth;

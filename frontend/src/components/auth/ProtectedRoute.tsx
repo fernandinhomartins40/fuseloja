@@ -1,6 +1,5 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/hooks/useAuth';
 import { AccessDenied } from './AccessDenied';
 
@@ -17,8 +16,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requireAdmin = false,
   fallbackPath = '/login'
 }) => {
-  const { user, isAuthenticated } = useUser();
-  const { apiUser, isLoading } = useAuth();
+  const { user, apiUser, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
   // Show loading while checking authentication
@@ -33,7 +31,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // Get user role from either source
+  // Get user role from available sources
   const userRole = apiUser?.role || user?.role;
 
   // If authentication is required but user is not authenticated

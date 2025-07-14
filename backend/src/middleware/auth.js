@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { query } = require('../database/connection');
 const response = require('../utils/response');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'fuseloja-super-secret-key-2024-production';
 
 // Middleware to authenticate JWT token
 const authenticateToken = async (req, res, next) => {
@@ -26,11 +26,22 @@ const authenticateToken = async (req, res, next) => {
       return response.unauthorized(res, 'User not found or inactive');
     }
 
-    req.user = result.rows[0];
+    const user = result.rows[0];
+    req.user = {
+      id: user.id,
+      email: user.email,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      role: user.role
+    };
+    
     next();
   } catch (error) {
     console.error('Token verification error:', error);
-    return response.unauthorized(res, 'Invalid or expired token');
+    if (error.name === 'TokenExpiredError') {
+      return response.unauthorized(res, 'Token expired');
+    }
+    return response.unauthorized(res, 'Invalid token');
   }
 };
 

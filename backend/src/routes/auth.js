@@ -6,7 +6,7 @@ const { validateEmail, validatePassword } = require('../utils/validation');
 const response = require('../utils/response');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'fuseloja-super-secret-key-2024-production';
 
 // Register endpoint
 router.post('/register', async (req, res) => {

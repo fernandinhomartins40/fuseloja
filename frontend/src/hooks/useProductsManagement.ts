@@ -5,29 +5,7 @@ import { Product } from '@/types/product';
 import apiClient from '@/services/api';
 import { toast } from 'sonner';
 
-// Função para fazer upload de imagem
-const uploadImage = async (imageData: string, filename?: string): Promise<string> => {
-  try {
-    const response = await apiClient.post('/upload', { imageData, filename });
-    return response.data.imageUrl;
-  } catch (error) {
-    console.error('Erro ao fazer upload da imagem:', error);
-    throw error;
-  }
-};
-
-// Interface para categoria do backend
-interface BackendCategory {
-  id: number;
-  name: string;
-  description: string;
-  image_url: string;
-  icon: string;
-  color: string;
-  slug: string;
-}
-
-// Interfaces para as respostas da API
+// Interfaces para tipos de resposta da API
 interface ProductsApiResponse {
   products: Product[];
   total: number;
@@ -38,76 +16,6 @@ interface ProductsApiResponse {
 interface SingleProductApiResponse {
   product: Product;
 }
-
-interface CategoriesApiResponse {
-  categories: BackendCategory[];
-}
-
-// Cache para categorias (para evitar múltiplas requisições)
-let categoriesCache: BackendCategory[] | null = null;
-
-// Função para buscar categorias
-const fetchCategories = async (): Promise<BackendCategory[]> => {
-  if (categoriesCache) {
-    return categoriesCache;
-  }
-  
-  try {
-    const response = await apiClient.get<CategoriesApiResponse>('/categories');
-    categoriesCache = response.data?.categories || [];
-    return categoriesCache;
-  } catch (error) {
-    console.error('❌ Erro ao buscar categorias:', error);
-    return [];
-  }
-};
-
-// Função para mapear produto do frontend para backend
-const mapProductToBackend = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
-  let categoryId = null;
-  
-  // Se category é um ID numérico (string), usar diretamente
-  if (product.category && !isNaN(parseInt(product.category))) {
-    categoryId = parseInt(product.category);
-  } else {
-    // Se category é um nome, buscar o ID correspondente
-    const categories = await fetchCategories();
-    const category = categories.find(cat => 
-      cat.name === product.category || 
-      cat.slug === product.category ||
-      cat.id.toString() === product.category
-    );
-    categoryId = category?.id || null;
-  }
-  
-  let imageUrl = product.imageUrl || '';
-  
-  // Se a imagem é um data URL (base64) ou blob URL, fazer upload
-  if (imageUrl && (imageUrl.startsWith('data:') || imageUrl.startsWith('blob:'))) {
-    try {
-      console.log('🔄 Fazendo upload da imagem principal...');
-      imageUrl = await uploadImage(imageUrl, `product_${product.title}_main`);
-      console.log('✅ Upload da imagem principal concluído:', imageUrl);
-    } catch (error) {
-      console.error('❌ Erro ao fazer upload da imagem principal:', error);
-      toast.error('Erro ao fazer upload da imagem');
-      // Manter URL original se falhar
-    }
-  }
-
-  return {
-    title: product.title,
-    short_description: product.shortDescription || '',
-    description: product.description || '',
-    price: product.price,
-    original_price: product.originalPrice || null,
-    sku: product.sku || '',
-    stock: product.stock,
-    category_id: categoryId,
-    tag: product.tag || null,
-    image_url: imageUrl
-  };
-};
 
 // Função para mapear produto do backend para frontend
 const mapProductFromBackend = (backendProduct: any): Product => {
@@ -130,59 +38,63 @@ const mapProductFromBackend = (backendProduct: any): Product => {
   };
 };
 
-// Funções de fetch da API - versão robusta
+// Função para mapear produto do frontend para backend
+const mapProductToBackend = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<any> => {
+  // Buscar categoria por nome para obter o ID
+  let categoryId;
+  try {
+    const categoriesResponse = await apiClient.get('/categories');
+    const categories = categoriesResponse.data.categories;
+    const category = categories.find((cat: any) => cat.name === product.category);
+    categoryId = category?.id;
+    
+    if (!categoryId) {
+      throw new Error(`Categoria '${product.category}' não encontrada`);
+    }
+  } catch (error) {
+    console.error('Erro ao buscar categoria:', error);
+    throw new Error('Erro ao validar categoria');
+  }
+
+  return {
+    title: product.title,
+    short_description: product.shortDescription,
+    description: product.description,
+    price: product.price,
+    original_price: product.originalPrice,
+    sku: product.sku,
+    stock: product.stock,
+    category_id: categoryId,
+    tag: product.tag,
+    image_url: product.imageUrl
+  };
+};
+
+// Função para buscar produtos da API
 const fetchProducts = async (): Promise<ProductsApiResponse> => {
   try {
-    // Primeira tentativa com limite alto
+    console.log('🔍 Buscando produtos da API...');
     const response = await apiClient.get<ProductsApiResponse>('/products?limit=1000&page=1');
-    const data = response.data || { products: [], total: 0, page: 1, limit: 1000 };
+    const data = response.data;
     
-    // Se retornou poucos produtos, tenta buscar mais páginas
-    if (data.products && data.products.length < 50 && data.total > data.products.length) {
-      console.log('🔄 Poucos produtos retornados, buscando mais páginas...');
-      
-      // Busca múltiplas páginas para garantir que temos todos os produtos
-      const allProducts: Product[] = [...data.products];
-      let page = 2;
-      let hasMore = true;
-      
-      while (hasMore && page <= 10) { // máximo 10 páginas para evitar loop infinito
-        try {
-          const pageResponse = await apiClient.get<ProductsApiResponse>(`/products?limit=1000&page=${page}`);
-          const pageData = pageResponse.data;
-          
-          if (pageData?.products && pageData.products.length > 0) {
-            allProducts.push(...pageData.products);
-            page++;
-          } else {
-            hasMore = false;
-          }
-        } catch (pageError) {
-          console.warn(`Erro ao buscar página ${page}:`, pageError);
-          hasMore = false;
-        }
-      }
-      
-      console.log(`✅ Total de produtos carregados: ${allProducts.length}`);
-      
-      return {
-        products: allProducts,
-        total: allProducts.length,
-        page: 1,
-        limit: allProducts.length
-      };
+    if (!data || !data.products) {
+      throw new Error('Formato de resposta inválido da API');
     }
-    
+
     // Mapear produtos do backend para frontend
-    const mappedData = {
-      ...data,
-      products: data.products.map(mapProductFromBackend)
-    };
+    const mappedProducts = data.products.map(mapProductFromBackend);
     
-    return mappedData;
+    console.log(`✅ ${mappedProducts.length} produtos carregados da API`);
+    
+    return {
+      products: mappedProducts,
+      total: data.total || mappedProducts.length,
+      page: data.page || 1,
+      limit: data.limit || 1000
+    };
   } catch (error) {
     console.error('❌ Erro ao buscar produtos:', error);
-    return { products: [], total: 0, page: 1, limit: 1000 };
+    throw error; // Não fazer fallback - deixar o erro ser tratado pelo React Query
   }
 };
 
@@ -203,17 +115,12 @@ const updateProduct = async (product: Product): Promise<Product> => {
   const backendData = await mapProductToBackend(product);
   console.log('📤 Atualizando produto no backend:', backendData);
   
-  // Validar dados obrigatórios
-  if (!backendData.title || !backendData.price || backendData.stock < 0 || !backendData.category_id) {
-    throw new Error('Dados obrigatórios faltando: título, preço, estoque e categoria são necessários');
-  }
-  
   const response = await apiClient.put<SingleProductApiResponse>(`/products/${product.id}`, backendData);
   return mapProductFromBackend(response.data?.product) || product;
 };
 
-const deleteProduct = async (productId: string): Promise<void> => {
-  await apiClient.delete(`/products/${productId}`);
+const deleteProduct = async (id: string): Promise<void> => {
+  await apiClient.delete(`/products/${id}`);
 };
 
 export const useProductsManagement = () => {
@@ -221,12 +128,13 @@ export const useProductsManagement = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // Query para buscar produtos
+  // Query para buscar produtos - sem fallback para dados de exemplo
   const { data: productsData, isLoading, isError, error } = useQuery<ProductsApiResponse, Error>({
     queryKey: ['products'],
     queryFn: fetchProducts,
-    retry: 3,
-    retryDelay: 1000,
+    retry: 2,
+    retryDelay: 2000,
+    staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
   // Debug logging
@@ -244,6 +152,9 @@ export const useProductsManagement = () => {
     onSuccess: () => {
       toast.success("Produto criado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['best-sellers'] });
+      queryClient.invalidateQueries({ queryKey: ['promotion-products'] });
+      queryClient.invalidateQueries({ queryKey: ['new-arrivals'] });
       setIsFormOpen(false);
     },
     onError: (error) => {
@@ -257,6 +168,9 @@ export const useProductsManagement = () => {
     onSuccess: () => {
       toast.success("Produto atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['best-sellers'] });
+      queryClient.invalidateQueries({ queryKey: ['promotion-products'] });
+      queryClient.invalidateQueries({ queryKey: ['new-arrivals'] });
       setIsFormOpen(false);
       setEditingProduct(null);
     },
@@ -269,11 +183,14 @@ export const useProductsManagement = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteProduct,
     onSuccess: () => {
-      toast.success("Produto desativado com sucesso!");
+      toast.success("Produto removido com sucesso!");
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['best-sellers'] });
+      queryClient.invalidateQueries({ queryKey: ['promotion-products'] });
+      queryClient.invalidateQueries({ queryKey: ['new-arrivals'] });
     },
     onError: (error) => {
-      toast.error(`Falha ao desativar produto: ${error.message}`);
+      toast.error(`Falha ao remover produto: ${error.message}`);
     }
   });
 
@@ -287,7 +204,7 @@ export const useProductsManagement = () => {
     setIsFormOpen(true);
   };
 
-  // Always use API data - if no data available, show empty state
+  // Sempre usar dados da API - sem fallback
   const products = productsData?.products || [];
 
   // Funções específicas para adicionar e atualizar
@@ -304,13 +221,12 @@ export const useProductsManagement = () => {
     isLoading,
     isError,
     error: error?.message,
-    apiDataAvailable: true, // Always expect API data
     totalProducts: products.length,
     editingProduct,
     isFormOpen,
     setIsFormOpen,
     handleDeleteProduct: (id: string) => {
-      if (window.confirm('Tem certeza que deseja desativar este produto?')) {
+      if (window.confirm('Tem certeza que deseja remover este produto?')) {
         deleteMutation.mutate(id);
       }
     },

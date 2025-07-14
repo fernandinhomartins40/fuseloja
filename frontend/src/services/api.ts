@@ -175,7 +175,7 @@ class ApiClient {
 
   private loadTokensFromStorage() {
     try {
-      this.accessToken = localStorage.getItem('accessToken');
+      this.accessToken = localStorage.getItem('token'); // Changed from 'accessToken' to 'token'
       this.refreshToken = localStorage.getItem('refreshToken');
     } catch (error) {
       console.warn('Error loading tokens from localStorage:', error);
@@ -185,7 +185,7 @@ class ApiClient {
   private saveTokensToStorage() {
     try {
       if (this.accessToken) {
-        localStorage.setItem('accessToken', this.accessToken);
+        localStorage.setItem('token', this.accessToken); // Changed from 'accessToken' to 'token'
       }
       if (this.refreshToken) {
         localStorage.setItem('refreshToken', this.refreshToken);
@@ -214,7 +214,8 @@ class ApiClient {
   public clearTokens() {
     this.accessToken = null;
     this.refreshToken = null;
-    this.clearTokensFromStorage();
+    localStorage.removeItem('token'); // Changed from 'accessToken' to 'token'
+    localStorage.removeItem('refreshToken');
   }
 
   public getAccessToken(): string | null {
@@ -222,7 +223,22 @@ class ApiClient {
   }
 
   public isAuthenticated(): boolean {
-    return !!this.accessToken;
+    const token = localStorage.getItem('token'); // Changed from 'accessToken' to 'token'
+    
+    if (!token) {
+      return false;
+    }
+    
+    try {
+      // Simple JWT expiry check
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const now = Date.now() / 1000;
+      
+      return payload.exp > now;
+    } catch (error) {
+      console.warn('Error checking token validity:', error);
+      return false;
+    }
   }
 
   public getTokenPayload(): JwtPayload | null {

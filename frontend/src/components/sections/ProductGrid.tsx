@@ -48,7 +48,7 @@ const ProductGrid: React.FC = () => {
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4">Produtos em Destaque</h2>
             <p className="text-lg text-muted-foreground">
-              {isError ? 'Erro ao carregar produtos' : 'Nenhum produto encontrado'}
+              {isError ? 'Erro ao carregar produtos - verifique a conexão com a API' : 'Nenhum produto encontrado'}
             </p>
           </div>
         </div>

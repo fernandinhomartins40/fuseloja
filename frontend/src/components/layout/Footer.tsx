@@ -104,36 +104,21 @@ export const Footer: React.FC = () => {
     setIsNavigating(true);
     
     try {
-      // MÉTODO SIMPLES E DIRETO: Verifica localStorage primeiro
-      const storedUser = localStorage.getItem('user');
-      let userRole = null;
-      
-      if (storedUser) {
-        try {
-          const userData = JSON.parse(storedUser);
-          userRole = userData.role;
-          console.log('Role encontrado no localStorage:', userRole);
-        } catch (error) {
-          console.warn('Erro ao parsear localStorage:', error);
-        }
+      // Verificar se está autenticado
+      if (!isAuthenticated) {
+        console.log('❌ Usuário não autenticado - redirecionando para login');
+        navigate('/login');
+        return;
       }
       
-      // Se não achou no localStorage, verifica contexts
-      if (!userRole) {
-        userRole = apiUser?.role || user?.role;
-        console.log('Role encontrado no context:', userRole);
-      }
+      // Verificar role do usuário
+      const userRole = apiUser?.role || user?.role;
       
-      const isLoggedIn = isAuthenticated || storedUser;
-      
-      if (isLoggedIn && userRole === 'admin') {
+      if (userRole === 'admin') {
         console.log('✅ Admin identificado - redirecionando para /admin');
         navigate('/admin');
-      } else if (isLoggedIn && userRole !== 'admin') {
-        console.log('❌ Usuário não é admin - redirecionando para login');
-        navigate('/login');
       } else {
-        console.log('❌ Usuário não logado - redirecionando para login');
+        console.log('❌ Usuário não é admin - redirecionando para login');
         navigate('/login');
       }
       

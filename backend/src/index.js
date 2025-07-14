@@ -36,9 +36,18 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdn.gpteng.co"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"],
+      connectSrc: ["'self'", "http://82.25.69.57:3001", "https://82.25.69.57:3001", "ws://82.25.69.57:3001", "wss://82.25.69.57:3001"],
+      frameSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'", "data:", "https:"],
+      workerSrc: ["'self'", "blob:"],
+      childSrc: ["'self'", "blob:"],
+      formAction: ["'self'"],
+      upgradeInsecureRequests: [],
     },
   },
 }));
@@ -49,6 +58,8 @@ app.use(cors({
     'http://localhost:3000',
     'http://127.0.0.1:5173',
     'http://127.0.0.1:3000',
+    'https://fuseloja.com.br',
+    'http://fuseloja.com.br',
     'https://www.fuseloja.com.br',
     'http://www.fuseloja.com.br'
   ],

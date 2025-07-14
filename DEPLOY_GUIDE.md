@@ -66,27 +66,27 @@ git push origin main
 ssh root@82.25.69.57
 
 # Verificar status da aplicação
-pm2 status fuseloja
+systemctl status fuseloja
 
 # Ver logs da aplicação
-pm2 logs fuseloja
+journalctl -u fuseloja -f
 
 # Verificar health check
 curl http://localhost:3001/health
 
 # Reiniciar aplicação (se necessário)
-pm2 restart fuseloja
+systemctl restart fuseloja
 ```
 
 ## 🛠️ **Comandos Úteis**
 
-### **Gerenciamento PM2**
+### **Gerenciamento Systemd**
 ```bash
-pm2 status fuseloja          # Status da aplicação
-pm2 logs fuseloja            # Logs em tempo real
-pm2 restart fuseloja         # Reiniciar aplicação
-pm2 stop fuseloja            # Parar aplicação
-pm2 start fuseloja           # Iniciar aplicação
+systemctl status fuseloja    # Status da aplicação
+journalctl -u fuseloja -f    # Logs em tempo real
+systemctl restart fuseloja   # Reiniciar aplicação
+systemctl stop fuseloja      # Parar aplicação
+systemctl start fuseloja     # Iniciar aplicação
 ```
 
 ### **Comandos de Sistema**

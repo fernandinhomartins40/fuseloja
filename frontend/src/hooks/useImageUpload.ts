@@ -26,7 +26,7 @@ const DEFAULT_OPTIONS: ImageUploadOptions = {
   allowedFormats: ['image/jpeg', 'image/png', 'image/webp'],
   quality: 80,
   multiple: false,
-  autoUpload: true // Novo: upload automático
+  autoUpload: true // ✅ ESSENCIAL - Upload automático habilitado por padrão
 };
 
 export const useImageUpload = (options: ImageUploadOptions = {}) => {

@@ -1,9 +1,19 @@
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Product } from '@/types/product';
 import apiClient from '@/services/api';
 import { toast } from 'sonner';
+
+// Função para fazer upload da imagem para o backend
+const uploadImageToBackend = async (imageData: string, filename?: string): Promise<string> => {
+  try {
+    const response = await apiClient.post('/upload', { imageData, filename });
+    return response.data.imageUrl;
+  } catch (error) {
+    console.error('Erro ao fazer upload da imagem:', error);
+    throw error;
+  }
+};
 
 // Interfaces para tipos de resposta da API
 interface ProductsApiResponse {
@@ -56,6 +66,43 @@ const mapProductToBackend = async (product: Omit<Product, 'id' | 'createdAt' | '
     throw new Error('Erro ao validar categoria');
   }
 
+  // Processar imagem principal - converter data URL para URL persistente
+  let imageUrl = product.imageUrl;
+  if (imageUrl && imageUrl.startsWith('data:image')) {
+    console.log('🔄 Fazendo upload da imagem principal...');
+    try {
+      const persistentUrl = await uploadImageToBackend(imageUrl, 'produto_principal');
+      imageUrl = persistentUrl;
+      console.log('✅ Upload da imagem principal concluído:', imageUrl);
+    } catch (error) {
+      console.error('❌ Erro no upload da imagem principal:', error);
+      throw new Error('Falha ao processar imagem principal');
+    }
+  }
+
+  // Processar galeria de imagens - converter data URLs para URLs persistentes
+  let processedImages = product.images || [];
+  if (processedImages.length > 0) {
+    console.log('🔄 Fazendo upload da galeria de imagens...');
+    try {
+      processedImages = await Promise.all(
+        processedImages.map(async (img, index) => {
+          if (img.startsWith('data:image')) {
+            console.log(`📤 Fazendo upload da imagem ${index + 1}/${processedImages.length}...`);
+            const persistentUrl = await uploadImageToBackend(img, `produto_galeria_${index}`);
+            console.log(`✅ Upload da imagem ${index + 1} concluído:`, persistentUrl);
+            return persistentUrl;
+          }
+          return img;
+        })
+      );
+      console.log('✅ Upload da galeria concluído');
+    } catch (error) {
+      console.error('❌ Erro no upload da galeria:', error);
+      throw new Error('Falha ao processar galeria de imagens');
+    }
+  }
+
   return {
     title: product.title,
     short_description: product.shortDescription,
@@ -66,7 +113,8 @@ const mapProductToBackend = async (product: Omit<Product, 'id' | 'createdAt' | '
     stock: product.stock,
     category_id: categoryId,
     tag: product.tag,
-    image_url: product.imageUrl
+    image_url: imageUrl,
+    images: processedImages // Incluir galeria processada
   };
 };
 
@@ -146,19 +194,36 @@ export const useProductsManagement = () => {
     products: productsData?.products?.length || 0
   });
 
+  // Função para invalidar cache de forma inteligente
+  const invalidateProductsCache = () => {
+    console.log('🔄 Invalidando cache de produtos...');
+    
+    // Invalidar imediatamente
+    queryClient.invalidateQueries({ queryKey: ['products'] });
+    
+    // Invalidar com delay para aguardar processamento de imagens
+    setTimeout(() => {
+      console.log('🔄 Segunda invalidação após processamento de imagens...');
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['best-sellers'] });
+      queryClient.invalidateQueries({ queryKey: ['promotion-products'] });
+      queryClient.invalidateQueries({ queryKey: ['new-arrivals'] });
+      queryClient.invalidateQueries({ queryKey: ['recommendedProducts'] });
+    }, 2000); // Aguardar 2 segundos para processamento de imagens
+  };
+
   // Mutação para criar produto
   const createMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
       toast.success("Produto criado com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['best-sellers'] });
-      queryClient.invalidateQueries({ queryKey: ['promotion-products'] });
-      queryClient.invalidateQueries({ queryKey: ['new-arrivals'] });
+      console.log('✅ Produto criado, invalidando cache...');
+      invalidateProductsCache();
       setIsFormOpen(false);
     },
     onError: (error) => {
       toast.error(`Falha ao criar produto: ${error.message}`);
+      console.error('❌ Erro ao criar produto:', error);
     }
   });
 
@@ -167,15 +232,14 @@ export const useProductsManagement = () => {
     mutationFn: updateProduct,
     onSuccess: () => {
       toast.success("Produto atualizado com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['best-sellers'] });
-      queryClient.invalidateQueries({ queryKey: ['promotion-products'] });
-      queryClient.invalidateQueries({ queryKey: ['new-arrivals'] });
+      console.log('✅ Produto atualizado, invalidando cache...');
+      invalidateProductsCache();
       setIsFormOpen(false);
       setEditingProduct(null);
     },
     onError: (error) => {
       toast.error(`Falha ao atualizar produto: ${error.message}`);
+      console.error('❌ Erro ao atualizar produto:', error);
     }
   });
 
@@ -184,13 +248,12 @@ export const useProductsManagement = () => {
     mutationFn: deleteProduct,
     onSuccess: () => {
       toast.success("Produto removido com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['best-sellers'] });
-      queryClient.invalidateQueries({ queryKey: ['promotion-products'] });
-      queryClient.invalidateQueries({ queryKey: ['new-arrivals'] });
+      console.log('✅ Produto removido, invalidando cache...');
+      invalidateProductsCache();
     },
     onError: (error) => {
       toast.error(`Falha ao remover produto: ${error.message}`);
+      console.error('❌ Erro ao remover produto:', error);
     }
   });
 

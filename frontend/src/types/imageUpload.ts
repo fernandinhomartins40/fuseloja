@@ -7,6 +7,7 @@ export interface ImageUploadOptions {
   quality?: number; // 0-100
   aspectRatio?: number;
   multiple?: boolean;
+  autoUpload?: boolean; // ✅ Upload automático para backend
 }
 
 export interface CropSettings {
@@ -23,6 +24,7 @@ export interface ProcessedImage {
   originalFile: File;
   processedBlob: Blob;
   dataUrl: string;
+  finalUrl?: string; // ✅ URL final após upload para backend
   width: number;
   height: number;
   size: number;

@@ -26,7 +26,12 @@ export const UnifiedProductImageUploader: React.FC<UnifiedProductImageUploaderPr
           onImagesChange={(urls) => onMainImageChange(urls[0] || '')}
           onSingleImageChange={onMainImageChange}
           placeholder="Adicione a imagem principal do produto"
+          autoCompress={true}
+          showCompressionStats={false}
         />
+        <p className="text-sm text-muted-foreground mt-2">
+          ✅ Upload automático habilitado - Imagens serão enviadas automaticamente ao servidor
+        </p>
       </div>
 
       {/* Additional Product Images */}
@@ -38,7 +43,12 @@ export const UnifiedProductImageUploader: React.FC<UnifiedProductImageUploaderPr
           currentImages={images}
           onImagesChange={onImagesChange}
           placeholder="Adicione imagens adicionais do produto"
+          autoCompress={true}
+          showCompressionStats={false}
         />
+        <p className="text-sm text-muted-foreground mt-2">
+          ✅ Upload automático habilitado - Imagens serão enviadas automaticamente ao servidor
+        </p>
       </div>
     </div>
   );

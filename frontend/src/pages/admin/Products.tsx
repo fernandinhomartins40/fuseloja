@@ -103,16 +103,43 @@ const Products: React.FC = () => {
       label: 'Imagem',
       width: '80px',
       align: 'center' as const,
-      render: (value: string) => (
-        <div className="w-12 h-12 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
-          <img
-            src={value}
-            alt="Produto"
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
-      )
+      render: (value: string) => {
+        // Debug: mostrar a URL da imagem
+        console.log('🖼️ Image URL:', value);
+        
+        // Construir URL absoluta se necessário
+        const getImageUrl = (url: string) => {
+          if (!url) return '/placeholder.svg';
+          if (url.startsWith('data:')) return url; // Data URL
+          if (url.startsWith('http')) return url; // URL completa
+          if (url.startsWith('/uploads/')) {
+            // URL relativa do backend - construir URL absoleta
+            const apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:3001';
+            return `${apiBaseUrl}${url}`;
+          }
+          return url;
+        };
+
+        const imageUrl = getImageUrl(value);
+        
+        return (
+          <div className="w-12 h-12 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 flex items-center justify-center">
+            <img
+              src={imageUrl}
+              alt="Produto"
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                console.error('❌ Erro ao carregar imagem:', imageUrl);
+                e.currentTarget.src = '/placeholder.svg';
+              }}
+              onLoad={() => {
+                console.log('✅ Imagem carregada com sucesso:', imageUrl);
+              }}
+            />
+          </div>
+        );
+      }
     },
     {
       key: 'title' as keyof Product,

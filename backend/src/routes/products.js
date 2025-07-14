@@ -2,68 +2,88 @@ const express = require('express');
 const { query } = require('../database/connection');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const response = require('../utils/response');
+const { getAbsoluteImageUrl } = require('../utils/imageUtils');
 
 const router = express.Router();
 
-// GET /api/v1/products - List all products (public)
+// GET /api/v1/products - List all products with pagination, filtering, and sorting (public)
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 1000, category, search, tag, sortBy = 'created_at', order = 'desc', price_min, price_max } = req.query;
-    
-    // Debug log
-    console.log('🔍 Products API Debug:', {
-      host: req.get('host'),
-      limit: limit,
-      query: req.query,
-      ip: req.ip
+    const { 
+      page = 1, 
+      limit = 10,
+      search = '',
+      category = '',
+      tag = '',
+      sort_by = 'created_at',
+      order = 'desc',
+      price_min,
+      price_max,
+      stock_min
+    } = req.query;
+
+    // Debug incoming request
+    console.log('📋 GET /products - Query parameters:', {
+      page, limit, search, category, tag, sort_by, order, price_min, price_max, stock_min
     });
-    const offset = (page - 1) * limit;
 
-    // Verificar se as tabelas existem primeiro
-    const tableCheck = await query(`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' 
-        AND table_name = 'products'
-      );
-    `);
-    
-    if (!tableCheck.rows[0].exists) {
-      console.log('⚠️ Products table does not exist, returning empty array');
-      return response.success(res, { products: [], page: parseInt(page), limit: parseInt(limit) }, 'Products table not found');
-    }
+    // Validate pagination parameters
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
+    const offset = (pageNum - 1) * limitNum;
 
+    // Validate sort parameters
+    const allowedSortFields = ['created_at', 'title', 'price', 'stock'];
+    const sortBy = allowedSortFields.includes(sort_by) ? sort_by : 'created_at';
+    const sortOrder = order.toLowerCase() === 'asc' ? 'asc' : 'desc';
+
+    // Build WHERE clause dynamically
     let whereClauses = [];
     let queryParams = [];
     let paramIndex = 1;
 
-    if (category) {
-      whereClauses.push(`p.category_id = (SELECT id FROM categories WHERE name = $${paramIndex++})`);
-      queryParams.push(category);
-    }
     if (search) {
-      whereClauses.push(`(p.title ILIKE $${paramIndex++} OR p.description ILIKE $${paramIndex++})`);
-      queryParams.push(`%${search}%`, `%${search}%`);
+      whereClauses.push(`(p.title ILIKE $${paramIndex} OR p.description ILIKE $${paramIndex})`);
+      queryParams.push(`%${search}%`);
+      paramIndex++;
     }
+
+    if (category) {
+      whereClauses.push(`c.name ILIKE $${paramIndex}`);
+      queryParams.push(`%${category}%`);
+      paramIndex++;
+    }
+
     if (tag) {
-      whereClauses.push(`p.tag = $${paramIndex++}`);
+      whereClauses.push(`p.tag = $${paramIndex}`);
       queryParams.push(tag);
+      paramIndex++;
     }
+
+    if (stock_min) {
+      whereClauses.push(`p.stock >= $${paramIndex}`);
+      queryParams.push(parseInt(stock_min));
+      paramIndex++;
+    }
+
     if (price_min) {
-      whereClauses.push(`p.price >= $${paramIndex++}`);
+      whereClauses.push(`p.price >= $${paramIndex}`);
       queryParams.push(parseFloat(price_min));
+      paramIndex++;
     }
+
     if (price_max) {
-      whereClauses.push(`p.price <= $${paramIndex++}`);
+      whereClauses.push(`p.price <= $${paramIndex}`);
       queryParams.push(parseFloat(price_max));
+      paramIndex++;
     }
     
     whereClauses.push('p.is_active = true');
 
     const whereString = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
-    const orderByString = `ORDER BY p.${sortBy} ${order.toUpperCase()}`;
+    const orderByString = `ORDER BY p.${sortBy} ${sortOrder.toUpperCase()}`;
     const limitOffsetString = `LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
-    queryParams.push(parseInt(limit), parseInt(offset));
+    queryParams.push(parseInt(limitNum), parseInt(offset));
 
     // First get total count
     const countParams = queryParams.slice(0, -2); // Remove limit and offset params
@@ -94,7 +114,7 @@ router.get('/', async (req, res) => {
       description: p.description,
       price: parseFloat(p.price),
       originalPrice: p.original_price ? parseFloat(p.original_price) : undefined,
-      imageUrl: p.image_url || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400',
+      imageUrl: getAbsoluteImageUrl(p.image_url, req),
       category: p.category_name || 'Sem categoria',
       tag: p.tag,
       stock: p.stock,
@@ -169,7 +189,7 @@ router.get('/best-sellers', async (req, res) => {
       originalPrice: p.original_price ? parseFloat(p.original_price) : undefined,
       sku: p.sku,
       stock: p.stock,
-      imageUrl: p.image_url,
+      imageUrl: getAbsoluteImageUrl(p.image_url, req),
       category: p.category_name,
       tag: p.tag,
       totalSold: parseInt(p.total_sold) || 0,
@@ -206,7 +226,7 @@ router.get('/:id', async (req, res) => {
       originalPrice: p.original_price ? parseFloat(p.original_price) : undefined,
       sku: p.sku,
       stock: p.stock,
-      imageUrl: p.image_url,
+      imageUrl: getAbsoluteImageUrl(p.image_url, req),
       category: p.category_name,
       tag: p.tag,
       createdAt: p.created_at,

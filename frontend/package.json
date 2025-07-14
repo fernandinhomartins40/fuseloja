@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode production",
+    "build:optimized": "vite build --mode production --minify esbuild",
     "build:dev": "vite build --mode development",
     "lint": "echo 'Skipping lint for deploy'",
     "lint:full": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "analyze": "vite build --mode production && npx vite-bundle-analyzer dist/stats.html"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

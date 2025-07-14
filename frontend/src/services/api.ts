@@ -16,8 +16,8 @@ const getApiBaseUrl = (): string => {
   
   // Production - fuseloja.com.br should use the backend on the same server
   if (hostname.includes('fuseloja.com.br')) {
-    // Use HTTP for production API (backend running on port 3000)
-    return 'http://www.fuseloja.com.br:3000';
+    // Use direct IP for production API (backend running on port 3000)
+    return 'http://82.25.69.57:3000';
   }
   
   // Custom API URL from environment
@@ -30,8 +30,8 @@ const getApiBaseUrl = (): string => {
     return 'http://localhost:3000';
   }
   
-  // Default fallback
-  return `${protocol}//${hostname}:3000`;
+  // Default fallback - use direct IP
+  return 'http://82.25.69.57:3000';
 };
 
 class ApiClient {

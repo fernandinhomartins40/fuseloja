@@ -45,8 +45,8 @@ jobs:
     - name: 🏗️ Build Frontend
       working-directory: ./frontend
       run: |
-        npm run build
-        echo "✅ Frontend build completed"
+        npm run build:optimized
+        echo "✅ Frontend build otimizado completed"
 
     - name: 📂 Copy Frontend Build to Backend
       run: |

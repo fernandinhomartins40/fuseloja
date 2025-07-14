@@ -1,124 +1,104 @@
-// Service Worker para invalidação de cache
-const CACHE_NAME = 'fuseloja-cache-v' + Date.now();
+// Service Worker simplificado para melhor performance
+const CACHE_NAME = 'fuseloja-v1';
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',
   '/static/css/main.css'
 ];
 
-// Install event
+// Install event - cache recursos essenciais apenas
 self.addEventListener('install', function(event) {
-  // Força ativação imediata do novo service worker
+  // Ativa imediatamente o novo service worker
   self.skipWaiting();
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(function(cache) {
+        console.log('Service Worker: Cache opened');
         return cache.addAll(urlsToCache);
+      })
+      .catch(function(error) {
+        console.log('Service Worker: Cache failed', error);
       })
   );
 });
 
-// Activate event
+// Activate event - limpa caches antigos
 self.addEventListener('activate', function(event) {
-  // Assume controle imediatamente
-  self.clients.claim();
+  console.log('Service Worker: Activated');
   
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(
         cacheNames.map(function(cacheName) {
-          // Remove caches antigos
           if (cacheName !== CACHE_NAME) {
+            console.log('Service Worker: Deleting old cache', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
+    }).then(function() {
+      return self.clients.claim();
     })
   );
 });
 
-// Fetch event
+// Fetch event - estratégia network-first para melhor performance
 self.addEventListener('fetch', function(event) {
-  // Para requisições da API ou dados de autenticação, sempre busca da rede
-  if (event.request.url.includes('/auth/') || 
-      event.request.url.includes('/api/') ||
-      event.request.url.includes('localhost:3000')) {
-    event.respondWith(
-      fetch(event.request)
-        .then(function(response) {
-          return response;
-        })
-        .catch(function() {
-          // Em caso de erro de rede, tenta o cache
-          return caches.match(event.request);
-        })
-    );
+  // Pular requisições não GET
+  if (event.request.method !== 'GET') {
     return;
   }
 
-  // Para outros recursos, usa estratégia cache-first com invalidação
+  // Pular requisições da API - sempre ir para rede
+  if (event.request.url.includes('/api/') || 
+      event.request.url.includes(':3000') ||
+      event.request.url.includes('82.25.69.57')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // Para outros recursos: network-first com timeout rápido
   event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        // Cache hit - retorna resposta do cache
-        if (response) {
-          // Mas também busca uma versão atualizada em background
-          fetch(event.request).then(function(fetchResponse) {
-            if (fetchResponse && fetchResponse.status === 200) {
-              const responseClone = fetchResponse.clone();
-              caches.open(CACHE_NAME).then(function(cache) {
-                cache.put(event.request, responseClone);
-              });
-            }
+    Promise.race([
+      fetch(event.request).then(function(response) {
+        // Se sucesso, atualiza cache e retorna
+        if (response && response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then(function(cache) {
+            cache.put(event.request, responseClone);
           });
-          return response;
         }
-
-        // Cache miss - busca da rede
-        return fetch(event.request)
-          .then(function(response) {
-            // Verifica se é uma resposta válida
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
+        return response;
+      }),
+      // Timeout de 2 segundos - se não responder, usa cache
+      new Promise(function(resolve, reject) {
+        setTimeout(function() {
+          caches.match(event.request).then(function(cachedResponse) {
+            if (cachedResponse) {
+              resolve(cachedResponse);
+            } else {
+              reject(new Error('Network timeout and no cache'));
             }
-
-            // Clona a resposta
-            const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(function(cache) {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
           });
+        }, 2000);
       })
+    ]).catch(function() {
+      // Em caso de erro, tenta cache
+      return caches.match(event.request);
+    })
   );
 });
 
-// Escuta mensagens para limpeza forçada de cache
+// Mensagens do client
 self.addEventListener('message', function(event) {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
   
   if (event.data && event.data.type === 'CLEAR_CACHE') {
-    event.waitUntil(
-      caches.keys().then(function(cacheNames) {
-        return Promise.all(
-          cacheNames.map(function(cacheName) {
-            return caches.delete(cacheName);
-          })
-        );
-      }).then(function() {
-        // Notifica que o cache foi limpo
-        self.clients.matchAll().then(clients => {
-          clients.forEach(client => {
-            client.postMessage({type: 'CACHE_CLEARED'});
-          });
-        });
-      })
-    );
+    caches.delete(CACHE_NAME).then(function() {
+      event.ports[0].postMessage({type: 'CACHE_CLEARED'});
+    });
   }
 });

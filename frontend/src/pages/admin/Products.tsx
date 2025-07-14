@@ -204,7 +204,7 @@ const Products: React.FC = () => {
         { label: 'Produtos' }
       ]}
       badge={{
-        text: `${products.length} itens ${!apiDataAvailable ? '(dados de exemplo)' : '(do banco)'}`,
+        text: `${products.length} produtos${apiDataAvailable ? ' (dados reais)' : ' (carregando...)'}`,
         variant: apiDataAvailable ? 'secondary' : 'outline'
       }}
       action={{
@@ -243,7 +243,13 @@ const Products: React.FC = () => {
             // Optional: handle row click for quick preview
           }}
           loading={isLoading}
-          emptyMessage={isError ? `Erro ao carregar produtos: ${error}` : "Nenhum produto encontrado"}
+          emptyMessage={
+            isError 
+              ? `Erro ao carregar produtos: ${error}` 
+              : isLoading 
+                ? "Carregando produtos..." 
+                : "Nenhum produto encontrado no banco de dados"
+          }
         />
       </div>
     </AdminPageLayout>

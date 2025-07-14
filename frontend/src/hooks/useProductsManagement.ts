@@ -185,13 +185,17 @@ export const useProductsManagement = () => {
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
+  // Verificar se os dados da API estão disponíveis
+  const apiDataAvailable = !isLoading && !isError && productsData && productsData.products && productsData.products.length >= 0;
+
   // Debug logging
   console.log('Products Query Debug:', {
     productsData,
     isLoading,
     isError,
     error: error?.message,
-    products: productsData?.products?.length || 0
+    products: productsData?.products?.length || 0,
+    apiDataAvailable
   });
 
   // Função para invalidar cache de forma inteligente
@@ -284,6 +288,7 @@ export const useProductsManagement = () => {
     isLoading,
     isError,
     error: error?.message,
+    apiDataAvailable, // ✅ Adicionado para corrigir o erro
     totalProducts: products.length,
     editingProduct,
     isFormOpen,

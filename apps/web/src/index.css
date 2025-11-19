@@ -1,0 +1,8 @@
+
+
+/* Import system styles (base Tailwind + CSS variables) FIRST */
+@import './styles/system.css';
+
+/* Import configurable styles (admin panel customizable) */
+@import './styles/configurable.css';
+

@@ -1,221 +1,412 @@
-# 🏪 FuseLoja - E-commerce Completo
+# 🛍️ FuseLoja - E-commerce Monorepo
 
-## 🚀 **Arquitetura Minimalista e Otimizada**
+> **Plataforma de e-commerce profissional construída com React, TypeScript, Node.js, Prisma e PostgreSQL**
 
-Sistema de e-commerce com frontend React e backend Node.js simplificado para **deploy rápido e fácil manutenção**.
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.3-61dafb)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933)](https://nodejs.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-5.22-2D3748)](https://www.prisma.io/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-### ✨ **Deploy Simplificado**
-- **1 secret**: Apenas `VPS_PASSWORD` necessária
-- **3 workflows**: Deploy principal + testes de conectividade
-- **Zero configuração**: Host e username pré-configurados
-- **Domínio**: fuseloja.com.br (82.25.69.57)
+## 📋 Índice
 
-### 📁 **Estrutura do Projeto**
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Arquitetura](#arquitetura)
+- [Tecnologias](#tecnologias)
+- [Estrutura do Monorepo](#estrutura-do-monorepo)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação](#instalação)
+- [Scripts Disponíveis](#scripts-disponíveis)
+- [Desenvolvimento](#desenvolvimento)
+- [Build e Deploy](#build-e-deploy)
+- [Documentação](#documentação)
+
+## 🎯 Sobre o Projeto
+
+**FuseLoja** é uma plataforma completa de e-commerce desenvolvida com as melhores práticas de desenvolvimento moderno. O projeto foi reestruturado em uma arquitetura monorepo profissional, garantindo escalabilidade, manutenibilidade e performance.
+
+### Funcionalidades Principais
+
+- ✅ **E-commerce Completo**: Catálogo de produtos, carrinho de compras, checkout
+- ✅ **Gestão de Produtos**: CRUD completo com upload de imagens
+- ✅ **Categorias Dinâmicas**: Sistema flexível de categorização
+- ✅ **Autenticação JWT**: Sistema robusto com refresh tokens
+- ✅ **Usuários Provisórios**: Compra sem cadastro via WhatsApp
+- ✅ **Admin Dashboard**: Painel administrativo completo
+- ✅ **Customização**: Temas, cores, logos, banners personalizáveis
+- ✅ **Responsivo**: Design adaptável para todos os dispositivos
+- ✅ **Performance**: Code splitting, lazy loading, otimização de imagens
+
+## 🏗️ Arquitetura
+
+```
+┌─────────────┐
+│   Nginx     │ → Reverse Proxy
+└──────┬──────┘
+       │
+       ├─→ ┌──────────────┐
+       │   │  Frontend    │ → React + Vite + TypeScript
+       │   │  (Web App)   │
+       │   └──────────────┘
+       │
+       └─→ ┌──────────────┐      ┌──────────────┐
+           │   Backend    │ ───→ │  PostgreSQL  │
+           │  (API REST)  │      │   Database   │
+           └──────────────┘      └──────────────┘
+                  ↓
+           ┌──────────────┐
+           │    Prisma    │ → ORM
+           └──────────────┘
+```
+
+## 🚀 Tecnologias
+
+### Frontend
+
+- **React 18.3.1** - Biblioteca UI
+- **TypeScript 5.5.3** - Tipagem estática
+- **Vite 5.4.1** - Build tool e dev server
+- **React Router 6.26** - Roteamento
+- **TanStack Query 5.56** - State management e cache
+- **Axios** - Cliente HTTP
+- **Tailwind CSS 3.4** - Estilização
+- **Shadcn/ui** - Componentes UI (Radix UI)
+- **Recharts** - Gráficos e dashboards
+- **React Hook Form + Zod** - Formulários e validação
+
+### Backend
+
+- **Node.js 18+** - Runtime JavaScript
+- **Express 4.18** - Framework web
+- **TypeScript 5.5.3** - Tipagem estática
+- **Prisma 5.22** - ORM
+- **PostgreSQL** - Banco de dados
+- **JWT** - Autenticação
+- **Bcryptjs** - Hash de senhas
+- **Helmet** - Segurança HTTP
+- **Winston** - Logging
+- **Sharp** - Processamento de imagens
+
+### DevOps & Infraestrutura
+
+- **Docker** - Containerização
+- **Docker Compose** - Orquestração de containers
+- **Nginx** - Reverse proxy e servidor web
+- **PM2** - Gerenciador de processos Node.js
+
+### Ferramentas de Desenvolvimento
+
+- **ESLint** - Linting
+- **Prettier** - Formatação de código
+- **Jest** - Testes
+- **Nodemon** - Hot reload no desenvolvimento
+- **ts-node** - Execução TypeScript
+
+## 📁 Estrutura do Monorepo
 
 ```
 fuseloja/
-├── backend/                 # Backend minimalista
-│   ├── src/
-│   │   ├── index.js        # Servidor principal
-│   │   ├── routes/         # Rotas da API
-│   │   ├── middleware/     # Middlewares de auth/cors
-│   │   ├── database/       # Conexão PostgreSQL
-│   │   └── utils/          # Utilitários e validações
-│   ├── package.json        # 8 dependências apenas
-│   └── README.md           # Documentação do backend
-├── frontend/               # React + TypeScript + Tailwind
-│   ├── src/
-│   │   ├── components/     # Componentes UI
-│   │   ├── pages/          # Páginas da aplicação
-│   │   ├── services/       # API e auth services
-│   │   ├── hooks/          # Custom hooks
-│   │   └── types/          # Tipos TypeScript
-│   └── package.json        # Dependências do frontend
-└── README.md              # Este arquivo
+├── apps/
+│   ├── web/                    # Frontend React
+│   │   ├── src/
+│   │   │   ├── components/     # Componentes React
+│   │   │   ├── pages/          # Páginas
+│   │   │   ├── hooks/          # Custom hooks
+│   │   │   ├── contexts/       # React contexts
+│   │   │   ├── services/       # Serviços API
+│   │   │   ├── lib/            # Utilitários
+│   │   │   └── styles/         # Estilos globais
+│   │   ├── public/             # Assets estáticos
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   └── vite.config.ts
+│   │
+│   └── api/                    # Backend Node.js + Express
+│       ├── src/
+│       │   ├── controllers/    # Controllers
+│       │   ├── services/       # Business logic
+│       │   ├── routes/         # Rotas da API
+│       │   ├── middleware/     # Middlewares
+│       │   ├── utils/          # Utilitários
+│       │   └── index.ts        # Entry point
+│       ├── prisma/
+│       │   ├── schema.prisma   # Schema do banco
+│       │   ├── migrations/     # Migrações
+│       │   └── seed.ts         # Seed data
+│       ├── package.json
+│       └── tsconfig.json
+│
+├── packages/
+│   ├── types/                  # TypeScript types compartilhados
+│   │   ├── src/
+│   │   │   ├── api.ts
+│   │   │   ├── product.ts
+│   │   │   ├── user.ts
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   ├── shared/                 # Código compartilhado
+│   │   ├── src/
+│   │   │   ├── utils/          # Utilitários
+│   │   │   ├── validators/     # Validadores
+│   │   │   ├── constants/      # Constantes
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   └── config/                 # Configurações compartilhadas
+│       ├── eslint/
+│       ├── prettier/
+│       ├── typescript/
+│       └── package.json
+│
+├── docker/                     # Configurações Docker
+│   ├── nginx/
+│   │   ├── nginx.conf
+│   │   └── Dockerfile
+│   ├── postgres/
+│   │   └── init.sql
+│   └── api/
+│       └── Dockerfile
+│
+├── scripts/                    # Scripts de build/deploy
+│
+├── docs/                       # Documentação
+│
+├── docker-compose.yml          # Orquestração de containers
+├── package.json                # Root package.json
+├── pnpm-workspace.yaml         # Workspaces config
+├── tsconfig.json               # TypeScript config raiz
+├── .prettierrc                 # Prettier config
+├── .gitignore
+└── README.md
 ```
 
-### 🎯 **Stack Tecnológica**
+## 📦 Pré-requisitos
 
-| Componente | Tecnologia | Justificativa |
-|------------|------------|---------------|
-| **Backend** | Node.js + Express | Simplicidade e performance |
-| **Linguagem** | JavaScript ES6+ | Zero build time |
-| **Banco** | PostgreSQL | Robustez e SQL familiar |
-| **Frontend** | React + TypeScript | Moderna e type-safe |
-| **UI** | Tailwind + Radix UI | Design system consistente |
-| **Auth** | JWT simples | Stateless e escalável |
+- **Node.js** >= 18.0.0
+- **npm** >= 9.0.0 ou **pnpm** >= 8.0.0
+- **Docker** >= 20.10 (para desenvolvimento com containers)
+- **PostgreSQL** >= 14 (ou usar via Docker)
 
-### 🔧 **Setup Rápido**
+## 🔧 Instalação
 
-#### 1. **Backend**
+### 1. Clone o repositório
+
 ```bash
-cd backend
-npm install
-cp .env.example .env
-# Editar .env com suas configurações
-npm start
+git clone https://github.com/fernandinhomartins40/fuseloja.git
+cd fuseloja
 ```
 
-#### 2. **Frontend**
+### 2. Instale as dependências
+
 ```bash
-cd frontend
 npm install
+# ou
+pnpm install
+```
+
+### 3. Configure as variáveis de ambiente
+
+```bash
+# Backend (apps/api/.env)
+cp apps/api/.env.example apps/api/.env
+
+# Frontend (apps/web/.env)
+cp apps/web/.env.example apps/web/.env
+```
+
+### 4. Configure o banco de dados
+
+```bash
+# Gerar o Prisma Client
+npm run prisma:generate
+
+# Executar migrações
+npm run prisma:migrate
+
+# (Opcional) Popular com dados de exemplo
+npm run prisma:seed
+```
+
+## 🎮 Scripts Disponíveis
+
+### Desenvolvimento
+
+```bash
+# Iniciar tudo (frontend + backend)
+npm run dev
+
+# Apenas frontend
+npm run dev:web
+
+# Apenas backend
+npm run dev:api
+```
+
+### Build
+
+```bash
+# Build de tudo
+npm run build
+
+# Build apenas frontend
+npm run build:web
+
+# Build apenas backend
+npm run build:api
+```
+
+### Prisma
+
+```bash
+# Gerar Prisma Client
+npm run prisma:generate
+
+# Criar migração
+npm run prisma:migrate
+
+# Abrir Prisma Studio
+npm run prisma:studio
+
+# Popular banco com dados
+npm run prisma:seed
+
+# Reset do banco
+npm run prisma:reset
+```
+
+### Docker
+
+```bash
+# Build das imagens
+npm run docker:build
+
+# Subir containers
+npm run docker:up
+
+# Parar containers
+npm run docker:down
+
+# Ver logs
+npm run docker:logs
+```
+
+### Qualidade de Código
+
+```bash
+# Lint
+npm run lint
+
+# Fix de lint
+npm run lint:fix
+
+# Type check
+npm run type-check
+
+# Formatar código
+npm run format
+
+# Checar formatação
+npm run format:check
+```
+
+### Testes
+
+```bash
+# Executar todos os testes
+npm run test
+
+# Testes com watch
+npm run test:watch
+
+# Coverage
+npm run test:coverage
+```
+
+## 💻 Desenvolvimento
+
+### Estrutura de Branches
+
+- `main` - Produção
+- `develop` - Desenvolvimento
+- `feature/*` - Novas funcionalidades
+- `fix/*` - Correções de bugs
+- `hotfix/*` - Correções urgentes
+
+### Workflow de Desenvolvimento
+
+1. Crie uma branch a partir de `develop`
+2. Desenvolva a funcionalidade
+3. Faça commits seguindo [Conventional Commits](https://www.conventionalcommits.org/)
+4. Abra um Pull Request para `develop`
+5. Aguarde revisão e aprovação
+
+### Padrões de Commit
+
+```
+feat: adiciona nova funcionalidade
+fix: corrige bug
+docs: atualiza documentação
+style: formatação de código
+refactor: refatoração de código
+test: adiciona ou corrige testes
+chore: atualiza dependências ou configurações
+```
+
+## 🚀 Build e Deploy
+
+### Desenvolvimento Local
+
+```bash
 npm run dev
 ```
 
-#### 3. **PostgreSQL**
-```bash
-# Instalar PostgreSQL
-sudo apt install postgresql postgresql-contrib
+### Build de Produção
 
-# Criar banco
-sudo -u postgres createdb fuseloja
+```bash
+npm run build
+npm run start
 ```
 
-### 🌐 **URLs de Desenvolvimento**
+### Deploy com Docker
 
-- **Frontend:** http://localhost:5173
-- **Backend:** http://localhost:3001
-- **API Docs:** http://localhost:3001 (JSON endpoints)
-- **Health Check:** http://localhost:3001/health
-
-### 📊 **Endpoints Principais**
-
-#### Autenticação (`/api/v1/auth`)
-- `POST /register` - Cadastro de usuário
-- `POST /login` - Login
-- `POST /validate` - Validar token
-- `GET /me` - Perfil do usuário
-
-#### Usuários (`/api/v1/users`)
-- `GET /me` - Perfil atual
-- `PUT /me` - Atualizar perfil
-- `GET /` - Listar usuários (admin)
-
-### 🚀 **Deploy Automático**
-
-#### **Configuração GitHub Secrets**
-1. Vá para: `Settings` → `Secrets and variables` → `Actions`
-2. Adicione os secrets **obrigatórios**:
-   ```
-   VPS_HOST=seu-ip-vps
-   VPS_USERNAME=root
-   VPS_PASSWORD=sua-senha-vps
-   ```
-
-3. Secrets **opcionais** (recomendados):
-   ```
-   JWT_SECRET=seu-jwt-secret-seguro
-   DB_HOST=localhost
-   DB_USER=postgres
-   DB_PASSWORD=sua-senha-db
-   DB_NAME=fuseloja
-   ```
-
-#### **Como Fazer Deploy**
-
-**✅ Automático:** Qualquer push na branch `main`
 ```bash
-git push origin main
+# Build e subir containers
+docker-compose up -d --build
+
+# Ver logs
+docker-compose logs -f
+
+# Parar
+docker-compose down
 ```
 
-**✅ Manual:** Via GitHub Actions
-1. Vá para `Actions` → `🚀 Deploy Fuseloja Minimal`
-2. Clique em `Run workflow`
-3. Aguarde 2-3 minutos
+## 📚 Documentação
 
-#### **Monitoramento**
-- **App:** https://www.fuseloja.com.br
-- **Health:** http://seu-ip:3001/health
-- **API:** http://seu-ip:3001/api/v1/
-- **Logs:** `pm2 logs fuseloja-minimal`
+Para documentação detalhada, consulte a pasta `docs/`:
 
-### 🔒 **Segurança**
+- [Análise de Imagens dos Produtos](docs/ANALISE_IMAGENS_PRODUTOS.md)
+- [Correções de Autenticação](docs/AUTENTICACAO_FIXES.md)
+- [Guia de Deploy](docs/DEPLOY_GUIDE.md)
+- [Configuração WSL](docs/SETUP_WSL.md)
+- [Guia de Upload](docs/UPLOAD_GUIDE.md)
 
-- ✅ **Helmet** para headers de segurança
-- ✅ **CORS** configurado
-- ✅ **Rate Limiting** por IP
-- ✅ **JWT** para autenticação
-- ✅ **bcrypt** para hash de senhas
-- ✅ **Validação** de inputs
+## 👥 Contribuindo
 
-### 📈 **Performance**
+Contribuições são sempre bem-vindas! Por favor, leia o [guia de contribuição](CONTRIBUTING.md) primeiro.
 
-- ⚡ **Backend:** JavaScript puro, sem build
-- ⚡ **Frontend:** Vite para dev, build otimizado
-- ⚡ **Database:** PostgreSQL com pooling
-- ⚡ **Deploy:** < 2 minutos
+## 📄 Licença
 
-### 🛠️ **Desenvolvimento**
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-#### **Comandos Úteis**
-```bash
-# Backend
-npm run dev          # Nodemon para auto-restart
-npm start           # Produção
+## 🙏 Agradecimentos
 
-# Frontend  
-npm run dev         # Servidor de desenvolvimento
-npm run build       # Build para produção
-npm run preview     # Preview do build
-```
-
-#### **Debugging**
-```bash
-# Logs do backend
-tail -f backend/logs/app.log
-
-# Verificar processos
-pm2 list
-pm2 logs fuseloja-backend
-
-# Health checks
-curl http://localhost:3001/health
-```
-
-### 🔄 **Roadmap**
-
-#### **Fase Atual: MVP ✅**
-- Autenticação JWT
-- CRUD de usuários
-- Frontend React
-- Deploy básico
-
-#### **Próximas Fases**
-- **Fase 2:** Produtos e categorias
-- **Fase 3:** Carrinho e checkout
-- **Fase 4:** Pagamentos
-- **Fase 5:** Admin dashboard
-
-### 📝 **Contribuição**
-
-1. Fork o repositório
-2. Crie uma branch: `git checkout -b feature/nova-feature`
-3. Commit: `git commit -m 'Add nova feature'`
-4. Push: `git push origin feature/nova-feature`
-5. Abra um Pull Request
-
-### 📋 **Documentação de Deploy**
-
-- 🚀 **Guia de Deploy**: [DEPLOY_GUIDE.md](DEPLOY_GUIDE.md)
-- 🔐 **Configuração de Secrets**: [SETUP_SECRETS.md](SETUP_SECRETS.md)
-- 🔄 **Workflows Disponíveis**: [.github/WORKFLOWS.md](.github/WORKFLOWS.md)
-- 📊 **GitHub Actions**: [Actions](../../actions)
-
-### 📞 **Suporte**
-
-- 📧 **Email:** suporte@fuseloja.com
-- 📚 **Docs Backend:** [/backend/README.md](backend/README.md)
-- 🐛 **Issues:** GitHub Issues
-
-### 📄 **Licença**
-
-MIT License - veja [LICENSE](LICENSE) para detalhes.
+- [React](https://reactjs.org/)
+- [Vite](https://vitejs.dev/)
+- [Prisma](https://www.prisma.io/)
+- [Shadcn/ui](https://ui.shadcn.com/)
+- [TanStack Query](https://tanstack.com/query)
 
 ---
 
-## 🎉 **Deploy Pronto em 30 Minutos!**
-
-Este projeto foi otimizado para **simplicidade e velocidade de deploy**, mantendo todas as funcionalidades essenciais de um e-commerce moderno.
-
-**Stack minimalista** = **Menos bugs** + **Deploy mais rápido** + **Manutenção mais fácil**
+**Desenvolvido com ❤️ pela equipe FuseLoja**

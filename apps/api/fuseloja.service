@@ -1,0 +1,21 @@
+[Unit]
+Description=Fuseloja Backend API
+After=network.target
+
+[Service]
+Type=simple
+User=fernandinhomartins040
+WorkingDirectory=/home/fernandinhomartins040/fuseloja/backend
+ExecStart=/usr/bin/node src/index.js
+Restart=always
+RestartSec=10
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+# Logs
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=fuseloja
+
+[Install]
+WantedBy=multi-user.target

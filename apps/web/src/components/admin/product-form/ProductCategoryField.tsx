@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Category } from '@/types/category';
+import { Category } from '@fuseloja/types';
 import { iconComponents, IconName } from '@/utils/categoryIcons';
 import apiClient from '@/services/api';
 

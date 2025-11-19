@@ -9,7 +9,7 @@ import {
   ChangePasswordRequest,
   ApiUser,
   UpdateProfileRequest
-} from '@/types/api';
+} from '@fuseloja/types';
 
 export class AuthService {
   

@@ -69,7 +69,7 @@ import {
   Clock,
   Award
 } from "lucide-react";
-import { Category } from "@/types/category";
+import { Category } from '@fuseloja/types';
 
 export const iconComponents = {
   Smartphone,

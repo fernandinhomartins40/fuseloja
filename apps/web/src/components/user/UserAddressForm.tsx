@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useUser } from '@/contexts/UserContext';
-import { UserAddress } from '@/types/user';
+import { UserAddress } from '@fuseloja/types';
 
 // Define Zod schema with all required fields to match UserAddress type
 const addressSchema = z.object({

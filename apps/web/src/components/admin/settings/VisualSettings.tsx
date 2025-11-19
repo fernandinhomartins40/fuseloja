@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { VisualSettings as VisualSettingsType } from '@/types/settings';
+import { VisualSettings as VisualSettingsType } from '@fuseloja/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';

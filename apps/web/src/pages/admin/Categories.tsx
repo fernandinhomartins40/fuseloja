@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { defaultCategories } from '@/utils/categoryIcons';
-import { Category } from '@/types/category';
+import { Category } from '@fuseloja/types';
 import CategoryCard from '@/components/admin/CategoryCard';
 import CategoryForm from '@/components/admin/CategoryForm';
 import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';

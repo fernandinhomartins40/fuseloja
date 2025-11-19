@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { User, initialUser, UserAddress, UserPreferences, ProvisionalUserData, AccountUpgradeData } from '@/types/user';
+import { User, initialUser, UserAddress, UserPreferences, ProvisionalUserData, AccountUpgradeData } from '@fuseloja/types';
 import { toast } from '@/components/ui/sonner';
 import { useAuth } from '@/hooks/useAuth';
 

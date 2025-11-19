@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { PageContent } from '@/types/settings';
+import { PageContent } from '@fuseloja/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { RichTextEditor } from './RichTextEditor';

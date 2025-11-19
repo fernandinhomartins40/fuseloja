@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Category, categoryColorsMap } from '@/types/category';
+import { Category, categoryColorsMap } from '@fuseloja/types';
 import { iconComponents, IconName } from '@/utils/categoryIcons';
 import { Edit, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';

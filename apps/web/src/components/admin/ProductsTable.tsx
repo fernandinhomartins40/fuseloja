@@ -3,7 +3,7 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2 } from 'lucide-react';
-import { Product } from '@/types/product';
+import { Product } from '@fuseloja/types';
 
 interface ProductsTableProps {
   products: Product[];

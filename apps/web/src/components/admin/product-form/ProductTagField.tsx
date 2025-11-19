@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ProductTag } from '@/types/product';
+import { ProductTag } from '@fuseloja/types';
 import { productTags } from '@/utils/productTags';
 
 interface ProductTagFieldProps {

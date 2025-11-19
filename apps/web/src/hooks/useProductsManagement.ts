@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Product } from '@/types/product';
+import { Product } from '@fuseloja/types';
 import apiClient from '@/services/api';
 import { toast } from 'sonner';
 

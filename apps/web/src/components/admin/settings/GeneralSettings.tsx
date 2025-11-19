@@ -1,5 +1,5 @@
 import React from 'react';
-import { GeneralSettings as GeneralSettingsType } from '@/types/settings';
+import { GeneralSettings as GeneralSettingsType } from '@fuseloja/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';

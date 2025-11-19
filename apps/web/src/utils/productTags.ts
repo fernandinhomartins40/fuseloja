@@ -1,5 +1,5 @@
 
-import { ProductTag } from '@/types/product';
+import { ProductTag } from '@fuseloja/types';
 
 // Define available product tags
 export const productTags = [

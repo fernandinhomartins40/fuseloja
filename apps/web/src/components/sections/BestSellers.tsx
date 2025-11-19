@@ -5,7 +5,7 @@ import { TrendingUp, Star, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import apiClient from '@/services/api';
-import { Product } from '@/types/product';
+import { Product } from '@fuseloja/types';
 
 // API function to fetch best selling products
 const fetchBestSellers = async (): Promise<Product[]> => {

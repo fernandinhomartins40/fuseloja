@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ProductCard } from '../ui/ProductCard';
-import { Product } from '@/types/product';
+import { Product } from '@fuseloja/types';
 import apiClient from '@/services/api';
 
 // API function to fetch products

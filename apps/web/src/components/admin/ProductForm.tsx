@@ -8,7 +8,7 @@ import {
   ProductTag,
   ProductSpecification,
   ProductVariant
-} from '@/types/product';
+} from '@fuseloja/types';
 import ProductPriceFields from './product-form/ProductPriceFields';
 import ProductCategoryField from './product-form/ProductCategoryField';
 import ProductTagField from './product-form/ProductTagField';

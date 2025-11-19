@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/services/api';
-import { Product } from '@/types/product';
+import { Product } from '@fuseloja/types';
 import { Link } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 

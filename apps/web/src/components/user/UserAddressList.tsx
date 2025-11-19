@@ -27,7 +27,7 @@ import {
 
 import { useUser } from '@/contexts/UserContext';
 import { UserAddressForm } from './UserAddressForm';
-import { UserAddress } from '@/types/user';
+import { UserAddress } from '@fuseloja/types';
 
 export const UserAddressList: React.FC = () => {
   const { user, removeAddress, setDefaultAddress } = useUser();

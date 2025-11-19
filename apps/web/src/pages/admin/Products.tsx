@@ -6,7 +6,7 @@ import { VirtualizedTable } from '@/components/admin/ui/VirtualizedTable';
 import { AdminPageLayout } from '@/components/admin/layout/AdminPageLayout';
 import { FilterOption } from '@/components/admin/ui/SearchFilter';
 import { useProductsManagement } from '@/hooks/useProductsManagement';
-import { Product } from '@/types/product';
+import { Product } from '@fuseloja/types';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 

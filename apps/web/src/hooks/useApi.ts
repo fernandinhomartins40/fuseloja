@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import apiClient from '@/services/api';
-import { ApiResponse } from '@/types/api';
+import { ApiResponse } from '@fuseloja/types';
 
 interface UseApiState<T> {
   data: T | null;

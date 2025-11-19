@@ -1,5 +1,5 @@
 
-import { StoreSettings } from "@/types/settings";
+import { StoreSettings } from '@fuseloja/types';
 
 export const defaultSettings: StoreSettings = {
   general: {

@@ -81,6 +81,8 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@fuseloja/types": path.resolve(__dirname, "../../packages/types/src"),
+      "@fuseloja/shared": path.resolve(__dirname, "../../packages/shared/src"),
     },
   },
   // Enable modern browser features while maintaining compatibility

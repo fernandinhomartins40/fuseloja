@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/contexts/UserContext';
-import { ProvisionalUserData } from '@/types/user';
+import { ProvisionalUserData } from '@fuseloja/types';
 
 const provisionalUserSchema = z.object({
   name: z.string().min(2, { message: 'Nome deve ter pelo menos 2 caracteres' }),

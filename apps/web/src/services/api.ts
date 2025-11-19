@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'sonner';
-import { ApiResponse, ApiErrorResponse, JwtPayload } from '@/types/api';
+import { ApiResponse, ApiErrorResponse, JwtPayload } from '@fuseloja/types';
 
 // Extend AxiosRequestConfig to include metadata
 interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {

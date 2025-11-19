@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUser } from '@/contexts/UserContext';
-import { AccountUpgradeData } from '@/types/user';
+import { AccountUpgradeData } from '@fuseloja/types';
 import { Eye, EyeOff } from 'lucide-react';
 
 const accountUpgradeSchema = z.object({

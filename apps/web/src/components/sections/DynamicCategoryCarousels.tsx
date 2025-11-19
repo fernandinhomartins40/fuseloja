@@ -4,8 +4,8 @@ import { ProductCard } from '../ui/ProductCard';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { iconComponents, IconName } from '@/utils/categoryIcons';
 import apiClient from '@/services/api';
-import { Product } from '@/types/product';
-import { getContrastTextColor } from '@/types/category';
+import { Product } from '@fuseloja/types';
+import { getContrastTextColor } from '@fuseloja/types';
 
 interface Category {
   id: string;

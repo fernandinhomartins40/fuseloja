@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus } from 'lucide-react';
-import { ProductSpecification } from '@/types/product';
+import { ProductSpecification } from '@fuseloja/types';
 
 interface ProductSpecificationsFieldProps {
   dimensions: {

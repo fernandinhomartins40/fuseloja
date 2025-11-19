@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { StoreSettings } from '@/types/settings';
+import { StoreSettings } from '@fuseloja/types';
 import { defaultSettings } from '@/utils/defaultSettings';
 
 interface SettingsContextType {

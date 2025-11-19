@@ -1,5 +1,5 @@
 import apiClient from './api';
-import { ApiUser, UpdateProfileRequest } from '@/types/api';
+import { ApiUser, UpdateProfileRequest } from '@fuseloja/types';
 
 export class UserService {
   

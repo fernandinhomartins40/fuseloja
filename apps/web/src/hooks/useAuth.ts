@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { authService } from '@/services/auth.service';
-import { ApiUser, LoginRequest, RegisterRequest } from '@/types/api';
-import { User, ProvisionalUserData, AccountUpgradeData } from '@/types/user';
+import { ApiUser, LoginRequest, RegisterRequest } from '@fuseloja/types';
+import { User, ProvisionalUserData, AccountUpgradeData } from '@fuseloja/types';
 
 interface UseAuthReturn {
   user: User | null;

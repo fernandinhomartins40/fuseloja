@@ -1,6 +1,6 @@
 import apiClient from './api';
 import { CartItem } from '@/contexts/CartContext';
-import { Category } from '@/types/category';
+import { Category } from '@fuseloja/types';
 
 // Interface para a resposta da criação de usuário provisório
 interface ProvisionalUserResponse {

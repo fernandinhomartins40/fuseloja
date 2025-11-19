@@ -1,7 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/services/api';
-import { Product } from '@/types/product';
+import { Product } from '@fuseloja/types';
 
 // Define a interface para a resposta da API que contém um único produto
 interface ProductApiResponse {

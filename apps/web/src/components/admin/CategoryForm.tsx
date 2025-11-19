@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Category, getContrastTextColor } from '@/types/category';
+import { Category, getContrastTextColor } from '@fuseloja/types';
 import IconSelector from './IconSelector';
 import { cn } from '@/lib/utils';
 import { iconComponents, IconName } from '@/utils/categoryIcons';

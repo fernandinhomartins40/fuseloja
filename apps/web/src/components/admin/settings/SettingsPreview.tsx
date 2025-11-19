@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { VisualSettings } from '@/types/settings';
+import { VisualSettings } from '@fuseloja/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 

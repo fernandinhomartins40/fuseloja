@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CartItem } from '@/contexts/CartContext';
-import { User } from '@/types/user';
+import { User } from '@fuseloja/types';
 import { toast } from '@/components/ui/sonner';
 import apiClient from '@/services/api';
 
